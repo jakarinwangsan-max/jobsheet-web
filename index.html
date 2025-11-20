@@ -249,7 +249,7 @@ function copyShort(){
 function splitJobs(t){
   let b=[],c=[];
   for(const l of t.split(/\n/).map(s=>s.trim())){
-    if(/^[A-Z]\d{3,5}-\d{1,2}/.test(l)){
+    if (/^[A-Z]{1,3}\d{1,6}(?:-\d{1,6})?/i.test(l)) {
       if(c.length) b.push(c.join("\n"));
       c=[l];
     } else if(l) c.push(l);
@@ -274,7 +274,7 @@ function shortName(n){
 }
 
 function parseJob(b){
-  const j=b.match(/^[A-Z]\d{3,5}-\d{1,2}/)?.[0]||"";
+  const j = b.match(/^[A-Z]{1,3}\d{1,6}(?:-\d{1,6})?/i)?.[0] || "";
   return{
     jobcode:j,
     date:getVal(b,"日期วันที่"),
