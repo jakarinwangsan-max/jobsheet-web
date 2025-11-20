@@ -214,7 +214,7 @@ function parseShort(){
   let out="";
 
   blocks.forEach(b=>{
-    const id=(b.match(/D\d{4,}-\d{2}/)||[""])[0];
+    const id = (b.match(/^[A-Z]{1,3}\d{1,6}(?:-\d{1,6})?/i) || [""])[0];
     const time=(b.match(/【时间เวลา】(.*)/)||["",""])[1].trim();
     const flt=(b.match(/【航班flight】(.*)/)||["",""])[1].trim();
     const pk=(b.match(/【接รับ】(.*)/)||["",""])[1].trim();
