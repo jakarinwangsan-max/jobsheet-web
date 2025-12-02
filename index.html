@@ -115,7 +115,20 @@ function getCode(block){
   if(!raw) return "";
   return raw[1].trim().match(/[0-9A-Za-z]+/)?.[0]||"";
 }
+  
+function getAreaForShort(text) {
+  const t = text.toLowerCase();
 
+  // เขตวัฒนา → แสดงเฉพาะชื่อย่าน
+  if(/สุขุมวิท/.test(t)) return "สุขุมวิท";
+  if(/ทองหล่อ|thonglor/.test(t)) return "ทองหล่อ";
+  if(/เอกมัย|ekkamai/.test(t)) return "เอกมัย";
+  if(/อโศก|asoke/.test(t)) return "อโศก";
+
+  // เขตอื่น ๆ ใช้ detectArea ปกติ
+  return detectArea(text);
+}
+  
 /* ------------------- parseShort ------------------- */
 function parseShort(){
   const raw=document.getElementById("input").value;
@@ -146,9 +159,8 @@ function parseShort(){
 
     const A=MAP(pk), B=MAP(dp);
 
-    const areaA=detectArea(pk);
-    const areaB=detectArea(dp);
-
+    const areaA = getAreaForShort(pk);
+const areaB = getAreaForShort(dp);
     out+=`${id}(😊)${time}/${price}#${seat}${A}-${B}\n`;
     out+=`${areaA}–${areaB}`;
     if(flt) out+=` ✈️${flt}`;
