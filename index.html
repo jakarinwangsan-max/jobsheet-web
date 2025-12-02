@@ -123,7 +123,16 @@ function parseShort(){
 
   const blocks=raw.split(/(?=D\d{4,}-\d{2})/).filter(x=>x.trim());
   let out="";
+  
+let firstDate = "";
+  if (blocks.length > 0) {
+      const dateMatch = blocks[0].match(/【日期วันที่】(.*)/);
+      firstDate = dateMatch ? dateMatch[1].trim() : "ไม่มีวันที่";
+  }
 
+  out += firstDate + "\n";
+  out += "--------------------------------------\n";
+  
   blocks.forEach((b,i)=>{
     const id=(b.match(/D\d{4,}-\d{2}/)||[""])[0];
     const time=(b.match(/【时间เวลา】(.*)/)||["",""])[1].trim();
