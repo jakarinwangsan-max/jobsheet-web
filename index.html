@@ -123,8 +123,8 @@ function parseShort(){
 
   const blocks=raw.split(/(?=D\d{4,}-\d{2})/).filter(x=>x.trim());
   let out="";
-  
-let firstDate = "";
+
+  let firstDate = "";
   if (blocks.length > 0) {
       const dateMatch = blocks[0].match(/【日期วันที่】(.*)/);
       firstDate = dateMatch ? dateMatch[1].trim() : "ไม่มีวันที่";
@@ -132,8 +132,8 @@ let firstDate = "";
 
   out += firstDate + "\n";
   out += "--------------------------------------\n";
-  
-  blocks.forEach((b,i)=>{
+
+  blocks.forEach(b=>{
     const id=(b.match(/D\d{4,}-\d{2}/)||[""])[0];
     const time=(b.match(/【时间เวลา】(.*)/)||["",""])[1].trim();
     const flt=(b.match(/【航班flight】(.*)/)||["",""])[1].trim();
@@ -143,20 +143,20 @@ let firstDate = "";
 
     const seat=car.includes("5")?5:7;
     const price=seat===5?400:500;
+
     const A=MAP(pk), B=MAP(dp);
+
     const areaA=detectArea(pk);
     const areaB=detectArea(dp);
 
-    out += `${id}(😊)${time}/${price}#${seat}${A}-${B}\n`;
-    out += `${areaA}–${areaB}`;
-    if(flt) out += ` ✈️${flt}`;
-    // เพิ่มบรรทัดเดียวเท่านั้น
-    if(i<blocks.length-1) out += `\n`;
+    out+=`${id}(😊)${time}/${price}#${seat}${A}-${B}\n`;
+    out+=`${areaA}–${areaB}`;
+    if(flt) out+=` ✈️${flt}`;
+    out+=`\n`;
   });
 
   return out.trim();
 }
-
 /* ------------------- copyShort ------------------- */
 function copyShort() {
   const shortEl = document.getElementById("short-out");
