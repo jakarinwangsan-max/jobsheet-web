@@ -159,8 +159,8 @@ function parseShort(){
 
     const A=MAP(pk), B=MAP(dp);
 
-    const areaA = getAreaForShort(pk);
-const areaB = getAreaForShort(dp);
+    const areaA=detectArea(pk);
+    const areaB=detectArea(dp);
     out+=`${id}(😊)${time}/${price}#${seat}${A}-${B}\n`;
     out+=`${areaA}–${areaB}`;
     if(flt) out+=` ✈️${flt}`;
