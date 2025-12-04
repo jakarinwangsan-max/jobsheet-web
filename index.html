@@ -162,9 +162,189 @@ function detectArea(text) {
     "เชียงราย": ["chiang rai"],
     "แม่สาย": ["mae sai"]
   };
-  for (const [area, keys] of Object.entries(BANGKOK)) if (keys.some(k=>t.includes(k))) return area;
-  for (const [area, keys] of Object.entries(METRO)) if (keys.some(k=>t.includes(k))) return area;
+function detectArea(text) {
+  if (!text) return "กรุงเทพฯ";
+  const t = text.toLowerCase();
+
+  // สนามบิน
+  if (/dmk|don mueang|ดอนเมือง/.test(t)) return "แอร์ดอน";
+  if (/bkk|suvarnabhumi|สุวรรณภูมิ/.test(t)) return "แอร์สุ";
+
+  /* ----------------------- กรุงเทพฯ ----------------------- */
+  const BANGKOK = {
+    "พระนคร": ["phra nakhon"], "ดุสิต": ["dusit"], "หนองจอก": ["nong chok"],
+    "บางรัก": ["bang rak","silom","surawong"],
+    "บางเขน": ["bang khen"], "บางกะปิ": ["bang kapi"],
+    "ปทุมวัน": ["pathum wan","siam","chidlom","ratchaprasong","lumphini","samyan","chula"],
+    "ป้อมปราบ": ["pom prap"],
+    "พระโขนง": ["phra khanong"], "มีนบุรี": ["min buri"], "ลาดกระบัง": ["lat krabang"],
+    "ยานนาวา": ["yan nawa"], "สัมพันธวงศ์": ["samphanthawong"],
+    "พญาไท": ["phaya thai","phayathai"], "ธนบุรี": ["thon buri"],
+    "บางกอกใหญ่": ["bangkok yai"], "ห้วยขวาง": ["huai khwang","rama 9","ratchada"],
+    "คลองสาน": ["khlong san"], "ตลิ่งชัน": ["taling chan"],
+    "บางกอกน้อย": ["bangkok noi"], "บางขุนเทียน": ["bang khun thian"],
+    "ภาษีเจริญ": ["phasi charoen"], "หนองแขม": ["nong khaem"],
+    "ราษฎร์บูรณะ": ["rat burana"], "บางพลัด": ["bang phlat"],
+    "ดินแดง": ["din daeng"], "บึงกุ่ม": ["bueng kum"],
+    "สาทร": ["sathorn"], "บางซื่อ": ["bang sue"],
+    "จตุจักร": ["chatuchak"], "บางคอแหลม": ["bang kho laem"],
+    "ประเวศ": ["prawet"], "คลองเตย": ["khlong toei"],
+    "สวนหลวง": ["suan luang"], "จอมทอง": ["chom thong"],
+    "ดอนเมือง": ["don mueang"],
+    "ราชเทวี": ["ratchathewi","victory monument","makkasan"],
+    "ลาดพร้าว": ["lat phrao"],
+    "วัฒนา": ["sukhumvit","thonglor","ekkamai","asoke","phrom phong","klongtan"],
+    "บางแค": ["bang khae"], "หลักสี่": ["lak si"],
+    "สายไหม": ["sai mai"], "คันนายาว": ["khan na yao"],
+    "สะพานสูง": ["saphan sung"], "วังทองหลาง": ["wang thonglang"],
+    "คลองสามวา": ["khlong sam wa"], "บางนา": ["bang na"],
+    "ทุ่งครุ": ["thung khru"], "บางบอน": ["bang bon"]
+  };
+
+  /* ----------------------- ปริมณฑล + จังหวัดสำคัญ ----------------------- */
+  const METRO = {
+    // นนทบุรี
+    "เมืองนนทบุรี": ["muang nonthaburi","ติวานนท์"],
+    "บางบัวทอง": ["bang bua thong"],
+    "ปากเกร็ด": ["pak kret"], "บางใหญ่": ["bang yai"], "ไทรน้อย": ["sai noi"],
+
+    // ปทุมธานี
+    "ธัญบุรี": ["thanyaburi","rangsit"],
+    "คลองหลวง": ["khlong luang"],
+    "ลำลูกกา": ["lam luk ka"],
+    "เมืองปทุมธานี": ["muang pathum"],
+
+    // สมุทรปราการ
+    "เมืองสมุทรปราการ": ["paknam"],
+    "บางพลี": ["bang phli"], "บางเสาธง": ["bang sao thong"],
+    "พระประแดง": ["phra pradaeng"],
+
+    // สมุทรสาคร
+    "เมืองสมุทรสาคร": ["muang samut sakhon"],
+    "กระทุ่มแบน": ["krathum baen"], "บ้านแพ้ว": ["ban phaeo"],
+
+    // นครปฐม
+    "เมืองนครปฐม": ["muang nakhon pathom"],
+    "พุทธมณฑล": ["phutthamonthon"], "สามพราน": ["samphran"],
+
+    /* --- ชลบุรี / พัทยา --- */
+    "พัทยาเหนือ": ["north pattaya"], "พัทยากลาง": ["central pattaya"],
+    "พัทยาใต้": ["south pattaya"], "บางละมุง": ["bang lamung"],
+    "หนองปรือ": ["nong prue"], "สัตหีบ": ["sattahip"],
+
+    /* --- ระยอง --- */
+    "ระยอง": ["rayong"], "บ้านฉาง": ["ban chang"],
+
+    /* --- อยุธยา --- */
+    "อยุธยา": ["ayutthaya"], "บางปะอิน": ["bang pa-in"],
+
+    /* --- หัวหิน / ชะอำ --- */
+    "หัวหิน": ["hua hin"], "ชะอำ": ["cha-am"],
+
+    /* --- ภูเก็ต --- */
+    "ภูเก็ต": ["phuket"], "ป่าตอง": ["patong"],
+    "กะตะ": ["kata"], "กะรน": ["karon"],
+
+    /* --- เชียงใหม่ --- */
+function detectArea(text) {
+  if (!text) return "กรุงเทพฯ";
+  const t = text.toLowerCase();
+
+  // สนามบิน
+  if (/dmk|don mueang|ดอนเมือง/.test(t)) return "แอร์ดอน";
+  if (/bkk|suvarnabhumi|สุวรรณภูมิ/.test(t)) return "แอร์สุ";
+
+  /* ----------------------- กรุงเทพฯ ----------------------- */
+  const BANGKOK = {
+    "พระนคร": ["phra nakhon"], "ดุสิต": ["dusit"], "หนองจอก": ["nong chok"],
+    "บางรัก": ["bang rak","silom","surawong"],
+    "บางเขน": ["bang khen"], "บางกะปิ": ["bang kapi"],
+    "ปทุมวัน": ["pathum wan","siam","chidlom","ratchaprasong","lumphini","samyan","chula"],
+    "ป้อมปราบ": ["pom prap"],
+    "พระโขนง": ["phra khanong"], "มีนบุรี": ["min buri"], "ลาดกระบัง": ["lat krabang"],
+    "ยานนาวา": ["yan nawa"], "สัมพันธวงศ์": ["samphanthawong"],
+    "พญาไท": ["phaya thai","phayathai"], "ธนบุรี": ["thon buri"],
+    "บางกอกใหญ่": ["bangkok yai"], "ห้วยขวาง": ["huai khwang","rama 9","ratchada"],
+    "คลองสาน": ["khlong san"], "ตลิ่งชัน": ["taling chan"],
+    "บางกอกน้อย": ["bangkok noi"], "บางขุนเทียน": ["bang khun thian"],
+    "ภาษีเจริญ": ["phasi charoen"], "หนองแขม": ["nong khaem"],
+    "ราษฎร์บูรณะ": ["rat burana"], "บางพลัด": ["bang phlat"],
+    "ดินแดง": ["din daeng"], "บึงกุ่ม": ["bueng kum"],
+    "สาทร": ["sathorn"], "บางซื่อ": ["bang sue"],
+    "จตุจักร": ["chatuchak"], "บางคอแหลม": ["bang kho laem"],
+    "ประเวศ": ["prawet"], "คลองเตย": ["khlong toei"],
+    "สวนหลวง": ["suan luang"], "จอมทอง": ["chom thong"],
+    "ดอนเมือง": ["don mueang"],
+    "ราชเทวี": ["ratchathewi","victory monument","makkasan"],
+    "ลาดพร้าว": ["lat phrao"],
+    "วัฒนา": ["sukhumvit","thonglor","ekkamai","asoke","phrom phong","klongtan"],
+    "บางแค": ["bang khae"], "หลักสี่": ["lak si"],
+    "สายไหม": ["sai mai"], "คันนายาว": ["khan na yao"],
+    "สะพานสูง": ["saphan sung"], "วังทองหลาง": ["wang thonglang"],
+    "คลองสามวา": ["khlong sam wa"], "บางนา": ["bang na"],
+    "ทุ่งครุ": ["thung khru"], "บางบอน": ["bang bon"]
+  };
+
+  /* ----------------------- ปริมณฑล + จังหวัดสำคัญ ----------------------- */
+  const METRO = {
+    // นนทบุรี
+    "เมืองนนทบุรี": ["muang nonthaburi","ติวานนท์"],
+    "บางบัวทอง": ["bang bua thong"],
+    "ปากเกร็ด": ["pak kret"], "บางใหญ่": ["bang yai"], "ไทรน้อย": ["sai noi"],
+
+    // ปทุมธานี
+    "ธัญบุรี": ["thanyaburi","rangsit"],
+    "คลองหลวง": ["khlong luang"],
+    "ลำลูกกา": ["lam luk ka"],
+    "เมืองปทุมธานี": ["muang pathum"],
+
+    // สมุทรปราการ
+    "เมืองสมุทรปราการ": ["paknam"],
+    "บางพลี": ["bang phli"], "บางเสาธง": ["bang sao thong"],
+    "พระประแดง": ["phra pradaeng"],
+
+    // สมุทรสาคร
+    "เมืองสมุทรสาคร": ["muang samut sakhon"],
+    "กระทุ่มแบน": ["krathum baen"], "บ้านแพ้ว": ["ban phaeo"],
+
+    // นครปฐม
+    "เมืองนครปฐม": ["muang nakhon pathom"],
+    "พุทธมณฑล": ["phutthamonthon"], "สามพราน": ["samphran"],
+
+    /* --- ชลบุรี / พัทยา --- */
+    "พัทยาเหนือ": ["north pattaya"], "พัทยากลาง": ["central pattaya"],
+    "พัทยาใต้": ["south pattaya"], "บางละมุง": ["bang lamung"],
+    "หนองปรือ": ["nong prue"], "สัตหีบ": ["sattahip"],
+
+    /* --- ระยอง --- */
+    "ระยอง": ["rayong"], "บ้านฉาง": ["ban chang"],
+
+    /* --- อยุธยา --- */
+    "อยุธยา": ["ayutthaya"], "บางปะอิน": ["bang pa-in"],
+
+    /* --- หัวหิน / ชะอำ --- */
+    "หัวหิน": ["hua hin"], "ชะอำ": ["cha-am"],
+
+    /* --- ภูเก็ต --- */
+    "ภูเก็ต": ["phuket"], "ป่าตอง": ["patong"],
+    "กะตะ": ["kata"], "กะรน": ["karon"],
+
+    /* --- เชียงใหม่ --- */
+    "เชียงใหม่": ["chiang mai"], "นิมมาน": ["nimman"],
+
+    /* --- เชียงราย --- */
+    "เชียงราย": ["chiang rai"], "แม่สาย": ["mae sai"]
+  };
+
+  for (const [area, keys] of Object.entries(BANGKOK))
+    if (keys.some(k => t.includes(k))) return area;
+
+  for (const [area, keys] of Object.entries(METRO))
+    if (keys.some(k => t.includes(k))) return area;
+
   return "กรุงเทพฯ";
+}
+}
 }
 
 /* ------------------- getCode ------------------- */
