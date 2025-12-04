@@ -73,89 +73,64 @@ function MAP(t){
 function detectArea(text) {
   if (!text) return "กรุงเทพฯ";
   const t = text.toLowerCase();
+
   if (/dmk|don mueang|ดอนเมือง/.test(t)) return "แอร์ดอน";
   if (/bkk|suvarnabhumi|สุวรรณภูมิ/.test(t)) return "แอร์สุ";
 
   const BANGKOK = {
-  "พระนคร": ["phra nakhon"], "ดุสิต": ["dusit"], "หนองจอก": ["nong chok"],
-  "บางรัก": ["bang rak","silom"], "บางเขน": ["bang khen"], "บางกะปิ": ["bang kapi"],
-  "ปทุมวัน": ["pathum wan","siam","chidlom","ploenchit","lumphini"],
-  "ป้อมปราบ": ["pom prap"],
-  "พระโขนง": ["phra khanong"], "มีนบุรี": ["min buri"], "ลาดกระบัง": ["lat krabang"],
-  "ยานนาวา": ["yan nawa"], "สัมพันธวงศ์": ["samphanthawong"], "พญาไท": ["phaya thai"],
-  "ธนบุรี": ["thon buri"], "บางกอกใหญ่": ["bangkok yai"], "ห้วยขวาง": ["huai khwang","rama 9"],
-  "คลองสาน": ["khlong san"], "ตลิ่งชัน": ["taling chan"], "บางกอกน้อย": ["bangkok noi"],
-  "บางขุนเทียน": ["bang khun thian"], "ภาษีเจริญ": ["phasi charoen"], "หนองแขม": ["nong khaem"],
-  "ราษฎร์บูรณะ": ["rat burana"], "บางพลัด": ["bang phlat"], "ดินแดง": ["din daeng"],
-  "บึงกุ่ม": ["bueng kum"], "สาทร": ["sathorn"], "บางซื่อ": ["bang sue"], "จตุจักร": ["chatuchak"],
-  "บางคอแหลม": ["bang kho laem"], "ประเวศ": ["prawet"], "คลองเตย": ["khlong toei"],
-  "สวนหลวง": ["suan luang"], "จอมทอง": ["chom thong"], "ดอนเมือง": ["don mueang"],
-  "ราชเทวี": ["ratchathewi","victory"], "ลาดพร้าว": ["lat phrao"],
-  "สุขุมวิท": ["watthana","sukhumvit","thonglor","ekkamai","asoke"],
-  "บางแค": ["bang khae"], "หลักสี่": ["lak si"], "สายไหม": ["sai mai"],
-  "คันนายาว": ["khan na yao"], "สะพานสูง": ["saphan sung"],
-  "วังทองหลาง": ["wang thonglang"], "คลองสามวา": ["khlong sam wa"],
-  "บางนา": ["bang na"], "ทุ่งครุ": ["thung khru"], "บางบอน": ["bang bon"],
+    "พระนคร": ["phra nakhon"], "ดุสิต": ["dusit"], "หนองจอก": ["nong chok"],
+    "บางรัก": ["bang rak","silom"], "บางเขน": ["bang khen"], "บางกะปิ": ["bang kapi"],
+    "ปทุมวัน": ["pathum wan","siam","chidlom","ploenchit","lumphini"],
+    "ป้อมปราบ": ["pom prap"], "พระโขนง": ["phra khanong"],
+    "มีนบุรี": ["min buri"], "ลาดกระบัง": ["lat krabang"],
+    "ยานนาวา": ["yan nawa"], "สัมพันธวงศ์": ["samphanthawong"],
+    "พญาไท": ["phaya thai"], "ธนบุรี": ["thon buri"],
+    "บางกอกใหญ่": ["bangkok yai"], "ห้วยขวาง": ["huai khwang","rama 9"],
+    "คลองสาน": ["khlong san"], "ตลิ่งชัน": ["taling chan"],
+    "บางกอกน้อย": ["bangkok noi"], "บางขุนเทียน": ["bang khun thian"],
+    "ภาษีเจริญ": ["phasi charoen"], "หนองแขม": ["nong khaem"],
+    "ราษฎร์บูรณะ": ["rat burana"], "บางพลัด": ["bang phlat"],
+    "ดินแดง": ["din daeng"], "บึงกุ่ม": ["bueng kum"],
+    "สาทร": ["sathorn"], "บางซื่อ": ["bang sue"], "จตุจักร": ["chatuchak"],
+    "บางคอแหลม": ["bang kho laem"], "ประเวศ": ["prawet"],
+    "คลองเตย": ["khlong toei"], "สวนหลวง": ["suan luang"],
+    "จอมทอง": ["chom thong"], "ราชเทวี": ["ratchathewi","victory"],
+    "ลาดพร้าว": ["lat phrao"], "สุขุมวิท": ["watthana","sukhumvit","thonglor","ekkamai","asoke"],
+    "บางแค": ["bang khae"], "หลักสี่": ["lak si"], "สายไหม": ["sai mai"],
+    "คันนายาว": ["khan na yao"], "สะพานสูง": ["saphan sung"],
+    "วังทองหลาง": ["wang thonglang"], "คลองสามวา": ["khlong sam wa"],
+    "บางนา": ["bang na"], "ทุ่งครุ": ["thung khru"], "บางบอน": ["bang bon"]
+  };
 
-  /* ย่านสำคัญ (ซ้ำกับเขตแต่ต้องคงไว้เพื่อให้จับง่ายขึ้น) */
-  "ทองหล่อ": ["thonglor", "thong lo", "thonglhor"],
-  "เอกมัย": ["ekkamai", "ekamai"],
-  "พร้อมพงษ์": ["phrom phong", "promphong"],
-  "อโศก": ["asoke", "asok"],
-  "คลองตัน": ["khlong tan", "klongtan"],
-  "พระโขนงเหนือ": ["phra khanong nuea", "phra khanong nua"],
-  "สยาม": ["siam"],
-  "ชิดลม": ["chidlom", "chitlom"],
-  "ราชประสงค์": ["ratchaprasong"],
-  "ลุมพินี": ["lumpini", "lumphini", "lumpinee"],
-  "สามย่าน": ["samyan", "sam yan"],
-  "จุฬา": ["chula", "chulalongkorn", "cu"],
-  "พระราม1": ["rama1", "rama 1", "rama i"],
-  "พญาไท": ["phayathai", "phaya thai", "phayathai rd"],
-  "อนุสาวรีย์ชัย": ["victory monument", "anusawari"],
-  "ประตูน้ำ": ["pratunam"],
-  "มักกะสัน": ["makkasan"],
-  "พระราม9": ["rama9", "rama 9", "rama ix"],
-  "รัชดา": ["ratchada", "ratchadapisek"],
-  "ศูนย์วัฒนธรรม": ["cultural center"],
-  "สุทธิสาร": ["sutthisan"],
-  "สีลม": ["silom"],
-  "สาทรเหนือ": ["sathon nuea", "sathorn north"],
-  "สุรวงศ์": ["surawong"],
-  "เจริญกรุง": ["charoenkrung"],
-  "ริมแม่น้ำเจ้าพระยา": ["chao phraya riverside", "riverside"]
-};
   const METRO = {
-    "เมืองนนทบุรี": ["muang nonthaburi", "ติวานนท์"],
+    // นนทบุรี
+    "เมืองนนทบุรี": ["muang nonthaburi","ติวานนท์"],
     "บางบัวทอง": ["bang bua thong"],
     "ปากเกร็ด": ["pak kret"],
     "บางใหญ่": ["bang yai"],
     "ไทรน้อย": ["sai noi"],
 
-    // ปทุมธานี  
-    "ธัญบุรี": ["thanyaburi", "rangsit"],
+    // ปทุมธานี
+    "ธัญบุรี": ["thanyaburi","rangsit"],
     "คลองหลวง": ["khlong luang"],
     "ลำลูกกา": ["lam luk ka"],
     "เมืองปทุมธานี": ["muang pathum"],
 
-    // สมุทรปราการ  
-    "เมืองสมุทรปราการ": ["muang samut prakan", "paknam"],
+    // สมุทรปราการ
+    "เมืองสมุทรปราการ": ["muang samut prakan","paknam"],
     "บางพลี": ["bang phli"],
     "บางเสาธง": ["bang sao thong"],
     "พระประแดง": ["phra pradaeng"],
 
-    // สมุทรสาคร  
+    // สมุทรสาคร
     "เมืองสมุทรสาคร": ["muang samut sakhon"],
     "กระทุ่มแบน": ["krathum baen"],
     "บ้านแพ้ว": ["ban phaeo"],
 
-    // นครปฐม  
+    // นครปฐม
     "เมืองนครปฐม": ["muang nakhon pathom"],
     "พุทธมณฑล": ["phutthamonthon"],
     "สามพราน": ["samphran"],
-
-
-    /* —————— เพิ่มจังหวัดสำคัญที่นี่ —————— */
 
     // ชลบุรี / พัทยา
     "พัทยาเหนือ": ["north pattaya"],
@@ -191,8 +166,15 @@ function detectArea(text) {
     "เชียงราย": ["chiang rai"],
     "แม่สาย": ["mae sai"]
   };
-  for (const [area, keys] of Object.entries(BANGKOK)) if (keys.some(k=>t.includes(k))) return area;
-  for (const [area, keys] of Object.entries(METRO)) if (keys.some(k=>t.includes(k))) return area;
+
+  // ตรวจกรุงเทพฯ
+  for (const [area, keys] of Object.entries(BANGKOK))
+    if (keys.some(k => t.includes(k))) return area;
+
+  // ตรวจปริมณฑล + จังหวัดสำคัญ
+  for (const [area, keys] of Object.entries(METRO))
+    if (keys.some(k => t.includes(k))) return area;
+
   return "กรุงเทพฯ";
 }
 
@@ -226,6 +208,106 @@ function parseShort(){
 
   let firstDate = "";
   if (blocks.length > 0) {
+      const dateMatch = blocks[0].match(/【日期วันที่】(.*)/);
+      firstDate = dateMatch ? dateMatch[1].trim() : "ไม่มีวันที่";
+  }
+
+  out += firstDate + "\n";
+  out += "--------------------------------------\n";
+
+  blocks.forEach(b=>{
+    const id=(b.match(/D\d{4,}-\d{2}/)||[""])[0];
+    const time=(b.match(/【时间เวลา】(.*)/)||["",""])[1].trim();
+    const flt=(b.match(/【航班flight】(.*)/)||["",""])[1].trim();
+    const pk=(b.match(/【接รับ】(.*)/)||["",""])[1].trim();
+    const dp=(b.match(/【送ส่ง】(.*)/)||["",""])[1].trim();
+    const car=(b.match(/【车型ขนาดรถ】(.*)/)||["",""])[1].trim();
+
+    const seat=car.includes("5")?5:7;
+    const price=seat===5?400:500;
+
+    const A=MAP(pk), B=MAP(dp);
+
+    const areaA=detectArea(pk);
+    const areaB=detectArea(dp);
+    out+=`${id}(😊)${time}/${price}#${seat}${A}-${B}\n`;
+    out+=`${areaA}–${areaB}`;
+    if(flt) out+=` ✈️${flt}`;
+    out+=`\n`;
+  });
+
+  return out.trim();
+}
+/* ------------------- copyShort ------------------- */
+function copyShort() {
+  const shortEl = document.getElementById("short-out");
+  const text = shortEl.innerText || shortEl.textContent;
+  
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => { alert("คัดลอกแล้ว ✔"); })
+    .catch(() => fallbackCopy(text));
+  } else { fallbackCopy(text); }
+}
+
+function fallbackCopy(text) {
+  const textarea = document.createElement("textarea");
+  textarea.value = text;
+  document.body.appendChild(textarea);
+  textarea.select();
+  try { document.execCommand("copy"); alert("คัดลอกแล้ว ✔"); }
+  catch(e){ alert("คัดลอกไม่สำเร็จ ❌"); }
+  document.body.removeChild(textarea);
+}
+
+/* ------------------- PDF System ------------------- */
+function splitJobs(t){
+  let b=[],c=[];
+  for(const l of t.split(/\n/).map(s=>s.trim())){
+    if(/^[A-Z]\d{3,5}-\d{1,2}/.test(l)){
+      if(c.length) b.push(c.join("\n"));
+      c=[l];
+    } else if(l) c.push(l);
+  }
+  if(c.length) b.push(c.join("\n"));
+  return b;
+}
+
+function getVal(t,k){ const m=t.match(new RegExp("【"+k+"】([^\\n]*)")); return m?m[1].trim():""; }
+function shortName(n){ if(!n) return ""; n=n.split("(")[0]; const w=n.replace(/[^\wก-๙\s]/g," ").trim().split(/\s+/); return w.slice(0,3).join(" "); }
+function parseJob(b){ const j=b.match(/^[A-Z]\d{3,5}-\d{1,2}/)?.[0]||""; return{jobcode:j,date:getVal(b,"日期วันที่"),time:getVal(b,"时间เวลา"),name:getVal(b,"姓名ชื่อ")||"",route:shortName(getVal(b,"接รับ"))+" → "+shortName(getVal(b,"送ส่ง")),code:getCode(b)}; }
+function getJobs(){ const r=document.getElementById("input").value.trim(); return r?splitJobs(r).map(parseJob):[]; }
+
+function adjustFontSize(el,maxFont,minFont){ if(!el) return; let f=maxFont; el.style.fontSize=f+"px"; while((el.scrollWidth>el.clientWidth||el.scrollHeight>el.clientHeight)&&f>minFont){ f--; el.style.fontSize=f+"px"; } }
+
+function makePage(jobs4){
+  const w=document.createElement("div"); w.className="page-wrap";
+  for(let i=0;i<4;i++){
+    const j=jobs4[i]; const s=document.createElement("div"); s.className="slot";
+    s.innerHTML=`<div class="line-top"><div>${j?j.jobcode:""}</div><div>${j?j.time:""}</div><div>${j?j.date:""}</div></div><div class="passenger">${j?j.name:""}</div><div class="route">${j?j.route:""}</div><div class="code">${j?j.code:""}</div>`;
+    adjustFontSize(s.querySelector(".passenger"),34,12);
+    adjustFontSize(s.querySelector(".route"),22,10);
+    w.appendChild(s);
+  }
+  return w;
+}
+
+function fillPreview(){ const w=document.getElementById("preview-container"); w.innerHTML=""; const j=getJobs(); if(!j.length) return; for(let i=0;i<j.length;i+=4) w.appendChild(makePage(j.slice(i,i+4))); }
+
+async function buildPDF(){ const {jsPDF}=window.jspdf; const pages=document.querySelectorAll(".page-wrap"); const pdf=new jsPDF({orientation:"landscape",unit:"pt",format:[842,595]}); for(let i=0;i<pages.length;i++){ const c=await html2canvas(pages[i],{scale:2}); pdf.addImage(c.toDataURL("image/png"),"PNG",0,0,842,595); if(i<pages.length-1) pdf.addPage(); } return pdf; }
+
+function getFileName(){ const r=document.getElementById("input").value.trim(); const m=r.match(/^([A-Z]\d{3,5})-/); return m?m[1]:"JobSheet"; }
+
+document.getElementById("btnProcess").onclick=()=>{
+  document.getElementById("short-out").textContent=parseShort();
+  fillPreview();
+};
+document.getElementById("btnPreviewSheet").onclick=fillPreview;
+document.getElementById("btnPDF").onclick=async()=>{ const pdf=await buildPDF(); pdf.save(getFileName()+".pdf"); };
+document.getElementById("btnSharePDF").onclick=async()=>{ const pdf=await buildPDF(); const blob=pdf.output("blob"); const file=new File([blob],getFileName()+".pdf",{type:"application/pdf"}); if(navigator.canShare && navigator.canShare({files:[file]})){ await navigator.share({files:[file],title:"Job Sheet"}); } else { pdf.save(getFileName()+".pdf"); } };
+</script>
+
+</body>
+</html>
       const dateMatch = blocks[0].match(/【日期วันที่】(.*)/);
       firstDate = dateMatch ? dateMatch[1].trim() : "ไม่มีวันที่";
   }
