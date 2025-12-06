@@ -61,7 +61,7 @@ button{padding:8px 14px;font-size:15px;margin:4px;cursor:pointer}
 <div id="preview-container"></div>
 
 <script>
-/* ------------------- MAP (FINAL VERSION) ------------------- */
+/* ------------------- MAP (FINAL VERSION - CR FIX) ------------------- */
 function MAP(t){
   t=t.toLowerCase();
   
@@ -76,7 +76,8 @@ function MAP(t){
   if(/หัวหิน|cha-am|chaam|huahin/.test(t)) return "HH"; // HH: Hua Hin
   if(/กระบี่|krabi|kbv/.test(t)) return "KR"; // KR: Krabi
   if(/สมุย|surat thani|samui|usm|surat/.test(t)) return "SM"; // SM: Samui/Surat Thani
-  if(/เชียงราย|chiang rai|ce/.test(t)) return "CR"; // CR: Chiang Rai
+  // *** แก้ไขตรงนี้: ลบคำย่อ 'ce' ออก เพื่อป้องกัน False Positive ***
+  if(/เชียงราย|chiang rai/.test(t)) return "CR"; // CR: Chiang Rai
   if(/อยุธยา|ayutthaya|ayutaya/.test(t)) return "AY"; // AY: Ayutthaya
   if(/ระยอง|rayong/.test(t)) return "RY"; // RY: Rayong
   
@@ -86,9 +87,12 @@ function MAP(t){
   if(/สมุทรปราการ|samut prakan/.test(t)) return "SP"; // SP: Samut Prakan
   if(/สมุทรสาคร|samut sakhon/.test(t)) return "SS"; // SS: Samut Sakhon
   if(/นครปฐม|nakhon pathom/.test(t)) return "NP"; // NP: Nakhon Pathom
+
+  // 4. เพิ่มการตรวจสอบ Bangkok เพื่อความแน่นอนก่อนจะคืนค่าเริ่มต้น
+  if(/กรุงเทพ|bangkok/.test(t)) return "Bk";
   
-  // 4. ค่าเริ่มต้นสำหรับกรุงเทพฯ
-  return "BK"; // BK: BangKok (Default)
+  // 5. ค่าเริ่มต้นสุดท้าย
+  return "Bk"; // Bk: BangKok (Default)
 }
 
 /* ------------------- detectArea (50 เขต + ย่าน) ------------------- */
@@ -158,14 +162,20 @@ function detectArea(text) {
   };
 
   const METRO = {
-    // นนทบุรี, ปทุมธานี, สมุทรปราการ, ฯลฯ
-    // ปริมณฑลจะถูกจับด้วยรหัสย่อ 2 ตัวอักษรใน MAP function แต่ยังคงต้องมีใน detectArea เพื่อแสดงชื่อเต็ม
+    // นนทบุรี, ปทุมธานี
     "เมืองนนทบุรี": ["muang nonthaburi","ติวานนท์"], "บางบัวทอง": ["bang bua thong"], "ปากเกร็ด": ["pak kret"],
     "บางใหญ่": ["bang yai"], "ไทรน้อย": ["sai noi"],
     "ธัญบุรี": ["thanyaburi","rangsit"], "คลองหลวง": ["khlong luang"], "ลำลูกกา": ["lam luk ka"], "เมืองปทุมธานี": ["muang pathum"],
-    "เมืองสมุทรปราการ": ["muang samut prakan","paknam"], "บางพลี": ["bang phli"], "บางเสาธง": ["bang sao thong"], "พระประแดง": ["phra pradaeng"],
+    
+    // *** แก้ไข/เพิ่มเติมสำหรับสมุทรปราการ เพื่อจับ Sam Rong และ Samut Prakan ***
+    "เมืองสมุทรปราการ": ["muang samut prakan", "samut prakan", "samrong", "สำโรง", "paknam"], 
+    "บางพลี": ["bang phli"], "บางเสาธง": ["bang sao thong"], "พระประแดง": ["phra pradaeng"],
+    
+    // สมุทรสาคร, นครปฐม
     "เมืองสมุทรสาคร": ["muang samut sakhon"], "กระทุ่มแบน": ["krathum baen"], "บ้านแพ้ว": ["ban phaeo"],
     "เมืองนครปฐม": ["muang nakhon pathom"], "พุทธมณฑล": ["phutthamonthon"], "สามพราน": ["samphran"],
+    
+    // จังหวัดท่องเที่ยวอื่นๆ
     "พัทยาเหนือ": ["north pattaya"], "พัทยากลาง": ["central pattaya"], "พัทยาใต้": ["south pattaya"],
     "บางละมุง": ["bang lamung"], "หนองปรือ": ["nong prue"], "สัตหีบ": ["sattahip"],
     "ระยอง": ["rayong"], "บ้านฉาง": ["ban chang"],
@@ -186,6 +196,7 @@ function detectArea(text) {
 
   return "กทม.";
 }
+
 /* ------------------- getAreaForShort (แสดงย่านแทนเขต) ------------------- */
 function getAreaForShort(text) {
   if (!text || text.trim() === "") return "กทม."; 
@@ -360,4 +371,3 @@ document.getElementById("btnSharePDF").onclick=async()=>{ const pdf=await buildP
 
 </body>
 </html>
-
