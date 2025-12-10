@@ -2,176 +2,41 @@
 <html lang="th">
 <head>
 <meta charset="utf-8" />
-<title>ตัวแปลงใบงานอัตโนมัติ (Job Parser) v15.1 - แก้ไขแล้ว</title>
+<title>ตัวแปลงใบงานอัตโนมัติ (Job Parser) v15.1</title>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
-/* ------------------- STYLES (คงเดิม) ------------------- */
-:root {
-    --primary-color: #007bff;
-    --secondary-color: #28a745;
-    --background-light: #f7f7f7;
-    --background-white: #ffffff;
-    --text-color: #333;
-    --border-radius: 8px;
-}
-body {
-    font-family: 'Kanit', sans-serif;
-    background: var(--background-light);
-    padding: 20px;
-    color: var(--text-color);
-    max-width: 1200px;
-    margin: 0 auto;
-}
-h1 {
-    color: var(--primary-color);
-    font-weight: 700;
-    margin-bottom: 15px;
-    padding-bottom: 8px;
-    border-bottom: 3px solid var(--primary-color);
-    display: inline-block;
-}
-h2 {
-    color: #495057;
-    font-weight: 600;
-    margin-top: 20px;
-    margin-bottom: 10px;
-}
-.input-section {
-    display: flex;
-    flex-direction: column;
-}
-.input-control-wrapper {
-    display: flex;
-    gap: 15px;
-    align-items: flex-end;
-}
-.input-control-wrapper textarea {
-    flex-grow: 1;
-    width: 100%;
-}
-.control-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 15px;
-    flex-shrink: 0;
-}
-textarea {
-    height: 200px;
-    font-family: 'Kanit', monospace;
-    padding: 10px;
-    border: 1px solid #ced4da;
-    border-radius: var(--border-radius);
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.06);
-    resize: vertical;
-}
-button {
-    padding: 8px 15px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    border: none;
-    border-radius: var(--border-radius);
-    transition: all 0.2s ease-in-out;
-    white-space: nowrap;
-}
-#btnProcess { background-color: var(--primary-color); color: white; }
-#btnProcess:hover { background-color: #0056b3; transform: translateY(-1px); box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15); }
-#btnPDF, #btnSharePDF, .short-out-section .control-group button, #btnPreviewSheet {
-    background-color: var(--secondary-color);
-    color: white;
-}
-#btnPDF:hover, #btnSharePDF:hover, .short-out-section .control-group button:hover, #btnPreviewSheet:hover {
-    background-color: #1e7e34;
-    transform: translateY(-1px);
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
-}
-hr { border: 0; height: 1px; background: #ced4da; margin: 20px 0; }
-#short-out {
-    white-space: pre-line;
-    background: var(--background-white);
-    padding: 15px;
-    border-radius: var(--border-radius);
-    font-size: 18px;
-    line-height: 1.4;
-    border: 1px solid #dee2e6;
-    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
-    overflow-wrap: break-word;
-    word-break: break-word;
-    margin: 10px 0;
-    max-width: 100%;
-}
-/* PDF Styles (คงเดิม) */
-#preview-container{
-    display:flex;
-    flex-direction:column;
-    gap:15px;
-    margin-top:15px;
-}
-.page-wrap{
-    width:842px;
-    height:595px;
-    margin:0 auto;
-    background:white;
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    grid-template-rows:1fr 1fr;
-    box-shadow:0 0 5px rgba(0,0,0,.1);
-    position:relative;
-}
-.slot{ 
-    box-sizing:border-box; 
-    padding:15px; 
-    display:flex; 
-    flex-direction:column; 
-    justify-content:space-between; 
-    font-weight:600; 
-    position:relative; 
-}
-.line-top{
-    display:flex;
-    justify-content:space-between;
-    font-size:18px;
-    font-weight:700;
-}
-.line-top>div:first-child{
-    font-size:24px;
-    font-weight:900;
-}
-.passenger{
-    text-align:center;
-    margin-top:15px; 
-    margin-bottom:8px; 
-    display:block;
-    overflow-wrap: break-word;
-    word-break: break-word;
-    line-height:1.2;
-}
-.route{
-    text-align:center;
-    font-size:16px;
-    display:block;
-    overflow-wrap: break-word;
-    word-break: break-word;
-    line-height:1.2;
-    margin:2px 0; 
-}
-.code{
-    position:absolute;
-    right:15px;
-    bottom:10px;
-    font-size:8px;
-}
+:root{--primary-color:#007bff;--secondary-color:#28a745;--background-light:#f7f7f7;--background-white:#fff;--text-color:#000;--border-radius:8px}
+body{font-family:'Kanit',sans-serif;background:var(--background-light);padding:20px;color:var(--text-color);max-width:1200px;margin:0 auto}
+h1{color:var(--primary-color);font-weight:700;margin-bottom:15px;padding-bottom:8px;border-bottom:3px solid var(--primary-color);display:inline-block}
+h2{color:#495057;font-weight:600;margin-top:20px;margin-bottom:10px}
+.input-section{display:flex;flex-direction:column}
+.input-control-wrapper{display:flex;gap:15px;align-items:flex-end}
+.input-control-wrapper textarea{flex-grow:1;width:100%}
+.control-group{display:flex;flex-direction:column;gap:8px;margin-bottom:15px;flex-shrink:0}
+textarea{height:200px;font-family:'Kanit',monospace;padding:10px;border:1px solid #ced4da;border-radius:var(--border-radius);box-shadow:inset 0 1px 3px rgba(0,0,0,.06);resize:vertical}
+button{padding:8px 15px;font-size:14px;font-weight:600;cursor:pointer;border:none;border-radius:var(--border-radius);transition:all .2s ease-in-out;white-space:nowrap}
+#btnProcess{background-color:var(--primary-color);color:white}
+#btnProcess:hover{background-color:#0056b3;transform:translateY(-1px);box-shadow:0 3px 6px rgba(0,0,0,.15)}
+#btnPDF,#btnSharePDF,.short-out-section .control-group button,#btnPreviewSheet{background-color:var(--secondary-color);color:white}
+#btnPDF:hover,#btnSharePDF:hover,.short-out-section .control-group button:hover,#btnPreviewSheet:hover{background-color:#1e7e34;transform:translateY(-1px);box-shadow:0 3px 6px rgba(0,0,0,.15)}
+hr{border:0;height:1px;background:#ced4da;margin:20px 0}
+#short-out{white-space:pre-line;background:var(--background-white);padding:15px;border-radius:var(--border-radius);font-size:18px;line-height:1.4;border:1px solid #dee2e6;box-shadow:0 1px 5px rgba(0,0,0,.05);overflow-wrap:break-word;word-break:break-word;margin:10px 0;max-width:100%}
+#preview-container{display:flex;flex-direction:column;gap:15px;margin-top:15px}
+.page-wrap{width:842px;height:595px;margin:0 auto;background:white;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;box-shadow:0 0 5px rgba(0,0,0,.1);position:relative}
+.slot{box-sizing:border-box;padding:15px;display:flex;flex-direction:column;justify-content:space-between;font-weight:600;position:relative}
+.line-top{display:flex;justify-content:space-between;font-size:18px;font-weight:700}
+.line-top>div:first-child{font-size:24px;font-weight:900}
+.passenger{text-align:center;margin-top:15px;margin-bottom:8px;display:block;overflow-wrap:break-word;word-break:break-word;line-height:1.2}
+.route{text-align:center;font-size:16px;display:block;overflow-wrap:break-word;word-break:break-word;line-height:1.2;margin:2px 0}
+.code{position:absolute;right:15px;bottom:10px;font-size:8px}
 </style>
 </head>
 
 <body>
-
 <h1>📄 แปลงใบงาน/ใบงานสแตนบาย 📋</h1>
 
 <div class="input-section">
@@ -204,28 +69,11 @@ hr { border: 0; height: 1px; background: #ced4da; margin: 20px 0; }
 </div>
 
 <div id="preview-container"></div>
-
 <script>
-// =========================================================================================================
-// !!! Web App URL ใหม่ล่าสุดของคุณ !!!
-// =========================================================================================================
 const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbz889F8LVJ7RxEIWJTFCHhxi89qriCSQT86m9UgFY5lN_H5UV0LSYrnKvnbhKC_RPmxdA/exec'; 
-// =========================================================================================================
-
 let PutterName = ""; 
-
-/* ---------------------------------------------------------------------------------------------------------
-   --- 🌎 ข้อมูลสำหรับการแปลง MAP และ AREA (มีการแก้ไข) --- 
-   --------------------------------------------------------------------------------------------------------- */
 const LOC_MAP = {
-  "S": /สุวรรณภูมิ|bkk|suvarnabhumi/, "D": /ดอนเมือง|dmk|don mueang/,
-  "CM": /เชียงใหม่|chiang mai|cnx/, "PK": /ภูเก็ต|phuket|hkt/, "PY": /พัทยา|ชลบุรี|pattaya|chonburi|utp|บางละมุง/, 
-  "HH": /หัวหิน|cha-am|chaam|huahin/, "KR": /กระบี่|krabi|kbv/, "SM": /สมุย|surat thani|samui|usm|surat/, 
-  "CR": /เชียงราย|chiang rai/, "AY": /อยุธยา|ayutthaya|ayutaya/, "RY": /ระยอง|rayong/,
-  "NB": /นนทบุรี|nonthaburi/, "PT": /ปทุมธานี|pathum thani|pathumtani/, "SP": /สมุทรปราการ|samut prakan/, 
-  "SS": /สมุทรสาคร|samut sakhon/, "NP": /นครปฐม|nakhon pathom/,
-  // *** แก้ไข: เปลี่ยน 'Bk' เป็น 'BK' สำหรับรหัสมาตรฐานกรุงเทพฯ ***
-  "BK": /กรุงเทพ|bangkok/ 
+  "S": /สุวรรณภูมิ|bkk|suvarnabhumi/, "D": /ดอนเมือง|dmk|don mueang/, "CM": /เชียงใหม่|chiang mai|cnx/, "PK": /ภูเก็ต|phuket|hkt/, "PY": /พัทยา|ชลบุรี|pattaya|chonburi|utp|บางละมุง/, "HH": /หัวหิน|cha-am|chaam|huahin/, "KR": /กระบี่|krabi|kbv/, "SM": /สมุย|surat thani|samui|usm|surat/, "CR": /เชียงราย|chiang rai/, "AY": /อยุธยา|ayutthaya|ayutaya/, "RY": /ระยอง|rayong/, "NB": /นนทบุรี|nonthaburi/, "PT": /ปทุมธานี|pathum thani|pathumtani/, "SP": /สมุทรปราการ|samut prakan/, "SS": /สมุทรสาคร|samut sakhon/, "NP": /นครปฐม|nakhon pathom/, "BK": /กรุงเทพ|bangkok/ 
 };
 function MAP(t){
   t=t.toLowerCase();
@@ -234,74 +82,34 @@ function MAP(t){
   return "BK"; 
 }
 const BANGKOK_AREAS = {
-  "พระนคร": ["phra nakhon", "สนามหลวง", "ถนนข้าวสาร", "บางลำพู"], 
-  "บางรัก": ["bang rak", "สีลม", "สาทรเหนือ", "bangrak"],
-  "ปทุมวัน": ["pathum wan", "สยาม", "ชิดลม", "เพลินจิต", "ลุมพินี", "ราชประสงค์"],
-  "วัฒนา": ["watthana", "สุขุมวิท", "ทองหล่อ", "เอกมัย", "อโศก"],
-  "ห้วยขวาง": ["huai khwang", "พระราม 9", "รัชดา", "เหม่งจ๋าย"],
-  "พญาไท": ["phaya thai", "อารีย์", "สนามเป้า"],
-  "ราชเทวี": ["ratchathewi", "อนุสาวรีย์ชัย", "ประตูน้ำ"],
-  "จตุจักร": ["chatuchak", "ตลาดจตุจักร"],
-  "บางนา": ["bang na", "อุดมสุข", "ลาซาล", "แบริ่ง"],
-  "แอร์ดอน": ["dmk|don mueang|ดอนเมือง"],
-  "แอร์สุ": ["bkk|suvarnabhumi|สุวรรณภูมิ"],
-  "ดุสิต": ["dusit"], "บางเขน": ["bang khen"], "บางกะปิ": ["bang kapi"], "พระโขนง": ["phra khanong"], 
-  "มีนบุรี": ["min buri"], "ยานนาวา": ["yan nawa"], "สัมพันธวงศ์": ["samphanthawong"], "ธนบุรี": ["thon buri"],
-  "ตลิ่งชัน": ["taling chan"], "บางกอกน้อย": ["bangkok noi"], "บางขุนเทียน": ["bang khun thian"], 
-  "ภาษีเจริญ": ["phasi charoen"], "หนองแขม": ["nong khaem"], "ราษฎร์บูรณะ": ["rat burana"], "บางพลัด": ["bang phlat"],
-  "บางบอน": ["bang bon"],
-  "ดินแดง": ["din daeng"], // เพิ่ม Din Daeng ใน list เพื่อให้มีการตรวจจับ
-  "กทม.": ["กรุงเทพ|bangkok"]
+  "พระนคร": ["phra nakhon", "สนามหลวง", "ถนนข้าวสาร", "บางลำพู"], "บางรัก": ["bang rak", "สีลม", "สาทรเหนือ", "bangrak"], "ปทุมวัน": ["pathum wan", "สยาม", "ชิดลม", "เพลินจิต", "ลุมพินี", "ราชประสงค์"], "วัฒนา": ["watthana", "สุขุมวิท", "ทองหล่อ", "เอกมัย", "อโศก"], "ห้วยขวาง": ["huai khwang", "พระราม 9", "รัชดา", "เหม่งจ๋าย"], "พญาไท": ["phaya thai", "อารีย์", "สนามเป้า"], "ราชเทวี": ["ratchathewi", "อนุสาวรีย์ชัย", "ประตูน้ำ"], "จตุจักร": ["chatuchak", "ตลาดจตุจักร"], "บางนา": ["bang na", "อุดมสุข", "ลาซาล", "แบริ่ง"], "แอร์ดอน": ["dmk|don mueang|ดอนเมือง"], "แอร์สุ": ["bkk|suvarnabhumi|สุวรรณภูมิ"], "ดุสิต": ["dusit"], "บางเขน": ["bang khen"], "บางกะปิ": ["bang kapi"], "พระโขนง": ["phra khanong"], "มีนบุรี": ["min buri"], "ยานนาวา": ["yan nawa"], "สัมพันธวงศ์": ["samphanthawong"], "ธนบุรี": ["thon buri"], "ตลิ่งชัน": ["taling chan"], "บางกอกน้อย": ["bangkok noi"], "บางขุนเทียน": ["bang khun thian"], "ภาษีเจริญ": ["phasi charoen"], "หนองแขม": ["nong khaem"], "ราษฎร์บูรณะ": ["rat burana"], "บางพลัด": ["bang phlat"], "บางบอน": ["bang bon"], "ดินแดง": ["din daeng"], "แจ้งวัฒนะ": ["chaeng watthana", "แจ้งวัฒนะ"], "หลักสี่": ["lak si", "หลักสี่"], "รามคำแหง": ["ramkhamhaeng", "รามคำแหง"], "บางแค": ["bang khae", "บางแค"], "คลองเตย": ["khlong toei", "คลองเตย"], "สาทร": ["sathon", "สาทร"], "กทม.": ["กรุงเทพ|bangkok"]
 };
 const YARN_OVERRIDE = {
-    "ทองหล่อ": /ทองหล่อ|thonglor/, "เอกมัย": /เอกมัย|ekkamai/, "อโศก": /อโศก|asoke|วัฒนา|watthana/, 
-    "นานา/เพลินจิต": /นานา|nana|เพลินจิต|ploenchit/, "ลุมพินี": /ลุมพินี|lumphini/,
-    "สีลม": /สีลม|silom/, "สยาม": /สยาม|siam/, "เยาวราช": /เยาวราช|yaowarat/, 
-    "ประตูน้ำ": /ประตูน้ำ|pratunam/, "อนุสาวรีย์ชัย": /อนุสาวรีย์ชัย|victory/, "อารีย์": /อารีย์|aree/, 
-    "ศูนย์สิริกิติ์": /ศูนย์สิริกิติ์|qsncc/, "เจริญนคร": /เจริญนคร|charoen nakhon/,
-    "พระราม 9": /พระราม 9|rama 9/, "ปิ่นเกล้า": /ปิ่นเกล้า|pin klao/, "รามอินทรา": /รามอินทรา|ramintra/, 
-    "อุดมสุข": /อุดมสุข|udomsuk/, "บางนา": /บางนา|bang na/, "ลาดกระบัง": /ลาดกระบัง|lat krabang/
+    "ทองหล่อ": /ทองหล่อ|thonglor/, "เอกมัย": /เอกมัย|ekkamai/, "อโศก": /อโศก|asoke|วัฒนา|watthana|FYI Center|fyi center/, "นานา/เพลินจิต": /นานา|nana|เพลินจิต|ploenchit/, "ลุมพินี": /ลุมพินี|lumpini|lumphini/, "สีลม": /สีลม|silom/, "สยาม": /สยาม|siam/, "เยาวราช": /เยาวราช|yaowarat/, "ประตูน้ำ": /ประตูน้ำ|pratunam/, "อนุสาวรีย์ชัย": /อนุสาวรีย์ชัย|victory/, "อารีย์": /อารีย์|aree/, "ศูนย์สิริกิติ์": /ศูนย์สิริกิติ์|qsncc/, "เจริญนคร": /เจริญนคร|charoen nakhon/, "พระราม 9": /พระราม 9|rama 9/, "ปิ่นเกล้า": /ปิ่นเกล้า|pin klao/, "รามอินทรา": /รามอินทรา|ramintra/, "อุดมสุข": /อุดมสุข|udomsuk/, "บางนา": /บางนา|bang na/, "ลาดกระบัง": /ลาดกระบัง|lat krabang/, "แจ้งวัฒนะ": /แจ้งวัฒนะ|chaeng watthana/, "รามคำแหง": /รามคำแหง|ramkhamhaeng|ramkhamhaeng/
 };
 function detectArea(text) {
   if (!text || text.trim() === "") return "กทม."; 
   const t = text.toLowerCase();
-  
-  // ตรวจสอบ Ratchada และ Din Daeng
   if (/din\s*daeng|ดินแดง/.test(t)) return "ดินแดง";
   if (/(รัชดา|ratchada)/.test(t)) return "ห้วยขวาง";
-  
   for (const [area, keys] of Object.entries(BANGKOK_AREAS)) {
     if (area === "กทม.") continue;
-    if (keys.some(k => t.includes(k.replace(/[|]/g, '')))) return area;
+    if (keys.some(k => new RegExp(k.replace(/[|]/g, ''), 'i').test(t))) return area;
   }
   return "กทม.";
 }
-
-// *** แก้ไข: ปรับปรุงการตรวจจับซอยสุขุมวิท และจัดการลำดับการ Override ***
 function getAreaForShort(text) {
   if (!text || text.trim() === "") return "กทม."; 
   const t = text.toLowerCase();
-  
-  // 1. ตรวจจับซอยสุขุมวิทก่อน (เพื่อให้ได้ 'สุขุมวิท23' แทน 'วัฒนา')
   const sukhumvitMatch = t.match(/สุขุมวิท\s*ซ?\s*อ?\s*ย?\s*(\d+)/) || t.match(/sukhumvit\s*(soi)?\s*(\d+)/);
   if (sukhumvitMatch) {
-    // ต้องเช็คทั้ง group 1 และ group 2
     const soiNumber = (sukhumvitMatch[2] || sukhumvitMatch[1] || '').trim();
-    // ตรวจสอบว่ามีตัวเลขตามหลังจริง ๆ
-    if (soiNumber && !isNaN(parseInt(soiNumber))) { 
-        return "สุขุมวิท" + parseInt(soiNumber); 
-    }
+    if (soiNumber && !isNaN(parseInt(soiNumber))) { return "สุขุมวิท" + parseInt(soiNumber); }
   }
-  
-  // 2. ตรวจจับสนามบิน
   if (/dmk|don mueang|ดอนเมือง/.test(t)) return "แอร์ดอน";
   if (/bkk|suvarnabhumi|สุวรรณภูมิ/.test(t)) return "แอร์สุ";
-  
-  // 3. ตรวจจับ YARN_OVERRIDE (เช่น สยาม, สีลม)
   for(const [yarn, pattern] of Object.entries(YARN_OVERRIDE))
       if(pattern.test(t)) return yarn;
-      
-  // 4. Fallback ไปที่ detectArea เพื่อหาเขต/ย่านใหญ่ (รวมถึง Din Daeng)
   return detectArea(text);
 }
 function getCode(block){
@@ -309,16 +117,11 @@ function getCode(block){
   if(!raw) return "";
   return raw[1].trim().match(/[0-9A-Za-z]+/)?.[0]||"";
 }
-
-// --------------------------------------------------------------------------
-// ฟังก์ชันแยกข้อมูลงานทั้งหมดในรูปแบบ Array of Objects
 function getAllJobData() {
     const raw = document.getElementById("input").value;
     if (!raw.trim()) return [];
-    
     const blocks = raw.split(/(?=D\d{4,}-\d{2})/).filter(x => x.trim());
     const jobData = [];
-
     blocks.forEach(b => {
         const id = (b.match(/D\d{4,}-\d{2}/) || [""])[0];
         const time = (b.match(/【时间เวลา】(.*)/) || ["", ""])[1].trim();
@@ -326,68 +129,38 @@ function getAllJobData() {
         const pk = (b.match(/【接รับ】(.*)/) || ["", ""])[1].trim();
         const dp = (b.match(/【送ส่ง】(.*)/) || ["", ""])[1].trim();
         const car = (b.match(/【车型ขนาดรถ】(.*)/) || ["", ""])[1].trim();
-        const seat = car.includes("5") ? 5 : 7;
+        const seat = /7\s*SEAT/i.test(car) ? 7 : 5; 
         const A = MAP(pk), B = MAP(dp);
         const areaA = getAreaForShort(pk);
         const areaB = getAreaForShort(dp);
         const date = (b.match(/【日期วันที่】(.*)/) || ["", ""])[1].trim();
-
-        jobData.push({
-            date: date,
-            id: id,
-            time: time,
-            seat: seat,
-            mapFrom: A,
-            mapTo: B,
-            areaFrom: areaA,
-            areaTo: areaB,
-            flight: flt,
-            putter: PutterName 
-        });
+        jobData.push({date: date, id: id, time: time, seat: seat, mapFrom: A, mapTo: B, areaFrom: areaA, areaTo: areaB, flight: flt, putter: PutterName });
     });
     return jobData;
 }
-// --------------------------------------------------------------------------
-
-// *** ฟังก์ชันที่แก้ไข: ส่งข้อมูลทั้งหมดไป Google Sheets (ไม่มี Pop-up สำเร็จ) ***
 async function sendToGoogleSheet(jobData) {
-    if (jobData.length === 0) {
-        alert("ไม่มีข้อมูลใบงานที่ประมวลผลได้");
-        return false;
-    }
-    
-    const sendPromises = jobData.map(data => {
+    if (jobData.length === 0) { alert("ไม่มีข้อมูลใบงานที่ประมวลผลได้"); return false; }
+    const results = [];
+    for (const data of jobData) {
         const formData = new FormData();
         formData.append('data', JSON.stringify(data));
-
-        return fetch(WEB_APP_URL, {
-            method: 'POST',
-            body: formData,
-            mode: 'no-cors' 
-        }).then(response => {
-            return { status: 'Sent', id: data.id };
-        }).catch(error => {
+        try {
+            await fetch(WEB_APP_URL, {
+                method: 'POST',
+                body: formData,
+                mode: 'no-cors' 
+            });
+            results.push({ status: 'Sent', id: data.id });
+        } catch (error) {
             console.error('Fetch Error:', error);
-            return { status: 'Error', id: data.id, error: error.message };
-        });
-    });
-
-    const results = await Promise.all(sendPromises);
-    
-    const errorCount = results.filter(r => r.status === 'Error').length;
-
-    if (errorCount === 0) {
-        // ✅ SUCCESS: ถูกลบออกแล้ว (เปลี่ยนเป็น console log แทน)
-        console.log(`Job data for ${jobData.length} jobs sent successfully.`); 
-    } else {
-        // ⚠️ ERROR: คง alert แจ้งเตือนข้อผิดพลาดไว้
-        alert(`⚠️ ส่งข้อมูลเสร็จสิ้น แต่มีข้อผิดพลาด ${errorCount} งาน (โปรดตรวจสอบ Apps Script Logs)`);
+            results.push({ status: 'Error', id: data.id, error: error.message });
+        }
     }
+    const errorCount = results.filter(r => r.status === 'Error').length;
+    if (errorCount === 0) { console.log(`Job data for ${jobData.length} jobs sent successfully. (Sent sequentially)`); } 
+    else { alert(`⚠️ ส่งข้อมูลเสร็จสิ้น แต่มีข้อผิดพลาด ${errorCount} งาน (โปรดตรวจสอบ Apps Script Logs)`); }
     return true;
 }
-// --------------------------------------------------------------------------
-
-// *** ฟังก์ชันหลัก: สร้างผลลัพธ์แบบ Short Out 2 บรรทัด (สำหรับแสดงผล) ***
 function parseShort(){
   const raw=document.getElementById("input").value;
   if(!raw.trim()) return "";
@@ -400,53 +173,26 @@ function parseShort(){
   }
   out += firstDate + "\n";
   out += "------------------------------\n";
-  
   const jobData = getAllJobData(); 
-  
   jobData.forEach(job=>{
-    // บรรทัดที่ 1: ID//Time//#Seat MapFrom-MapTo
     out+=`${job.id}//${job.time}//#${job.seat}${job.mapFrom}-${job.mapTo}\n`;
-    
-    // บรรทัดที่ 2: AreaFrom–AreaTo ✈️Flight
     out+=`${job.areaFrom}–${job.areaTo}`;
     if(job.flight) out+=` ✈️${job.flight}`;
     out+=`\n`;
   });
   return out.trim();
 }
-// --------------------------------------------------------------------------
-
-// *** ฟังก์ชันรวม: เรียกชื่อ, ประมวลผล, แสดงผล, และส่งข้อมูล ***
 async function processAndSend() {
     const inputContent = document.getElementById("input").value.trim();
-    if (!inputContent) {
-        alert("กรุณาวางข้อมูลใบงานก่อน");
-        return;
-    }
-
+    if (!inputContent) { alert("กรุณาวางข้อมูลใบงานก่อน"); return; }
     let name = prompt("กรุณาป้อน(ทะเบียนรถ):", PutterName || "");
-    
-    if (name === null || name.trim() === "") {
-        alert("ต้องระบุทะเบียนรถจึงจะประมวลผลและส่งข้อมูลได้");
-        return;
-    }
-
+    if (name === null || name.trim() === "") { alert("ต้องระบุทะเบียนรถจึงจะประมวลผลและส่งข้อมูลได้"); return; }
     PutterName = name.trim();
-    
-    // 1. ประมวลผลและแสดงผลลัพธ์แบบ 2 บรรทัด
     document.getElementById("short-out").textContent = parseShort(); 
     fillPreview();
-    
-    // 2. ดึงข้อมูลในรูปแบบที่พร้อมส่ง
     const jobData = getAllJobData();
-    
-    // 3. ส่งข้อมูลไป Google Sheets
     await sendToGoogleSheet(jobData);
 }
-// -------------------------------------------------------------------------
-
-
-/* ------------------- PDF SYSTEM & Utility Functions (คงเดิม) ------------------- */
 function copyShort() {
   const shortEl = document.getElementById("short-out");
   const text = shortEl.innerText || shortEl.textContent;
@@ -473,10 +219,8 @@ function makePage(jobs4){
   for(let i=0;i<4;i++){
     const j=jobs4[i]; const s=document.createElement("div"); s.className="slot";
     s.innerHTML=`<div class="line-top"><div>${j?j.jobcode:""}</div><div>${j?j.time:""}</div><div>${j?j.date:""}</div></div><div class="passenger">${j?j.name:""}</div><div class="route">${j?j.route:""}</div><div class="code">${j?j.code:""}</div>`;
-    
     adjustFontSize(s.querySelector(".passenger"), 28, 10); 
     adjustFontSize(s.querySelector(".route"), 18, 8);
-    
     w.appendChild(s);
   }
   return w;
