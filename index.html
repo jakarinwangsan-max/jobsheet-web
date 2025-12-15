@@ -38,7 +38,7 @@ hr{border:0;height:1px;background:#ced4da;margin:20px 0}
 </head>
 
 <body>
-<h1> 📄 แปลงใบงาน  /  ใบงานสแตนบาย 📋</h1>
+<h1> 📄 แปลงใบงาน / ใบงานสแตนบาย 📋</h1>
 
 <div class="input-section">
     <h2>📥 วางข้อมูลใบงานที่นี่</h2>
@@ -159,11 +159,22 @@ function detectArea(text) {
 function getAreaForShort(text) {
   if (!text || text.trim() === "") return "กทม."; 
   const t = text.toLowerCase();
+  
+  // ตรวจสอบซอยสุขุมวิท (เดิม)
   const sukhumvitMatch = t.match(/สุขุมวิท\s*ซ?\s*อ?\s*ย?\s*(\d+)/) || t.match(/sukhumvit\s*(soi)?\s*(\d+)/);
   if (sukhumvitMatch) {
     const soiNumber = sukhumvitMatch[2] || sukhumvitMatch[1];
     return "สุขุมวิท" + soiNumber.trim();
   }
+  
+  // === NEW: ตรวจสอบซอยลาดพร้าว ===
+  const latphraoMatch = t.match(/ลาดพร้าว\s*ซ?\s*อ?\s*ย?\s*(\d+)/) || t.match(/lat phrao\s*(soi)?\s*(\d+)/);
+  if (latphraoMatch) {
+      const soiNumber = latphraoMatch[2] || latphraoMatch[1];
+      return "ลาดพร้าว" + soiNumber.trim();
+  }
+  // ==============================
+
   if (/dmk|don mueang|ดอนเมือง/.test(t)) return "แอร์ดอน";
   if (/bkk|suvarnabhumi|สุวรรณภูมิ/.test(t)) return "แอร์สุ";
   for(const [yarn, pattern] of Object.entries(YARN_OVERRIDE))
@@ -171,6 +182,7 @@ function getAreaForShort(text) {
       
   return detectArea(text);
 }
+
 function getCode(block){
   const raw=block.match(/【接驳编码code】(.*)/)||block.match(/code[:：]?\s*(.*)/i);
   if(!raw) return "";
