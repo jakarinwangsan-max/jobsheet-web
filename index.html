@@ -25,7 +25,21 @@ button{padding:8px 15px;font-size:14px;font-weight:600;cursor:pointer;border:non
 #btnPDF,#btnSharePDF,.short-out-section .control-group button,#btnPreviewSheet{background-color:var(--secondary-color);color:white}
 #btnPDF:hover,#btnSharePDF:hover,.short-out-section .control-group button:hover,#btnPreviewSheet:hover{background-color:#1e7e34;transform:translateY(-1px);box-shadow:0 3px 6px rgba(0,0,0,.15)}
 hr{border:0;height:1px;background:#ced4da;margin:20px 0}
-#short-out{white-space:pre-line;background:var(--background-white);padding:15px;border-radius:var(--border-radius);font-size:18px;line-height:1.4;border:1px solid #dee2e6;box-shadow:0 1px 5px rgba(0,0,0,.05);overflow-wrap:break-word;word-break:break-word;margin:10px 0;max-width:100%}
+#short-out{
+    white-space:pre; /* <-- ส่วนที่แก้ไข */
+    background:var(--background-white);
+    padding:15px;
+    border-radius:var(--border-radius);
+    font-size:18px;
+    line-height:1.4;
+    border:1px solid #dee2e6;
+    box-shadow:0 1px 5px rgba(0,0,0,.05);
+    overflow-wrap:break-word;
+    word-break:break-word;
+    margin:10px 0;
+    max-width:100%
+}
+
 #preview-container{display:flex;flex-direction:column;gap:15px;margin-top:15px}
 .page-wrap{width:842px;height:595px;margin:0 auto;background:white;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;box-shadow:0 0 5px rgba(0,0,0,.1);position:relative}
 .slot{box-sizing:border-box;padding:15px;display:flex;flex-direction:column;justify-content:space-between;font-weight:600;position:relative}
@@ -79,7 +93,7 @@ const LOC_MAP = {
   "S": /สุวรรณภูมิ|bkk|suvarnabhumi/, "D": /ดอนเมือง|dmk|don mueang/, "CM": /เชียงใหม่|chiang mai|cnx/, "PK": /ภูเก็ต|phuket|hkt/, "PY": /พัทยา|ชลบุรี|pattaya|chonburi|utp|บางละมุง/, "HH": /หัวหิน|cha-am|chaam|huahin/, "KR": /กระบี่|krabi|kbv/, "SM": /สมุย|surat thani|samui|usm|surat/, "CR": /เชียงราย|chiang rai/, "AY": /อยุธยา|ayutthaya|ayutaya/, "RY": /ระยอง|rayong/, 
   // ปริมณฑล (Map Code)
   "NB": /นนทบุรี|nonthaburi|เมืองนนท์|ปากเกร็ด|บางบัวทอง|บางใหญ่|บางกรวย|ไทรน้อย/, 
-  "PT": /ปทุมธานี|pathum thani|pathumtani|rangsit|รังสิต|ลำลูกกา|lam luk ka|ธัญบุรี|thanyaburi|คลองหลวง|khlong luang|สามโคก|sam khok|ลาดหลุมแก้ว|lat lum kaew/, 
+  "PT": /ปทุมธานี|pathum thani|pathumtani|ลำลูกกา|lam luk ka|ธัญบุรี|thanyaburi|คลองหลวง|khlong luang|สามโคก|sam khok|ลาดหลุมแก้ว|lat lum kaew/, 
   "SP": /สมุทรปราการ|samut prakan|ปากน้ำ|บางพลี|บางเสาธง|พระประแดง|พระสมุทรเจดีย์|บางบ่อ/, 
   "SS": /สมุทรสาคร|samut sakhon|มหาชัย|กระทุ่มแบน|บ้านแพ้ว/, 
   "NP": /นครปฐม|nakhon pathom|สามพราน|นครชัยศรี|พุทธมณฑล|ศาลายา/,
@@ -91,7 +105,7 @@ const BANGKOK_AREAS = {
   "พระนคร": ["phra nakhon", "สนามหลวง", "ถนนข้าวสาร", "บางลำพู", "สามเสน", "samsen", "trok pho", "ตรอกโพธิ์"], 
   "บางรัก": ["bang rak", "สีลม", "สาทรเหนือ", "bangrak", "เจริญกรุง"],
   "ปทุมวัน": ["pathum wan", "สยาม", "ชิดลม", "เพลินจิต", "ลุมพินี", "ราชประสงค์"],
-  "ป้อมปราบ": ["pom prap", "เยาวราช", "สำเพ็ง", "คลองถม"],
+  "ป้อมปราบ": ["pom prap", "เยาวราช", "สำเพ็ง", "คลองถม", "วัดโสมนัส", "lan luang", "หลานหลวง"],
   "วัฒนา": ["watthana", "สุขุมวิท", "ทองหล่อ", "เอกมัย", "อโศก"],
   "คลองเตย": ["khlong toei", "พระราม 4"], 
   "ห้วยขวาง": ["huai khwang", "พระราม 9", "รัชดา", "เหม่งจ๋าย"],
@@ -245,7 +259,7 @@ function parseShort(){
       firstDate = dateMatch ? dateMatch[1].trim() : "ไม่มีวันที่";
   }
   out += firstDate + "\n";
-  out += "------------------------------\n";
+  out += "====================\n";
   const jobData = getAllJobData(); 
   jobData.forEach(job=>{
     out+=`${job.id}//${job.time}//#${job.seat}${job.mapFrom}-${job.mapTo}\n`;
