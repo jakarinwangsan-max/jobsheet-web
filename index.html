@@ -1,97 +1,139 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="utf-8"/><title>Job Parser v15.7</title>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta charset="utf-8" />
+<title>Job Parser v15.7</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--primary-color:#007bff;--secondary-color:#28a745;--background-light:#f7f7f7;--background-white:#fff;--border-radius:8px}
-body{font-family:'Kanit',sans-serif;background:var(--background-light);padding:20px;max-width:1200px;margin:0 auto}
-h1{color:var(--primary-color);border-bottom:3px solid var(--primary-color);display:inline-block}
+:root{--primary-color:#007bff;--secondary-color:#28a745;--background-light:#f7f7f7;--background-white:#fff;--text-color:#000;--border-radius:8px}
+body{font-family:'Kanit',sans-serif;background:var(--background-light);padding:20px;color:var(--text-color);max-width:1200px;margin:0 auto}
+h1{color:var(--primary-color);font-weight:700;margin-bottom:15px;padding-bottom:8px;border-bottom:3px solid var(--primary-color);display:inline-block}
+h2{color:#495057;font-weight:600;margin-top:20px;margin-bottom:10px}
+.input-section{display:flex;flex-direction:column}
 .input-control-wrapper{display:flex;gap:15px;align-items:flex-end}
-textarea{flex-grow:1;height:200px;padding:10px;border:1px solid #ced4da;border-radius:var(--border-radius);resize:vertical}
-button{padding:8px 15px;font-weight:600;cursor:pointer;border:none;border-radius:var(--border-radius);transition:all .2s;white-space:nowrap;color:#fff}
-#btnProcess{background:var(--primary-color)}
-#btnPDF,#btnSharePDF,#btnPreviewSheet,.short-out-section button{background:var(--secondary-color)}
-#short-out{white-space:pre;background:#fff;padding:15px;border-radius:var(--border-radius);font-size:18px;border:1px solid #dee2e6;margin:10px 0}
+.input-control-wrapper textarea{flex-grow:1;width:100%}
+.control-group{display:flex;flex-direction:column;gap:8px;margin-bottom:15px;flex-shrink:0}
+textarea{height:200px;font-family:'Kanit',monospace;padding:10px;border:1px solid #ced4da;border-radius:var(--border-radius);box-shadow:inset 0 1px 3px rgba(0,0,0,.06);resize:vertical}
+button{padding:8px 15px;font-size:14px;font-weight:600;cursor:pointer;border:none;border-radius:var(--border-radius);transition:all .2s ease-in-out;white-space:nowrap}
+#btnProcess{background-color:var(--primary-color);color:white}
+#btnPDF,#btnSharePDF,.short-out-section .control-group button,#btnPreviewSheet{background-color:var(--secondary-color);color:white}
+hr{border:0;height:1px;background:#ced4da;margin:20px 0}
+#short-out{white-space:pre;background:var(--background-white);padding:15px;border-radius:var(--border-radius);font-size:18px;line-height:1.4;border:1px solid #dee2e6;box-shadow:0 1px 5px rgba(0,0,0,.05);overflow-wrap:break-word;word-break:break-word;margin:10px 0;max-width:100%}
 #preview-container{display:flex;flex-direction:column;gap:15px;margin-top:15px}
-.page-wrap{width:842px;height:595px;margin:0 auto;background:#fff;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;box-shadow:0 0 5px rgba(0,0,0,.1);position:relative}
+.page-wrap{width:842px;height:595px;margin:0 auto;background:white;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;box-shadow:0 0 5px rgba(0,0,0,.1);position:relative}
 .slot{box-sizing:border-box;padding:15px;display:flex;flex-direction:column;justify-content:space-between;font-weight:600;position:relative}
 .line-top{display:flex;justify-content:space-between;font-size:18px;font-weight:700}
 .line-top>div:first-child{font-size:24px;font-weight:900}
-.passenger{text-align:center;margin-top:15px;font-size:28px;line-height:1.2}
-.route{text-align:center;font-size:16px;line-height:1.2}
+.passenger{text-align:center;margin-top:15px;margin-bottom:8px;display:block;overflow-wrap:break-word;word-break:break-word;line-height:1.2}
+.route{text-align:center;font-size:16px;display:block;overflow-wrap:break-word;word-break:break-word;line-height:1.2;margin:2px 0}
 .code{position:absolute;right:15px;bottom:10px;font-size:8px}
 </style>
 </head>
 <body>
-<h1>📄 แปลงใบงานอัตโนมัติ</h1>
+<h1> 📄 แปลงใบงาน / ใบงานสแตนบาย 📋</h1>
 <div class="input-section">
     <div class="input-control-wrapper">
         <textarea id="input" placeholder="วางข้อมูลใบงาน..."></textarea>
-        <button id="btnProcess">⚙️ แปลง & บันทึกอัตโนมัติ</button>
+        <div class="control-group"><button id="btnProcess">⚙️ แปลง & บันทึกงานอัตโนมัติ</button></div>
     </div>
 </div>
 <hr>
 <div class="short-out-section">
-    <h2>✅ ผลลัพธ์แบบย่อ</h2>
-    <button onclick="copyShort()">✂️ คัดลอกแบบย่อ</button>
-    <div id="short-out">ผลลัพธ์จะแสดงที่นี่</div>
+    <h2>✅ ผลลัพธ์แบบย่อ </h2>
+    <div class="control-group"><button onclick="copyShort()">✂️ คัดลอกแบบย่อ</button></div>
+    <div id="short-out">ผลลัพธ์การแปลงจะแสดงที่นี่</div>
 </div>
 <hr>
-<h2>🖨️ จัดการ PDF</h2>
-<button id="btnPreviewSheet">👀 ตัวอย่าง</button> <button id="btnPDF">💾 ดาวน์โหลด</button> <button id="btnSharePDF">🔗 แชร์</button>
+<h2>🖨️ ตัวอย่างใบงานสำหรับพิมพ์/แชร์ </h2>
+<div class="control-group">
+  <button id="btnPreviewSheet">👀 แสดงตัวอย่าง (PDF)</button>
+  <button id="btnPDF">💾 ดาวน์โหลด PDF</button>
+  <button id="btnSharePDF">🔗 แชร์ PDF</button>
+</div>
 <div id="preview-container"></div>
-
 <script>
-const WEB_APP_URL='https://script.google.com/macros/s/AKfycbz889F8LVJ7RxEIWJTFCHhxi89qriCSQT86m9UgFY5lN_H5UV0LSYrnKvnbhKC_RPmxdA/exec';
-let PutterName="";
-const LOC_MAP={"S":/สุวรรณภูมิ|bkk|suvarnabhumi/,"D":/ดอนเมือง|dmk/,"CM":/เชียงใหม่|cnx/,"PK":/ภูเก็ต|hkt/,"PY":/พัทยา|pattaya/,"HH":/หัวหิน|huahin/,"KR":/กระบี่/,"SM":/สมุย/,"CR":/เชียงราย/,"AY":/อยุธยา/,"RY":/ระยอง/,"NB":/นนทบุรี/,"PT":/ปทุมธานี/,"SP":/สมุทรปราการ/,"SS":/สมุทรสาคร/,"NP":/นครปฐม/,"BK":/กรุงเทพ|bangkok/};
-const thaiMap={'sathon':'สาทร','ratchadamri':'ราชดำริ','ratchada':'รัชดา','rama iv':'พระราม 4','rama 4':'พระราม 4','rama 3':'พระราม 3','rama vi':'พระราม 6','rama 6':'พระราม 6','sukhumvit':'สุขุมวิท','phloen chit':'เพลินจิต','lumphini':'ลุมพินี','king kaew':'กิ่งแก้ว','lat phrao':'ลาดพร้าว','bang rak':'บางรัก','silom':'สีลม','phaya thai':'พญาไท'};
+const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbz889F8LVJ7RxEIWJTFCHhxi89qriCSQT86m9UgFY5lN_H5UV0LSYrnKvnbhKC_RPmxdA/exec'; 
+let PutterName = ""; 
+const LOC_MAP = {"S": /สุวรรณภูมิ|bkk|suvarnabhumi/,"D": /ดอนเมือง|dmk|don mueang/,"CM": /เชียงใหม่|cnx/,"PK": /ภูเก็ต|hkt/,"PY": /พัทยา|chonburi|utp/,"HH": /หัวหิน|huahin/,"KR": /กระบี่/,"SM": /สมุย/,"CR": /เชียงราย/,"AY": /อยุธยา/,"RY": /ระยอง/,"NB": /นนทบุรี/,"PT": /ปทุมธานี/,"SP": /สมุทรปราการ/,"SS": /สมุทรสาคร/,"NP": /นครปฐม/,"BK": /กรุงเทพ|bangkok/};
+const BANGKOK_AREAS = {"พระนคร": ["phra nakhon", "สนามหลวง"],"บางรัก": ["bang rak", "สีลม"],"ปทุมวัน": ["pathum wan", "สยาม", "ชิดลม", "เพลินจิต"],"ป้อมปราบ": ["pom prap"],"วัฒนา": ["watthana", "สุขุมวิท", "ทองหล่อ"],"คลองเตย": ["khlong toei", "พระราม 4"],"ห้วยขวาง": ["huai khwang", "พระราม 9", "รัชดา"],"พญาไท": ["phaya thai", "อารีย์"],"ราชเทวี": ["ratchathewi", "ประตูน้ำ"],"จตุจักร": ["chatuchak"],"ลาดพร้าว": ["lat phrao"],"บางนา": ["bang na"],"แอร์ดอน": ["dmk|don mueang"],"แอร์สุ": ["bkk|suvarnabhumi"],"กทม.": ["กรุงเทพ|bangkok"]};
+const YARN_OVERRIDE = {"ทองหล่อ": /ทองหล่อ|thonglor/,"เอกมัย": /เอกมัย|ekkamai/,"อโศก": /อโศก|asoke/,"สีลม": /สีลม|silom/,"สยาม": /สยาม|siam/,"พระราม 9": /พระราม 9|rama 9/};
 
-function MAP(t){t=t.toLowerCase();for(let[c,p]of Object.entries(LOC_MAP))if(p.test(t))return c;return "BK"}
-function getAreaForShort(t){
-    t=t.toLowerCase();if(/dmk|ดอนเมือง/.test(t))return "แอร์ดอน";if(/bkk|สุวรรณภูมิ/.test(t))return "แอร์สุ";
-    let sm=t.match(/(?:ซอย|ซ\.|soi)\s*([\d\/\-]+)/i), rm=t.match(/(สุขุมวิท|ลาดพร้าว|รัชดา|พระราม\s*[\div\d]+|กิ่งแก้ว|ราชดำริ|สาทร|เพลินจิต|บางรัก|sukhumvit|lat phrao|ratchada|rama\s*[\div\d]+|sathon|ratchadamri|king kaew|phloen chit|bang\s*rak)/i);
-    if(sm||rm){let n=rm?rm[0].trim().toLowerCase():"";for(let k in thaiMap)if(n.includes(k))n=thaiMap[k];return n+(sm?" "+sm[1]:"")}
-    return "ในเมือง"
+function MAP(t){t=t.toLowerCase();for(const [code, pattern] of Object.entries(LOC_MAP))if(pattern.test(t)) return code;return "BK";}
+function detectArea(text){if(!text) return "กทม.";const t=text.toLowerCase();for(const [area, keys] of Object.entries(BANGKOK_AREAS)){if(keys.some(k=>t.includes(k.replace(/[|]/g,'')))) return area;}return "กทม.";}
+function getAreaForShort(text){
+  if(!text) return "ระบุพื้นที่";const t=text.toLowerCase();
+  if(/dmk|don mueang/.test(t)) return "แอร์ดอน";if(/bkk|suvarnabhumi/.test(t)) return "แอร์สุ";
+  const thaiMap = {'sathon':'สาทร','ratchadamri':'ราชดำริ','ratchada':'รัชดา','rama iv':'พระราม 4','rama 4':'พระราม 4','rama 3':'พระราม 3','rama vi':'พระราม 6','sukhumvit':'สุขุมวิท','phloen chit':'เพลินจิต','king kaew':'กิ่งแก้ว','lat phrao':'ลาดพร้าว'};
+  const soiMatch = t.match(/(?:ซอย|ซ\.|soi)\s*([\d\/\-]+)/i);
+  const roadMatch = t.match(/(สุขุมวิท|ลาดพร้าว|รัชดา|พระราม\s*[\div\d]+|กิ่งแก้ว|ราชดำริ|สาทร|sukhumvit|lat phrao|ratchada|rama\s*[\div\d]+|sathon|ratchadamri|king kaew|phloen chit)/i);
+  if(soiMatch || roadMatch){
+    let roadName = roadMatch ? roadMatch[0].trim().toLowerCase() : "";
+    for(let k in thaiMap){if(roadName.includes(k)){roadName=thaiMap[k];break;}}
+    if(!/[ก-๙]/.test(roadName)) roadName = roadName.replace('road','ถ.').replace('rd','ถ.');
+    return roadName + (soiMatch ? " " + soiMatch[1] : "");
+  }
+  const area = detectArea(text);
+  if(area==="กทม."){for(const [y,p] of Object.entries(YARN_OVERRIDE)){if(p.test(t))return y;}return "ในเมือง";}
+  return area;
 }
+function getCode(b){const m=b.match(/code[:：]?\s*(.*)/i);return m?m[1].trim().match(/[0-9A-Za-z]+/)?.[0]||"":"";}
 function getAllJobData(){
-    let r=document.getElementById("input").value, b=r.split(/(?=[A-Z]\d{2,5}-\d{1,2})/).filter(x=>x.trim()), d=[];
-    b.forEach(x=>{
-        let id=(x.match(/[A-Z]\d{2,5}-\d{1,2}/)||[""])[0], t=(x.match(/【时间เวลา】(.*)/)||["",""])[1].trim(), f=(x.match(/【航班flight】(.*)/)||["",""])[1].trim(), pk=(x.match(/【接รับ】(.*)/)||["",""])[1].trim(), dp=(x.match(/【送ส่ง】(.*)/)||["",""])[1].trim(), dt=(x.match(/【日期วันที่】(.*)/)||["",""])[1].trim();
-        d.push({date:dt,id:id,time:t,seat:/7\s*SEAT/i.test(x)?7:5,mapFrom:MAP(pk),mapTo:MAP(dp),areaFrom:getAreaForShort(pk),areaTo:getAreaForShort(dp),flight:f,putter:PutterName});
-    });return d;
+    const v=document.getElementById("input").value;if(!v.trim())return [];
+    const bs=v.split(/(?=[A-Z]\d{2,5}-\d{1,2})/).filter(x=>x.trim());
+    return bs.map(b=>({
+        id:(b.match(/[A-Z]\d{2,5}-\d{1,2}/)||[""])[0],
+        time:(b.match(/【时间เวลา】(.*)/)||["",""])[1].trim(),
+        flight:(b.match(/【航班flight】(.*)/)||["",""])[1].trim(),
+        pk:(b.match(/【接รับ】(.*)/)||["",""])[1].trim(),
+        dp:(b.match(/【送ส่ง】(.*)/)||["",""])[1].trim(),
+        car:(b.match(/【车型ขนาดรถ】(.*)/)||["",""])[1].trim(),
+        seat:/7\s*SEAT/i.test(b)?7:5,
+        mapFrom:MAP((b.match(/【接รับ】(.*)/)||["",""])[1]),
+        mapTo:MAP((b.match(/【送ส่ง】(.*)/)||["",""])[1]),
+        areaFrom:getAreaForShort((b.match(/【接รับ】(.*)/)||["",""])[1]),
+        areaTo:getAreaForShort((b.match(/【送ส่ง】(.*)/)||["",""])[1]),
+        date:(b.match(/【日期วันที่】(.*)/)||["",""])[1].trim(),
+        putter:PutterName
+    }));
 }
-async function processAndSend(){
-    let v=document.getElementById("input").value.trim();if(!v)return alert("วางข้อมูลก่อน");
-    let n=prompt("ทะเบียนรถ:",PutterName);if(!n)return;PutterName=n;
-    document.getElementById("short-out").textContent=parseShort();fillPreview();
-    let jd=getAllJobData();for(let d of jd){let fd=new FormData();fd.append('data',JSON.stringify(d));await fetch(WEB_APP_URL,{method:'POST',body:fd,mode:'no-cors'})}
-}
+async function sendToGoogleSheet(jd){for(const d of jd){const f=new FormData();f.append('data',JSON.stringify(d));try{await fetch(WEB_APP_URL,{method:'POST',body:f,mode:'no-cors'});}catch(e){}}return true;}
 function parseShort(){
-    let jd=getAllJobData(), out=(jd[0]?jd[0].date:"")+"\n====================\n";
-    jd.forEach(j=>{out+=`${j.id}//${j.time}//#${j.seat}${j.mapFrom}-${j.mapTo}\n${j.areaFrom}–${j.areaTo}${j.flight?' ✈️'+j.flight:''}\n\n`});
+    const jd=getAllJobData();if(!jd.length)return "";
+    let out=jd[0].date+"\n====================\n";
+    jd.forEach(j=>{out+=`${j.id}//${j.time}//#${j.seat}${j.mapFrom}-${j.mapTo}\n${j.areaFrom}–${j.areaTo}${j.flight?' ✈️'+j.flight:''}\n\n`;});
     return out.trim();
 }
-function copyShort(){let t=document.getElementById("short-out").textContent;navigator.clipboard.writeText(t).then(()=>alert("คัดลอกแล้ว"));}
-function shortName(n){if(!n)return "";let c=n.split("(")[0].trim(),w=c.match(/[\wก-๙\u4e00-\u9fff]+/g)||[];return w.slice(0,3).join(" ")}
-function makePage(j4){
-    let p=document.createElement("div");p.className="page-wrap";
-    for(let i=0;i<4;i++){
-        let j=j4[i],s=document.createElement("div");s.className="slot";
-        s.innerHTML=`<div class="line-top"><div>${j?j.id:""}</div><div>${j?j.time:""}</div><div>${j?j.date:""}</div></div><div class="passenger">${j?getVal(j.raw,"姓名ชื่อ"):""}</div><div class="route">${j?j.areaFrom+' → '+j.areaTo:""}</div><div class="code">${j?j.code:""}</div>`;
-        p.appendChild(s);
-    }return p;
+async function processAndSend(){
+    const v=document.getElementById("input").value.trim();if(!v)return;
+    let n=prompt("ทะเบียนรถ:",PutterName);if(!n)return;PutterName=n;
+    document.getElementById("short-out").textContent=parseShort();fillPreview();
+    await sendToGoogleSheet(getAllJobData());
 }
-function fillPreview(){let c=document.getElementById("preview-container"),jd=getAllJobData();c.innerHTML="";for(let i=0;i<jd.length;i+=4)c.appendChild(makePage(jd.slice(i,i+4)))}
-async function buildPDF(){const{jsPDF}=window.jspdf;let p=document.querySelectorAll(".page-wrap"),pdf=new jsPDF('l','pt',[842,595]);for(let i=0;i<p.length;i++){let c=await html2canvas(p[i],{scale:1.5});pdf.addImage(c.toDataURL('image/jpeg',0.7),'JPEG',0,0,842,595);if(i<p.length-1)pdf.addPage()}return pdf}
+function copyShort(){navigator.clipboard.writeText(document.getElementById("short-out").textContent).then(()=>alert("คัดลอกแล้ว ✔"));}
+function shortName(n){if(!n)return "";let c=n.split("(")[0].trim();const w=c.match(/[\wก-๙\u4e00-\u9fff]+/g)||[];return w.slice(0,3).join(" ");}
+function getVal(t,k){const m=t.match(new RegExp("【"+k+"】([^\\n]*)"));return m?m[1].trim():"";}
+function getJobs(){
+    const v=document.getElementById("input").value.trim();if(!v)return [];
+    return v.split(/(?=[A-Z]\d{2,5}-\d{1,2})/).filter(x=>x.trim()).map(b=>({jobcode:(b.match(/[A-Z]\d{2,5}-\d{1,2}/)||[""])[0],date:getVal(b,"日期วันที่"),time:getVal(b,"时间เวลา"),name:getVal(b,"姓名ชื่อ"),route:shortName(getVal(b,"接รับ"))+" → "+shortName(getVal(b,"送ส่ง")),code:getCode(b)}));
+}
+function adjustFontSize(el,max,min){if(!el)return;let f=max;el.style.fontSize=f+"px";while((el.scrollWidth>el.clientWidth||el.scrollHeight>el.clientHeight)&&f>min){f--;el.style.fontSize=f+"px";}}
+function makePage(j4){
+    const w=document.createElement("div");w.className="page-wrap";
+    for(let i=0;i<4;i++){
+        const j=j4[i];const s=document.createElement("div");s.className="slot";
+        s.innerHTML=`<div class="line-top"><div>${j?j.jobcode:""}</div><div>${j?j.time:""}</div><div>${j?j.date:""}</div></div><div class="passenger">${j?j.name:""}</div><div class="route">${j?j.route:""}</div><div class="code">${j?j.code:""}</div>`;
+        adjustFontSize(s.querySelector(".passenger"),28,10);adjustFontSize(s.querySelector(".route"),18,8);w.appendChild(s);
+    }return w;
+}
+function fillPreview(){const w=document.getElementById("preview-container");w.innerHTML="";const j=getJobs();for(let i=0;i<j.length;i+=4)w.appendChild(makePage(j.slice(i,i+4)));}
+async function buildPDF(){const{jsPDF}=window.jspdf;const ps=document.querySelectorAll(".page-wrap"),pdf=new jsPDF({orientation:"landscape",unit:"pt",format:[842,595]});for(let i=0;i<ps.length;i++){const c=await html2canvas(ps[i],{scale:1.5});pdf.addImage(c.toDataURL('image/jpeg',0.7),'JPEG',0,0,842,595);if(i<ps.length-1)pdf.addPage();}return pdf;}
 document.getElementById("btnProcess").onclick=processAndSend;
 document.getElementById("btnPreviewSheet").onclick=fillPreview;
-document.getElementById("btnPDF").onclick=async()=>{let p=await buildPDF();p.save("JobSheet.pdf")};
-document.getElementById("btnSharePDF").onclick=async()=>{let p=await buildPDF(),b=p.output("blob"),f=new File([b],"JobSheet.pdf",{type:"application/pdf"});if(navigator.canShare&&navigator.canShare({files:[f]}))await navigator.share({files:[f]});else p.save("JobSheet.pdf")};
+document.getElementById("btnPDF").onclick=async()=>{const pdf=await buildPDF();pdf.save("JobSheet.pdf");};
+document.getElementById("btnSharePDF").onclick=async()=>{const pdf=await buildPDF();const b=pdf.output("blob");const f=new File([b],"JobSheet.pdf",{type:"application/pdf"});if(navigator.canShare&&navigator.canShare({files:[f]}))await navigator.share({files:[f]});else pdf.save("JobSheet.pdf");};
 </script>
 </body>
 </html>
