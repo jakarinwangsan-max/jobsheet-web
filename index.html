@@ -171,30 +171,59 @@ function detectArea(text) {
   return "กทม.";
 }
 function getAreaForShort(text) {
-  if (!text || text.trim() === "") return "กทม."; 
+  if (!text || text.trim() === "") return "ระบุพื้นที่"; 
   const t = text.toLowerCase();
-  
-  // ตรวจสอบซอยสุขุมวิท (เดิม)
-  const sukhumvitMatch = t.match(/สุขุมวิท\s*ซ?\s*อ?\s*ย?\s*(\d+)/) || t.match(/sukhumvit\s*(soi)?\s*(\d+)/);
-  if (sukhumvitMatch) {
-    const soiNumber = sukhumvitMatch[2] || sukhumvitMatch[1];
-    return "สุขุมวิท" + soiNumber.trim();
-  }
-  
-  // === NEW: ตรวจสอบซอยลาดพร้าว ===
-  const latphraoMatch = t.match(/ลาดพร้าว\s*ซ?\s*อ?\s*ย?\s*(\d+)/) || t.match(/lat phrao\s*(soi)?\s*(\d+)/);
-  if (latphraoMatch) {
-      const soiNumber = latphraoMatch[2] || latphraoMatch[1];
-      return "ลาดพร้าว" + soiNumber.trim();
-  }
-  // ==============================
 
+  // 1. ตรวจสอบสนามบิน
   if (/dmk|don mueang|ดอนเมือง/.test(t)) return "แอร์ดอน";
   if (/bkk|suvarnabhumi|สุวรรณภูมิ/.test(t)) return "แอร์สุ";
-  for(const [yarn, pattern] of Object.entries(YARN_OVERRIDE))
-      if(pattern.test(t)) return yarn;
+
+  // 2. แผนผังคำแปล (บังคับภาษาไทย)
+  const thaiMap = {
+    'sathon': 'สาทร', 'ratchadamri': 'ราชดำริ', 'ratchada': 'รัชดา',
+    'rama iv': 'พระราม 4', 'rama 4': 'พระราม 4', 'rama 3': 'พระราม 3',
+    'rama iii': 'พระราม 3', 'rama vi': 'พระราม 6', 'rama 6': 'พระราม 6',
+    'sukhumvit': 'สุขุมวิท', 'phloen chit': 'เพลินจิต', 'lumphini': 'ลุมพินี', 
+    'king kaew': 'กิ่งแก้ว', 'lat phrao': 'ลาดพร้าว', 'bang rak': 'บางรัก',
+    'silom': 'สีลม', 'sathorn': 'สาทร', 'phaya thai': 'พญาไท'
+  };
+
+  // 3. ระบบดึง "ซอย" และ "ถนน"
+  const soiMatch = t.match(/(?:ซอย|ซ\.|soi)\s*([\d\/\-]+)/i);
+  // เพิ่มการดักจับ Rama + ตัวเลข/เลขโรมัน
+  const roadMatch = t.match(/(สุขุมวิท|ลาดพร้าว|รัชดา|พระราม\s*[\div\d]+|พหลโยธิน|กิ่งแก้ว|ราชดำริ|วิทยุ|สาทร|นราธิวาส|เพลินจิต|หลังสวน|บางรัก|sukhumvit|lat phrao|ratchada|rama\s*[\div\d]+|sathon|ratchadamri|king kaew|phloen chit|bang\s*rak)/i);
+
+  if (soiMatch || roadMatch) {
+      let roadName = roadMatch ? roadMatch[0].trim().toLowerCase() : "";
+      const soiNum = soiMatch ? soiMatch[1] : "";
+
+      // ค้นหาในแผนผังเพื่อเปลี่ยนเป็นภาษาไทย
+      for (let key in thaiMap) {
+          if (roadName.includes(key)) {
+              roadName = thaiMap[key];
+              break;
+          }
+      }
       
-  return detectArea(text);
+      // ถ้ายังเป็นภาษาอังกฤษอยู่ (กรณีนอกเหนือจาก Map) พยายามทำความสะอาด
+      if (!/[ก-๙]/.test(roadName)) {
+          roadName = roadName.replace('road', 'ถ.').replace('rd', 'ถ.');
+      }
+
+      return roadName + (soiNum ? " " + soiNum : "");
+  }
+
+  // 4. คืนค่าชื่อเขตภาษาไทยจาก detectArea (เลิกใช้ กทม.)
+  const area = detectArea(text);
+  if (area === "กทม.") {
+      // ตรวจสอบย่านสำคัญเพิ่มเติมก่อนจะตัดสินใจใช้คำว่า "ในเมือง"
+      for(const [yarn, pattern] of Object.entries(YARN_OVERRIDE)) {
+          if(pattern.test(t)) return yarn;
+      }
+      return "ในเมือง";
+  }
+  
+  return area;
 }
 
 function getCode(block){
@@ -265,7 +294,7 @@ function parseShort(){
     out+=`${job.id}//${job.time}//#${job.seat}${job.mapFrom}-${job.mapTo}\n`;
     out+=`${job.areaFrom}–${job.areaTo}`;
     if(job.flight) out+=` ✈️${job.flight}`;
-    out+=`\n`;
+    out+=`\n\n`;
   });
   return out.trim();
 }
@@ -373,9 +402,4 @@ function getFileName(){ const r=document.getElementById("input").value.trim(); c
 document.getElementById("btnProcess").onclick = processAndSend; 
 document.getElementById("btnPreviewSheet").onclick=fillPreview;
 document.getElementById("btnPDF").onclick=async()=>{ const pdf=await buildPDF(); pdf.save(getFileName()+".pdf"); };
-document.getElementById("btnSharePDF").onclick=async()=>{ const pdf=await buildPDF(); const blob=pdf.output("blob"); const file=new File([blob],getFileName()+".pdf",{type:"application/pdf"}); if(navigator.canShare && navigator.canShare({files:[file]})){ await navigator.share({files:[file],title:"Job Sheet"}); } else { pdf.save(getFileName()+".pdf"); } };
-</script>
-
-</body>
-</html>
-
+document.getElementById("btnSharePDF").onclick=async()=>{ const pdf=await buildPDF(); const b
