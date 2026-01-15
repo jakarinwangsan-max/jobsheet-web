@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8" />
-<title>Job Parser v15.9.5 (Auto Filename)</title>
+<title>Job Parser v16.9 (Hybrid Stable)</title>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -21,19 +21,24 @@ button{padding:8px 15px;font-size:14px;font-weight:600;cursor:pointer;border:non
 #btnProcess{background-color:var(--primary-color);color:white}
 #btnPDF,#btnSharePDF,.short-out-section .control-group button,#btnPreviewSheet{background-color:var(--secondary-color);color:white}
 hr{border:0;height:1px;background:#ced4da;margin:20px 0}
-#short-out{white-space:pre;background:var(--background-white);padding:15px;border-radius:var(--border-radius);font-size:18px;line-height:1.4;border:1px solid #dee2e6;box-shadow:0 1px 5px rgba(0,0,0,.05);overflow-wrap:break-word;word-break:break-word;margin:10px 0;max-width:100%}
+#short-out-container{background:var(--background-white);padding:15px;border-radius:var(--border-radius);border:1px solid #dee2e6;box-shadow:0 1px 5px rgba(0,0,0,.05);margin:10px 0}
+.job-item{border-bottom:1px dashed #ccc;padding:10px 0;position:relative}
+.job-item:last-child{border-bottom:none}
+.job-text{font-size:18px;line-height:1.4;white-space:pre-wrap;margin-bottom:10px}
+.maps-buttons{display:flex;gap:10px}
+.btn-maps{background-color:#17a2b8;color:white;font-size:12px;padding:4px 8px}
 #preview-container{display:flex;flex-direction:column;gap:15px;margin-top:15px}
 .page-wrap{width:842px;height:595px;margin:0 auto;background:white;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;box-shadow:0 0 5px rgba(0,0,0,.1);position:relative}
 .slot{box-sizing:border-box;padding:15px;display:flex;flex-direction:column;justify-content:space-between;font-weight:600;position:relative}
 .line-top{display:flex;justify-content:space-between;font-size:18px;font-weight:700}
 .line-top>div:first-child{font-size:24px;font-weight:900}
-.passenger{text-align:center;margin-top:15px;margin-bottom:8px;display:block;overflow-wrap:break-word;word-break:break-word;line-height:1.2}
+.passenger{text-align:center;margin-top:15px;margin-bottom:8px;display:block;overflow-wrap:break-word;word-break:break-word;line-height:1.2;font-size:22px}
 .route{text-align:center;font-size:16px;display:block;overflow-wrap:break-word;word-break:break-word;line-height:1.2;margin:2px 0}
 .code{position:absolute;right:15px;bottom:10px;font-size:8px}
 </style>
 </head>
 <body>
-<h1> 📄 แปลงใบงาน v15.9.5 📋</h1>
+<h1> 📄 แปลงใบงาน v16.9 (Hybrid Stable) 📋</h1>
 <div class="input-section">
     <div class="input-control-wrapper">
         <textarea id="input" placeholder="วางข้อมูลใบงาน..."></textarea>
@@ -44,52 +49,38 @@ hr{border:0;height:1px;background:#ced4da;margin:20px 0}
 <div class="short-out-section">
     <h2>✅ ผลลัพธ์แบบย่อ </h2>
     <div class="control-group"><button onclick="copyShort()">✂️ คัดลอกแบบย่อ</button></div>
-    <div id="short-out">ผลลัพธ์การแปลงจะแสดงที่นี่</div>
+    <div id="short-out-container">ผลลัพธ์จะแสดงที่นี่พร้อมปุ่มแผนที่</div>
 </div>
 <hr>
-<h2>🖨️ ตัวอย่างใบงานสำหรับพิมพ์/แชร์ </h2>
+<h2>🖨️ ตัวอย่างใบงาน (โชว์ชื่อโรงแรมจริง) </h2>
 <div class="control-group">
   <button id="btnPreviewSheet">👀 แสดงตัวอย่าง (PDF)</button>
   <button id="btnPDF">💾 ดาวน์โหลด PDF</button>
-  <button id="btnSharePDF">🔗 แชร์ PDF</button>
+  <button id="btnSharePDF">🔗 แชร์ PDF (iPhone/Android)</button>
 </div>
 <div id="preview-container"></div>
+
 <script>
 const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbz889F8LVJ7RxEIWJTFCHhxi89qriCSQT86m9UgFY5lN_H5UV0LSYrnKvnbhKC_RPmxdA/exec'; 
 let PutterName = ""; 
 
-// --- ฟังก์ชันดึงรหัสใบงานมาทำชื่อไฟล์ ---
 function getFileName(){
     const v = document.getElementById("input").value.trim();
-    const m = v.match(/([A-Z]\d{2,5})/); // ดึงเฉพาะตัวอักษรนำหน้าและตัวเลข 2-5 หลัก (ไม่เอาเครื่องหมาย -)
+    const m = v.match(/^([A-Z]\d{2,5})/m);
     return m ? m[1] : "ใบงาน";
 }
 
-const LOC_MAP = {"S": /สุวรรณภูมิ|bkk|suvarnabhumi/,"D": /ดอนเมือง|dmk|don mueang/,"CM": /เชียงใหม่|cnx/,"PK": /ภูเก็ต|hkt/,"PY": /พัทยา|chonburi|utp/,"HH": /หัวหิน|huahin/,"KR": /กระบี่/,"SM": /สมุย/,"CR": /เชียงราย/,"AY": /อยุธยา/,"RY": /ระยอง/,"NB": /นนทบุรี/,"PT": /ปทุมธานี/,"SP": /สมุทรปราการ/,"SS": /สมุทรสาคร/,"NP": /นครปฐม/,"BK": /กรุงเทพ|bangkok/};
+// ใช้ฐานข้อมูลจาก v16.2 ทั้งหมดเพื่อให้จับได้แม่นยำเหมือนเดิม
+const LOC_MAP = {"S": /สุวรรณภูมิ|bkk|suvarnabhumi/i,"D": /ดอนเมือง|dmk|don mueang/i,"CM": /เชียงใหม่|cnx/i,"PK": /ภูเก็ต|hkt/i,"PY": /พัทยา|chonburi|utp/i,"HH": /หัวหิน|huahin/i,"KR": /กระบี่/i,"SM": /สมุย/i,"CR": /เชียงราย/i,"AY": /อยุธยา/i,"RY": /ระยอง/i,"NB": /นนทบุรี/i,"PT": /ปทุมธานี/i,"SP": /สมุทรปราการ/i,"SS": /สมุทรสาคร/i,"NP": /นครปฐม/i,"BK": /กรุงเทพ|bangkok/i};
 
 const BANGKOK_AREAS = {
-    "นนทบุรี": ["nonthaburi", "ปากเกร็ด", "pak kret", "บางใหญ่", "บางบัวทอง"],
-    "ปทุมธานี": ["pathum thani", "ธัญบุรี", "thanyaburi", "ลำลูกกา", "คลองหลวง"],
-    "สมุทรปราการ": ["samut prakan", "บางพลี", "bang phli", "พระประแดง", "บางบ่อ", "กิ่งแก้ว"],
-    "สมุทรสาคร": ["samut sakhon", "มหาชัย", "กระทุ่มแบน"],
-    "นครปฐม": ["nakhon pathom", "สามพราน", "พุทธมณฑล"],
-    "พระนคร": ["phra nakhon", "สนามหลวง"], "ดุสิต": ["dusit"], "หนองจอก": ["nong chok"], "บางรัก": ["bang rak", "สีลม", "silom"],
-    "บางเขน": ["bang khen"], "บางกะปิ": ["bang kapi"], "ปทุมวัน": ["pathum wan", "สยาม", "siam", "ชิดลม", "เพลินจิต", "หลังสวน"],
-    "ป้อมปราบ": ["pom prap"], "พระโขนง": ["phra khanong"], "มีนบุรี": ["min buri"], "ลาดกระบัง": ["lat krabang"],
-    "ยานนาวา": ["yan nawa"], "สัมพันธวงศ์": ["samphanthawong", "เยาวราช"], "พญาไท": ["phaya thai", "อารีย์", "ari"],
-    "ธนบุรี": ["thon buri"], "บางกอกใหญ่": ["bangkok yai"], "ห้วยขวาง": ["huai khwang", "รัชดา", "ratchada", "พระราม 9"],
-    "คลองสาน": ["khlong san"], "ตลิ่งชัน": ["taling chan"], "บางกอกน้อย": ["bangkok noi"], "บางขุนเทียน": ["bang khun thian"],
-    "ภาษีเจริญ": ["phasi charoen"], "หนองแขม": ["nong khaem"], "ราษฎร์บูรณะ": ["rat burana"], "บางพลัด": ["bang phlat"],
-    "ดินแดง": ["din daeng"], "บึงกุ่ม": ["bueng kum", "เสรีไทย"], "สาทร": ["sathon"], "บางซื่อ": ["bang sue"], "จตุจักร": ["chatuchak", "วิภาวดี"],
-    "บางคอแหลม": ["bang kho laem"], "ประเวศ": ["prawet"], "คลองเตย": ["khlong toei", "พระราม 4"], "สวนหลวง": ["suan luang"],
-    "จอมทอง": ["chom thong"], "ดอนเมือง": ["don mueang"], "ราชเทวี": ["ratchathewi", "ประตูน้ำ", "เพชรบุรี"],
-    "ลาดพร้าว": ["lat phrao"], "วัฒนา": ["watthana", "สุขุมวิท", "ทองหล่อ", "เอกมัย", "อโศก"], "บางแค": ["bang khae"],
-    "หลักสี่": ["lak si"], "สายไหม": ["sai mai"], "คันนายาว": ["khannayao"], "สะพานสูง": ["saphan sung"],
-    "วังทองหลาง": ["wang thonglang"], "คลองสามวา": ["khlong sam wa"], "บางนา": ["bang na"], "ทวีวัฒนา": ["thawi watthana"],
-    "ทุ่งครุ": ["thung khru"], "บางบอน": ["bang bon"], "แอร์ดอน": ["dmk|don mueang"],"แอร์สุ": ["bkk|suvarnabhumi"],"กทม.": ["กรุงเทพ|bangkok"]
+    "หลังสวน": ["langsuan", "หลังสวน"],"ทองหล่อ": ["thong lo", "thonglor", "ทองหล่อ"],"เอกมัย": ["ekkamai", "ekkamae", "เอกมัย"],"อโศก": ["asoke", "asok", "อโศก"],"ข้าวสาร": ["khaosan", "ram buttri", "รามบุตรี"],"อารีย์": ["ari", "aree", "อารีย์"],"สยาม": ["siam", "สยาม"],"ประตูน้ำ": ["pratunam", "ประตูน้ำ"],
+    "ปากเกร็ด": ["pak kret", "ปากเกร็ด", "เมืองทอง", "impact", "อิมแพ็ค"],"บางใหญ่": ["bang yai", "บางใหญ่", "westgate", "เวสต์เกต"],"บางบัวทอง": ["bang bua thong", "บางบัวทอง"],"ราชพฤกษ์": ["ratchaphruek", "ราชพฤกษ์", "วงเวียนพระราม 5"],"เมืองนนท์": ["เมืองนนทบุรี", "แคราย", "สนามบินน้ำ", "ติวานนท์", "รัตนาธิเบศร์"],
+    "รังสิต": ["rangsit", "รังสิต", "future park", "ฟิวเจอร์", "เซียร"],"คลองหลวง": ["khlong luang", "คลองหลวง", "ธรรมศาสตร์", "tu", "นวนคร"],"ลำลูกกา": ["lam luk ka", "ลำลูกกา", "คูคต"],"ธัญบุรี": ["thanyaburi", "ธัญบุรี", "คลอง 1", "คลอง 2", "คลอง 3", "คลอง 4", "คลอง 5", "คลอง 6"],
+    "บางพลี": ["bang phli", "บางพลี", "กิ่งแก้ว", "วัดศรีเอี่ยม"],"บางแก้ว": ["bang kaeo", "เมกาบางนา", "mega bangna"],"พระประแดง": ["phra pradaeng", "พระประแดง", "สุขสวัสดิ์"],"บางปู": ["bang pu", "บางปู", "ตำหรุ"],"ปากน้ำ": ["ปากน้ำ", "เมืองสมุทรปราการ", "แพรกษา"],
+    "ศาลายา": ["salaya", "ศาลายา", "พุทธมณฑลสาย 4"],"สามพราน": ["sam phran", "สามพราน", "อ้อมใหญ่"],"มหาชัย": ["mahachai", "มหาชัย", "เมืองสมุทรสาคร"],"กระทุ่มแบน": ["krathum baen", "กระทุ่มแบน", "อ้อมน้อย"],
+    "พระนคร": ["phra nakhon", "สนามหลวง", "ราชดำเนิน"],"ดุสิต": ["dusit", "สามเสน", "ราชวัตร"],"ปทุมวัน": ["pathum wan", "ชิดลม", "เพลินจิต", "ลุมพินี", "วิทยุ"],"บางรัก": ["bang rak", "สีลม", "silom", "สุรวงศ์", "เจริญกรุง"],"สาทร": ["sathon", "เซนต์หลุยส์", "เย็นอากาศ", "สวนพลู"],"พญาไท": ["phaya thai", "สะพานควาย"],"ราชเทวี": ["ratchathewi", "เพชรบุรี", "รางน้ำ", "มักกะสัน"],"วัฒนา": ["watthana", "สุขุมวิท", "sukhumvit", "ปรีดี"],"คลองเตย": ["khlong toei", "พระราม 4", "ศูนย์สิริกิติ์"],"ห้วยขวาง": ["huai khwang", "พระราม 9", "เหม่งจ๋าย"],"ดินแดง": ["din daeng", "สุทธิสาร"],"จตุจักร": ["chatuchak", "หมอชิต", "รัชโยธิน", "พหลโยธิน"],"ลาดพร้าว": ["lat phrao", "โชคชัย 4", "นาคนิวาส"],"บางกะปิ": ["bang kapi", "หน้าราม", "หัวหมาก"],"วังทองหลาง": ["wang thonglang", "ทาวน์อินทาวน์"],"บึงกุ่ม": ["bueng kum", "เสรีไทย", "นวลจันทร์"],"สวนหลวง": ["suan luang", "พัฒนาการ", "อ่อนนุช"],"พระโขนง": ["phra khanong", "บางจาก", "ปุณณวิถี", "อุดมสุข"],"ประเวศ": ["prawet", "ศรีนครินทร์"],"บางนา": ["bang na", "ไบเทค", "ลาซาล", "แบริ่ง"],"มีนบุรี": ["min buri", "ร่มเกล้า"],"ลาดกระบัง": ["lat krabang", "ฉลองกรุง"],"ดอนเมือง": ["don mueang", "สรงประภา"],"หลักสี่": ["lak si", "แจ้งวัฒนะ", "เมืองทอง"],"สายไหม": ["sai mai", "วัชรพล"],"บางซื่อ": ["bang sue", "เตาปูน", "ประชาชื่น"],"ธนบุรี": ["thon buri", "วงเวียนใหญ่", "ตลาดพลู"],"คลองสาน": ["khlong san", "ไอคอนสยาม", "เจริญนคร"],"บางกอกน้อย": ["bangkok noi", "พรานนก", "ศิริราช"],"บางพลัด": ["bang phlat", "จรัญ", "ปิ่นเกล้า"],"ตลิ่งชัน": ["taling chan", "สวนผัก", "ราชพฤกษ์"],"ภาษีเจริญ": ["phasi charoen", "บางหว้า", "เพชรเกษม"],"บางแค": ["bang khae", "หลักสอง"],"บางขุนเทียน": ["bang khun thian", "เทียนทะเล", "พระราม 2"],"ยานนาวา": ["yan nawa", "สาธุประดิษฐ์", "พระราม 3"],"แอร์ดอน": ["dmk", "don mueang"],"แอร์สุ": ["bkk", "suvarnabhumi", "สุวรรณภูมิ"],"กทม.": ["กรุงเทพ", "bangkok"]
 };
-
-const YARN_OVERRIDE = {"ทองหล่อ": /ทองหล่อ|thonglor/,"เอกมัย": /เอกมัย|ekkamai/,"อโศก": /อโศก|asoke/,"สีลม": /สีลม|silom/,"สยาม": /สยาม|siam/,"พระราม 9": /พระราม 9|rama 9/};
 
 function MAP(t){t=t.toLowerCase();for(const [code, pattern] of Object.entries(LOC_MAP))if(pattern.test(t)) return code;return "BK";}
 function detectArea(text){if(!text) return "กทม.";const t=text.toLowerCase();for(const [area, keys] of Object.entries(BANGKOK_AREAS)){if(keys.some(k=>t.includes(k.replace(/[|]/g,'')))) return area;}return "กทม.";}
@@ -97,121 +88,160 @@ function detectArea(text){if(!text) return "กทม.";const t=text.toLowerCase
 function getAreaForShort(text){
     if(!text) return "ระบุพื้นที่";
     const t = text.toLowerCase();
-    if(/dmk|don mueang/.test(t)) return "แอร์ดอน";
-    if(/bkk|suvarnabhumi/.test(t)) return "แอร์สุ";
-
-    const sukhumvitMatch = t.match(/สุขุมวิท\s*ซ?\s*อ?\s*ย?\s*(\d+)/) || t.match(/sukhumvit\s*(soi)?\s*(\d+)/);
-    if (sukhumvitMatch) { return "สุขุมวิท" + (sukhumvitMatch[2] || sukhumvitMatch[1]).trim(); }
-    
-    const latphraoMatch = t.match(/ลาดพร้าว\s*ซ?\s*อ?\s*ย?\s*(\d+)/) || t.match(/lat phrao\s*(soi)?\s*(\d+)/);
-    if (latphraoMatch) { return "ลาดพร้าว" + (latphraoMatch[2] || latphraoMatch[1]).trim(); }
-
-    const thaiMap = {'sathon':'สาทร','ratchadamri':'ราชดำริ','ratchada':'รัชดา','rama iv':'พระราม 4','rama 4':'พระราม 4','rama 3':'พระราม 3','rama vi':'พระราม 6','phloen chit':'เพลินจิต','king kaew':'กิ่งแก้ว','seri thai':'เสรีไทย','vibhavadi':'วิภาวดี','lang suan':'หลังสวน','phetchaburi':'เพชรบุรี','phaya thai':'พญาไท','silom':'สีลม','asoke':'อโศก','thong lo':'ทองหล่อ','ekkamai':'เอกมัย'};
-    
-    const soiMatch = t.match(/(?:ซอย|ซ\.|soi|alley|trok)\s*([\d\/\-]+[ก-ฮ]?)/i);
-    let foundSoi = soiMatch ? " " + soiMatch[1].trim() : "";
-
-    const roadMatch = t.match(/(รัชดา|พระราม\s*[\div\d]+|กิ่งแก้ว|ราชดำริ|สาทร|เพลินจิต|เสรีไทย|วิภาวดี|หลังสวน|เพชรบุรี|พญาไท|สีลม|อโศก|ทองหล่อ|เอกมัย|ratchada|rama\s*[\div\d]+|sathon|ratchadamri|king kaew|phloen chit|seri thai|vibhavadi|lang suan|phetchaburi|phaya thai|silom|asoke|thong lo|ekkamai)/i);
-
-    let baseLocation = "";
-    if(roadMatch){
-        let roadName = roadMatch[0].trim().toLowerCase();
-        for(let k in thaiMap){if(roadName.includes(k)){roadName=thaiMap[k];break;}}
-        if(!/[ก-๙]/.test(roadName)) roadName = roadName.replace('road','ถ.').replace('rd','ถ.');
-        baseLocation = roadName;
-    } else {
-        baseLocation = detectArea(text);
+    if(/dmk|don mueang/i.test(t)) return "แอร์ดอน";
+    if(/bkk|suvarnabhumi/i.test(t)) return "แอร์สุ";
+    const roadWithSoiMatch = t.match(/(สุขุมวิท|sukhumvit|ลาดพร้าว|lat\s*phrao|รัชดา|ratchada|พหล|phahon|จรัญ|charan|เพชรบุรี|phetchaburi|พระราม\s*\d+|rama\s*\d+|รามอินทรา|ram\s*intra|ประชาอุทิศ|pracha\s*uthit|ศรีนครินทร์|srinakarin|แจ้งวัฒนะ|chaeng\s*watthana|กิ่งแก้ว|king\s*kaew|บรม|borom|ติวานนท์|tiwanon)\s*ซ?\s*อ?\s*ย?\s*(\d+)/i);
+    if (roadWithSoiMatch) {
+        let rName = roadWithSoiMatch[1].toLowerCase().trim();
+        let sNum = roadWithSoiMatch[2].trim();
+        const nameMap = {"sukhumvit":"สุขุมวิท","lat phrao":"ลาดพร้าว","ratchada":"รัชดา","phahon":"พหล","charan":"จรัญ","phetchaburi":"เพชรบุรี","ram intra":"รามอินทรา","pracha uthit":"ประชาอุทิศ","srinakarin":"ศรีนครินทร์","chaeng watthana":"แจ้งวัฒนะ","king kaew":"กิ่งแก้ว","borom":"บรม","tiwanon":"ติวานนท์"};
+        for (let key in nameMap) { if (rName.includes(key.replace(' ', ''))) { rName = nameMap[key]; break; } }
+        if(rName.includes('rama')) rName = rName.replace('rama', 'พระราม');
+        return rName + " " + sNum;
     }
-
-    if(baseLocation === "กทม.") {
-        for(const [y,p] of Object.entries(YARN_OVERRIDE)){if(p.test(t)) return y;}
-        const fallback = text.split(/[,\(]/)[0].trim();
-        return (fallback.length < 20 ? fallback : "ในเมือง") + foundSoi;
-    }
-
-    return baseLocation + foundSoi;
+    return detectArea(text); 
 }
 
-function getCode(b){const m=b.match(/code[:：]?\s*(.*)/i);return m?m[1].trim().match(/[0-9A-Za-z]+/)?.[0]||"":"";}
+function openMaps(address) {
+    if(!address) return;
+    let searchTxt = address.replace(/'/g,"");
+    const t = address.toLowerCase();
+    if(/suvarnabhumi|bkk|สุวรรณภูมิ/i.test(t)) searchTxt = "suvarnabhumi airport";
+    else if(/don mueang|dmk|ดอนเมือง/i.test(t)) searchTxt = "don mueang airport";
+    window.open(`https://www.google.com/maps/search/${encodeURIComponent(searchTxt)}`, '_blank');
+}
+
+function getVal(t,k){const m=t.match(new RegExp("【"+k+"】([^\\n]*)"));return m?m[1].trim():"";}
+function shortName(n){if(!n)return "";let c=n.split("(")[0].trim();const w=c.match(/[\wก-๙\u4e00-\u9fff]+/g)||[];return w.slice(0,3).join(" ");}
+
 function getAllJobData(){
     const v=document.getElementById("input").value;if(!v.trim())return [];
-    const bs=v.split(/(?=[A-Z]\d{2,5}-\d{1,2})/).filter(x=>x.trim());
+    const bs=v.split(/\n(?=[A-Z]\d{2,5}(?:-\d{1,2})?)/).filter(x=>x.trim() && x.includes('【日期วันที่】'));
     return bs.map(b=>({
-        id:(b.match(/[A-Z]\d{2,5}-\d{1,2}/)||[""])[0],
-        time:(b.match(/【时间เวลา】(.*)/)||["",""])[1].trim(),
-        flight:(b.match(/【航班flight】(.*)/)||["",""])[1].trim(),
-        pk:(b.match(/【接รับ】(.*)/)||["",""])[1].trim(),
-        dp:(b.match(/【送ส่ง】(.*)/)||["",""])[1].trim(),
-        car:(b.match(/【车型ขนาดรถ】(.*)/)||["",""])[1].trim(),
+        id:(b.match(/^([A-Z]\d{2,5}(?:-\d{1,2})?)/m)||[""])[0],
+        time:getVal(b,"时间เวลา"),
+        flight:getVal(b,"航班flight"),
+        pk:getVal(b,"接รับ"),
+        dp:getVal(b,"送ส่ง"),
+        name:getVal(b,"姓名ชื่อ"),
         seat:/7\s*SEAT/i.test(b)?7:5,
-        mapFrom:MAP((b.match(/【接รับ】(.*)/)||["",""])[1]),
-        mapTo:MAP((b.match(/【送ส่ง】(.*)/)||["",""])[1]),
-        areaFrom:getAreaForShort((b.match(/【接รับ】(.*)/)||["",""])[1]),
-        areaTo:getAreaForShort((b.match(/【送ส่ง】(.*)/)||["",""])[1]),
-        date:(b.match(/【日期วันที่】(.*)/)||["",""])[1].trim(),
-        putter:PutterName
+        mapFrom:MAP(getVal(b,"接รับ")),
+        mapTo:MAP(getVal(b,"送ส่ง")),
+        areaFrom:getAreaForShort(getVal(b,"接รับ")),
+        areaTo:getAreaForShort(getVal(b,"送ส่ง")),
+        date:getVal(b,"日期วันที่")
     }));
 }
-async function sendToGoogleSheet(jd){for(const d of jd){const f=new FormData();f.append('data',JSON.stringify(d));try{await fetch(WEB_APP_URL,{method:'POST',body:f,mode:'no-cors'});}catch(e){}}return true;}
-function parseShort(){
-    const jd=getAllJobData();if(!jd.length)return "";
-    let out=jd[0].date+"\n====================\n";
-    jd.forEach(j=>{out+=`${j.id}//${j.time}//#${j.seat}${j.mapFrom}-${j.mapTo}\n${j.areaFrom}–${j.areaTo}${j.flight?' ✈️'+j.flight:''}\n\n`;});
-    return out.trim();
-}
-async function processAndSend(){
-    const v=document.getElementById("input").value.trim();if(!v)return;
-    let n=prompt("ทะเบียนรถ:",PutterName);if(!n)return;PutterName=n;
-    document.getElementById("short-out").textContent=parseShort();fillPreview();
-    await sendToGoogleSheet(getAllJobData());
+
+function renderShortOut(){
+    const jd=getAllJobData();
+    const container = document.getElementById("short-out-container");
+    if(!jd.length) { container.innerHTML = "ผลลัพธ์การแปลงจะแสดงที่นี่"; return; }
+    let html = `<div style="margin-bottom:10px; font-weight:bold;">${jd[0].date}</div><div>====================</div>`;
+    jd.forEach(j=>{
+        const text = `${j.id}//${j.time}//#${j.seat}${j.mapFrom}-${j.mapTo}\n${j.areaFrom}–${j.areaTo}${j.flight?' ✈️'+j.flight:''}`;
+        html += `<div class="job-item">
+            <div class="job-text">${text}</div>
+            <div class="maps-buttons">
+                <button class="btn-maps" onclick="openMaps('${j.pk}')">📍 แผนที่รับ</button>
+                <button class="btn-maps" onclick="openMaps('${j.dp}')">📍 แผนที่ส่ง</button>
+            </div>
+        </div>`;
+    });
+    container.innerHTML = html;
 }
 
 function copyShort() {
-    const text = document.getElementById("short-out").textContent;
-    if (text === "ผลลัพธ์การแปลงจะแสดงที่นี่" || !text) { alert("ยังไม่มีข้อมูลให้คัดลอก"); return; }
+    const jd=getAllJobData(); if(!jd.length) return;
+    let out=jd[0].date+"\n====================\n";
+    jd.forEach(j=>{out+=`${j.id}//${j.time}//#${j.seat}${j.mapFrom}-${j.mapTo}\n${j.areaFrom}–${j.areaTo}${j.flight?' ✈️'+j.flight:''}\n\n`;});
     const textArea = document.createElement("textarea");
-    textArea.value = text;
-    textArea.style.position = "fixed"; textArea.style.left = "-9999px"; textArea.style.top = "0";
-    document.body.appendChild(textArea); textArea.focus(); textArea.select();
-    try { document.execCommand('copy'); alert("คัดลอกแล้ว ✔"); } catch (err) { alert("ไม่สามารถคัดลอกได้"); }
-    document.body.removeChild(textArea);
+    textArea.value = out.trim(); document.body.appendChild(textArea); textArea.select();
+    document.execCommand('copy'); document.body.removeChild(textArea);
+    alert("คัดลอกข้อความย่อแล้ว ✔");
 }
 
-function shortName(n){if(!n)return "";let c=n.split("(")[0].trim();const w=c.match(/[\wก-๙\u4e00-\u9fff]+/g)||[];return w.slice(0,3).join(" ");}
-function getVal(t,k){const m=t.match(new RegExp("【"+k+"】([^\\n]*)"));return m?m[1].trim():"";}
-function getJobs(){
-    const v=document.getElementById("input").value.trim();if(!v)return [];
-    return v.split(/(?=[A-Z]\d{2,5}-\d{1,2})/).filter(x=>x.trim()).map(b=>({jobcode:(b.match(/[A-Z]\d{2,5}-\d{1,2}/)||[""])[0],date:getVal(b,"日期วันที่"),time:getVal(b,"时间เวลา"),name:getVal(b,"姓名ชื่อ"),route:shortName(getVal(b,"接รับ"))+" → "+shortName(getVal(b,"送ส่ง")),code:getCode(b)}));
+function fillPreview(){
+    const w=document.getElementById("preview-container");w.innerHTML="";
+    const v=document.getElementById("input").value.trim();
+    const blocks=v.split(/\n(?=[A-Z]\d{2,5}(?:-\d{1,2})?)/).filter(x=>x.trim() && x.includes('【日期วันที่】'));
+    
+    const jobs = blocks.map(b => {
+        const id = (b.match(/^([A-Z]\d{2,5}(?:-\d{1,2})?)/m)||[""])[0];
+        const codeMatch = b.match(/code[:：]?\s*([A-Z0-9]+)/i);
+        // ใน PDF เราใช้ shortName(สถานที่) เพื่อให้โชว์ชื่อโรงแรมจริง ไม่ใช่ชื่อย่าน
+        return {
+            jobcode: id,
+            date: getVal(b,"日期วันที่"),
+            time: getVal(b,"时间เวลา"),
+            name: getVal(b,"姓名ชื่อ"),
+            route: shortName(getVal(b,"接รับ"))+" → "+shortName(getVal(b,"送ส่ง")),
+            code: codeMatch ? codeMatch[1] : ""
+        };
+    });
+    for(let i=0;i<jobs.length;i+=4)w.appendChild(makePage(jobs.slice(i,i+4)));
 }
-function adjustFontSize(el,max,min){if(!el)return;let f=max;el.style.fontSize=f+"px";while((el.scrollWidth>el.clientWidth||el.scrollHeight>el.clientHeight)&&f>min){f--;el.style.fontSize=f+"px";}}
+
 function makePage(j4){
     const w=document.createElement("div");w.className="page-wrap";
     for(let i=0;i<4;i++){
         const j=j4[i];const s=document.createElement("div");s.className="slot";
         s.innerHTML=`<div class="line-top"><div>${j?j.jobcode:""}</div><div>${j?j.time:""}</div><div>${j?j.date:""}</div></div><div class="passenger">${j?j.name:""}</div><div class="route">${j?j.route:""}</div><div class="code">${j?j.code:""}</div>`;
-        adjustFontSize(s.querySelector(".passenger"),28,10);adjustFontSize(s.querySelector(".route"),18,8);w.appendChild(s);
+        w.appendChild(s);
     }return w;
 }
-function fillPreview(){const w=document.getElementById("preview-container");w.innerHTML="";const j=getJobs();for(let i=0;i<j.length;i+=4)w.appendChild(makePage(j.slice(i,i+4)));}
-async function buildPDF(){const{jsPDF}=window.jspdf;const ps=document.querySelectorAll(".page-wrap"),pdf=new jsPDF({orientation:"landscape",unit:"pt",format:[842,595]});for(let i=0;i<ps.length;i++){const c=await html2canvas(ps[i],{scale:1.5});pdf.addImage(c.toDataURL('image/jpeg',0.7),'JPEG',0,0,842,595);if(i<ps.length-1)pdf.addPage();}return pdf;}
 
-document.getElementById("btnProcess").onclick=processAndSend;
+async function buildPDF(){
+    const{jsPDF}=window.jspdf;const ps=document.querySelectorAll(".page-wrap"),pdf=new jsPDF({orientation:"landscape",unit:"pt",format:[842,595]});
+    for(let i=0;i<ps.length;i++){const c=await html2canvas(ps[i],{scale:1.5});pdf.addImage(c.toDataURL('image/jpeg',0.7),'JPEG',0,0,842,595);if(i<ps.length-1)pdf.addPage();}
+    return pdf;
+}
+
+document.getElementById("btnProcess").onclick=async()=>{
+    const v=document.getElementById("input").value.trim();if(!v)return;
+    let n=prompt("ทะเบียนรถ:",PutterName);if(!n)return;PutterName=n;
+    renderShortOut(); fillPreview();
+    const jd = getAllJobData();
+    for(const d of jd){
+        d.putter = PutterName;
+        const f=new FormData(); f.append('data',JSON.stringify(d));
+        try{await fetch(WEB_APP_URL,{method:'POST',body:f,mode:'no-cors'});}catch(e){}
+    }
+};
 document.getElementById("btnPreviewSheet").onclick=fillPreview;
+document.getElementById("btnSharePDF").onclick = async () => {
+    try {
+        const pdf = await buildPDF();
+        const b = pdf.output("blob");
+        const f = new File([b], getFileName() + ".pdf", { type: "application/pdf" });
 
-// แก้ไขจุดบันทึกไฟล์ให้ดึงรหัสใบงานมาตั้งชื่อ
-document.getElementById("btnPDF").onclick=async()=>{
-    const pdf=await buildPDF();
-    pdf.save(getFileName() + ".pdf");
+        // เช็คว่าเครื่องรองรับการแชร์ไฟล์หรือไม่
+        if (navigator.canShare && navigator.canShare({ files: [f] })) {
+            await navigator.share({
+                files: [f],
+                title: getFileName(),
+                text: 'ใบงาน PDF'
+            });
+        } else {
+            // ถ้าแชร์ไม่ได้จริงๆ ค่อยดาวน์โหลด
+            pdf.save(getFileName() + ".pdf");
+            alert("เบราว์เซอร์นี้ไม่รองรับการแชร์โดยตรง ระบบจึงดาวน์โหลดไฟล์ลงเครื่องให้แทนครับ");
+        }
+    } catch (e) {
+        console.error(e);
+        // กรณี Error อื่นๆ ให้เซฟเป็นไฟล์ไว้ก่อน
+        const pdf = await buildPDF();
+        pdf.save(getFileName() + ".pdf");
+    }
 };
 
 document.getElementById("btnSharePDF").onclick=async()=>{
-    const pdf=await buildPDF();
-    const b=pdf.output("blob");
-    const f=new File([b], getFileName() + ".pdf", {type:"application/pdf"});
-    if(navigator.canShare&&navigator.canShare({files:[f]})) await navigator.share({files:[f]});
-    else pdf.save(getFileName() + ".pdf");
+    try{
+        const pdf=await buildPDF();const b=pdf.output("blob");const f=new File([b],getFileName()+".pdf",{type:"application/pdf"});
+        if(navigator.canShare&&navigator.canShare({files:[f]})) await navigator.share({files:[f]});
+        else pdf.save(getFileName()+".pdf");
+    }catch(e){const pdf=await buildPDF();pdf.save(getFileName()+".pdf");}
 };
 </script>
 </body>
 </html>
-
