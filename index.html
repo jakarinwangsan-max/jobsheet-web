@@ -32,8 +32,10 @@ hr{border:0;height:1px;background:#ced4da;margin:20px 0}
 .line-top{display:flex;justify-content:space-between;font-size:18px;font-weight:700}  
 .line-top>div:first-child{font-size:24px;font-weight:900}  
 .passenger{text-align:center;margin-top:15px;margin-bottom:8px;display:block;overflow-wrap:break-word;word-break:break-word;line-height:1.2;font-size:22px}  
-.route{text-align:center;font-size:16px;display:block;overflow-wrap:break-word;word-break:break-word;line-height:1.2;margin:2px 0}  
-.code{position:absolute;right:15px;bottom:10px;font-size:8px}  
+/* แก้ไขตำแหน่ง route ให้ขยับขึ้นบนเพื่อหลบ code */
+.route{text-align:center;font-size:16px;display:block;overflow-wrap:break-word;word-break:break-word;line-height:1.2;margin:0 0 35px 0}  
+/* ปรับแต่งตำแหน่ง code */
+.code{position:absolute;right:15px;bottom:10px;font-size:18px;font-weight:700;color:#000}  
 </style>  
 </head>  
 <body>  
@@ -51,7 +53,7 @@ hr{border:0;height:1px;background:#ced4da;margin:20px 0}
     <div id="short-out-container">ผลลัพธ์จะแสดงที่นี่พร้อมปุ่มแผนที่</div>  
 </div>  
 <hr>  
-<h2>🖨️ ตัวอย่างใบงาน (STB) </h2>  
+<h2>🖨️ ใบงาน (STB) </h2>  
 <div class="control-group">  
   <button id="btnPreviewSheet">👀 แสดงตัวอย่าง (PDF)</button>  
   <button id="btnPDF">💾 ดาวน์โหลด PDF</button>  
@@ -62,6 +64,12 @@ hr{border:0;height:1px;background:#ced4da;margin:20px 0}
 <script>  
 const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbz889F8LVJ7RxEIWJTFCHhxi89qriCSQT86m9UgFY5lN_H5UV0LSYrnKvnbhKC_RPmxdA/exec';   
 let PutterName = localStorage.getItem("lastPutter") || "";   
+
+function getCode(block){
+  const raw=block.match(/【接驳编码code】(.*)/)||block.match(/code[:：]?\s*(.*)/i);
+  if(!raw) return "";
+  return raw[1].trim().match(/[0-9A-Za-z]+/)?.[0]||"";
+}
   
 function getFileName(){  
     const v = document.getElementById("input").value.trim();  
@@ -160,7 +168,6 @@ function renderShortOut(){
     const container = document.getElementById("short-out-container");  
     if(!jd.length) { container.innerHTML = "ผลลัพธ์การแปลงจะแสดงที่นี่พร้อมปุ่มแผนที่"; return; }  
 
-    // จัดเรียงตามวันที่และเวลา
     jd.sort((a, b) => {
         if (a.date !== b.date) return a.date.localeCompare(b.date);
         return a.time.localeCompare(b.time);
@@ -217,14 +224,14 @@ function fillPreview(){
     const blocks=v.split(/\n(?=[A-Z]\d{2,5}(?:-\d{1,2})?)/).filter(x=>x.trim() && x.includes('【日期วันที่】'));  
     const jobs = blocks.map(b => {  
         const id = (b.match(/^([A-Z]\d{2,5}(?:-\d{1,2})?)/m)||[""])[0];  
-        const codeMatch = b.match(/code[:：]?\s*([A-Z0-9]+)/i);  
+        const foundCode = getCode(b);
         return {  
             jobcode: id,  
             date: getVal(b,"日期วันที่"),  
             time: getVal(b,"时间เวลา"),  
             name: getVal(b,"姓名ชื่อ"),  
             route: shortName(getVal(b,"接รับ"))+" → "+shortName(getVal(b,"送ส่ง")),  
-            code: codeMatch ? codeMatch[1] : ""  
+            code: foundCode
         };  
     });  
     for(let i=0;i<jobs.length;i+=4)w.appendChild(makePage(jobs.slice(i,i+4)));  
