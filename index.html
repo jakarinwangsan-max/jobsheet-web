@@ -49,7 +49,7 @@
     <div class="control-group" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"><button id="btnPreviewSheet">👀 ตัวอย่าง (PDF)</button><button id="btnPDF">💾 ดาวน์โหลด PDF</button><button id="btnSharePDF" style="grid-column:span 2">🔗 แชร์ PDF</button></div>
     <div id="preview-container"></div>
     <script>
-        const WEB_APP_URL='https://script.google.com/macros/s/AKfycbz889F8LVJ7RxEIWJTFCHhxi89qriCSQT86m9UgFY5lN_H5UV0LSYrnKvnbhKC_RPmxdA/exec';
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwn9p1uIxVfShlXaXRQ0PMwuGnzSXw7MpkbIFIkCLujyccQJz13AyfmsBVQwtHvgTPI0A/exec';
         let PutterName = localStorage.getItem("lastPutter") || "";
         let isAdmin = localStorage.getItem("isAdmin") === "true";
         let isSystemActive = true;
@@ -75,13 +75,13 @@
         document.getElementById("toggle-system").onclick = async () => {
             const nextStatus = isSystemActive ? "OFF" : "ON";
             if(!confirm("คุณต้องการ " + (nextStatus === "ON" ? "เปิด" : "ปิด") + " ระบบใช่หรือไม่?")) return;
-            document.getElementById("status-text").innerText = "⏳ กำลังบันทึกสถานะ...";
+            document.getElementById("status-text").innerText = "⏳ กำลังเปิดปิดใช้งาน (Online)...";
             const f = new FormData();
             f.append('type', 'updateStatus');
             f.append('status', nextStatus);
             try {
                 await fetch(WEB_APP_URL, { method: 'POST', body: f, mode: 'no-cors' }); 
-                setTimeout(() => { isSystemActive = (nextStatus === "ON"); updateUI(); alert("บันทึกสำเร็จ!"); }, 800);
+                setTimeout(() => { isSystemActive = (nextStatus === "ON"); updateUI(); alert("ระบบ (Online)สำเร็จ!"); }, 800);
             } catch (e) { alert("Error: " + e); }
         };
 
@@ -143,6 +143,33 @@
 
         function copyShort(){
             const jd=getAllJobData();if(!jd.length)return;
+            let out="",currentDate="";
+            jd.forEach(j=>{
+                if(j.date!==currentDate){currentDate=j.date;out+=`\n${currentDate}\n====================\n`}
+                out+=`${j.id}//${j.time}//#${j.seat}${j.mapFrom}-${j.mapTo}\n${j.areaFrom}–${j.areaTo}${j.flight?' ✈️'+j.flight:''}\n\n`
+            });
+            const ta=document.createElement("textarea");ta.value=out.trim();document.body.appendChild(ta);ta.select();document.execCommand("copy");document.body.removeChild(ta);
+            alert("คัดลอกสำเร็จ ✔");
+        }
+
+        function fillPreview(){const w=document.getElementById("preview-container");w.innerHTML="";const jd=getAllJobData();for(let i=0;i<jd.length;i+=4)w.appendChild(makePage(jd.slice(i,i+4)))}
+        function makePage(j4){const w=document.createElement("div");w.className="page-wrap";const cleanHotelName=(t)=>{if(!t)return"";let n=t.split(/[,\(\)\n]/)[0].trim();if(/[a-zA-Z]/.test(n)){n=n.replace(/[\u0E00-\u0E7F]/g,"").replace(/\s+/g," ").trim()}return n};for(let i=0;i<4;i++){const j=j4[i],s=document.createElement("div");s.className="slot";s.innerHTML=j?`<div class="line-top"><div>${j.id}</div><div>${j.time}</div><div>${j.date}</div></div><div class="passenger">${j.name}</div><div class="route">${cleanHotelName(j.pk)} → ${cleanHotelName(j.dp)}</div>${j.code?`<div class="code">${j.code}</div>`:""}`:"";w.appendChild(s)}return w}
+
+        async function buildPDF(){const{jsPDF}=window.jspdf,ps=document.querySelectorAll(".page-wrap"),pdf=new jsPDF({orientation:"landscape",unit:"pt",format:[842,595]});for(let i=0;i<ps.length;i++){ps[i].querySelectorAll('.slot, .slot div, .passenger, .route, .code-ui, .line-top').forEach(el=>{el.style.color="#000000";el.style.fontWeight="900";el.style.textShadow="none"});const c=await html2canvas(ps[i],{scale:3,useCORS:true,logging:false,windowWidth:1200,backgroundColor:"#ffffff"});pdf.addImage(c.toDataURL('image/jpeg',1.0),'JPEG',0,0,842,595);if(i<ps.length-1)pdf.addPage()}return pdf}
+        
+        document.getElementById("btnProcess").onclick=async()=>{const v=document.getElementById("input").value.trim();if(!v)return;let cur=isAdmin?"Admin":prompt("ทะเบียนรถ:",PutterName);if(!isAdmin&&(!cur||!cur.trim()))return alert("ต้องระบุทะเบียนรถ");PutterName=cur;localStorage.setItem("lastPutter",cur);renderShortOut();fillPreview();getAllJobData().forEach(d=>{d.putter=cur;const f=new FormData();f.append('data',JSON.stringify(d));fetch(WEB_APP_URL,{method:'POST',body:f}).catch(e=>console.error(e))});
+            const ask=document.createElement("div");ask.style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.7);z-index:99999;display:flex;align-items:center;justify-content:center";
+            ask.innerHTML=`<div style="background:white;padding:30px;border-radius:20px;width:85%;max-width:320px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,0.5)"><p style="font-size:20px;margin-bottom:25px;font-weight:600;color:#000!important">${isAdmin?'🔓 Admin Mode':'🚗 ทะเบียน: '+cur}<br><span style="color:#333;font-size:16px;">คัดลอกงานย่อหรือไม่?</span></p><button id="btnYes" style="background:#28a745;color:white;width:100%;padding:16px;margin-bottom:12px;border-radius:12px;font-size:18px;border:none;font-weight:600">✂️ คัดลอก</button><button id="btnNo" style="background:#f8f9fa;color:#666;width:100%;padding:12px;border-radius:12px;font-size:15px;border:1px solid #ddd">ไม่คัดลอก</button></div>`;
+            document.body.appendChild(ask);
+            document.getElementById("btnYes").onclick=()=>{copyShort();document.body.removeChild(ask)};
+            document.getElementById("btnNo").onclick=()=>{document.body.removeChild(ask)};
+        };
+
+        document.getElementById("btnPreviewSheet").onclick=fillPreview;
+        document.getElementById("btnSharePDF").onclick=async()=>{const pdf=await buildPDF(),blob=pdf.output('blob'),fn=(document.getElementById("input").value.match(/^([A-Z]{1,2}\d{2,5})/m)||["","JobSheet"])[1]+".pdf",file=new File([blob],fn,{type:'application/pdf'});if(navigator.share){try{await navigator.share({files:[file],title:fn});}catch(e){}}else{alert("ไม่รองรับการแชร์");}};
+    </script>
+</body>
+</html>            const jd=getAllJobData();if(!jd.length)return;
             let out="",currentDate="";
             jd.forEach(j=>{
                 if(j.date!==currentDate){currentDate=j.date;out+=`\n${currentDate}\n====================\n`}
