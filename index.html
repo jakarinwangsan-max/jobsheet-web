@@ -169,7 +169,7 @@ function getAllJobData() {
     if (!v.trim()) return [];
     
     // แยกบล็อกใบงาน
-    const bs = v.split(/\n(?=[A-Z]{1,2}\d{2,5})/).filter(x => x.includes('วันที่'));
+const bs = v.split(/\n(?=[A-Z]{1,2}\d{2,5}(?:-\d+)?)/).filter(x => x.includes('วันที่'));
     
     // ดึงค่าราคาจาก UI เส้นทางพิเศษ
     const cRouteInput = document.getElementById('custom_route').value || "";
@@ -177,8 +177,7 @@ function getAllJobData() {
     const cPrice = document.getElementById('custom_price').value;
 
     return bs.map(b => {
-        const id = (b.match(/^([A-Z]{1,2}\d{2,5})/m) || [""])[0];
-        const time = getVal(b, "时间เวลา");
+        const id = (b.match(/^([A-Z]{1,2}\d{2,5}(?:-\d+)?)/m) || [""])[0];          const time = getVal(b, "时间เวลา");
         const date = getVal(b, "日期วันที่");
         
         // ดึงขนาดรถ (5, 7, C7)
@@ -251,29 +250,52 @@ function executeManualCopy(t){let e=document.createElement("textarea");e.value=t
 function makePage(j4){let w=document.createElement("div");w.className="page-wrap";let c=t=>{if(!t)return"";let n=t.split(/[,\(\)\n]/)[0].trim();return/[a-zA-Z]/.test(n)?n.replace(/[\u0E00-\u0E7F]/g,"").replace(/\s+/g," ").trim():n};for(let i=0;i<4;i++){let j=j4[i],s=document.createElement("div");s.className="slot";s.innerHTML=j?`<div class="line-top"><div>${j.id}</div><div>${j.time}</div><div>${j.date}</div></div><div class="passenger">${j.name}</div><div class="route">${c(j.pk)} → ${c(j.dp)}</div>${j.code?`<div class="code">${j.code}</div>`:""}`:"";w.appendChild(s)}return w}
 async function buildPDF(){let{jsPDF:j}=window.jspdf,p=document.querySelectorAll(".page-wrap"),d=new j({orientation:"landscape",unit:"pt",format:[842,595]});for(let i=0;i<p.length;i++){let c=await html2canvas(p[i],{scale:3,useCORS:!0,logging:!1,windowWidth:1200,backgroundColor:"#ffffff"});d.addImage(c.toDataURL("image/jpeg",1),"JPEG",0,0,842,595);i<p.length-1&&d.addPage()}return d}
 
-document.getElementById("btnProcess").onclick=async()=>{
-let v=document.getElementById("input").value.trim();if(!v)return;
-let d=!PutterName||PutterName.toLowerCase()=="admin"?"":PutterName,
-c=isAdmin?"Admin":prompt("ทะเบียนรถ:",d);
-if(!isAdmin&&(!c||!c.trim()))return alert("ต้องระบุทะเบียนรถ");
-PutterName=c;localStorage.setItem("lastPutter",c);
-renderShortOut();fillPreview();
-let a=document.createElement("div");
-a.style="position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:9999;display:flex;align-items:center;justify-content:center";
-a.innerHTML='<div style="background:#fff;padding:25px;border-radius:15px;text-align:center;width:80%;max-width:300px"><p style="color:#000;font-weight:bold;font-size:18px">✅ แปลงข้อมูลสำเร็จ<br><span style="font-size:14px;color:#555">คัดลอกส่ง LINE หรือไม่?</span></p><button id="y" style="background:#28a745;color:#fff;width:100%;padding:14px;border:0;border-radius:10px;margin-bottom:10px;font-weight:bold">✂️ คัดลอก</button><button id="n" style="background:#eee;color:#666;width:100%;padding:10px;border:0;border-radius:10px">ปิด</button></div>';
-document.body.appendChild(a);
-let y=a.querySelector("#y"),n=a.querySelector("#n"),r=()=>a.remove();
-y.onclick=()=>{currentMode===2?copyShort2():copyShort1();r()};
-n.onclick=r;
-(async()=>{for(let d of getAllJobData()){
-let k=`sent_${d.id}_${d.date}`;
-if(localStorage.getItem(k))continue;
-d.putter=c;let f=new FormData;
-f.append("data",JSON.stringify(d));
-try{await fetch(WEB_APP_URL,{method:"POST",body:f,mode:"no-cors"});
-localStorage.setItem(k,"true")}catch(e){}
-}})()
+let isSyncing = false; // ตัวล็อกกันส่งซ้อน
+
+document.getElementById("btnProcess").onclick = async () => {
+    let v = document.getElementById("input").value.trim(), btn = document.getElementById("btnProcess");
+    if (!v || isSyncing) return; // ถ้ากำลังส่งอยู่ ห้ามกดซ้ำ
+    
+    let d = !PutterName || PutterName.toLowerCase() == "admin" ? "" : PutterName,
+        c = isAdmin ? "Admin" : prompt("ทะเบียนรถ:", d);
+    if (!isAdmin && (!c || !c.trim())) return alert("ต้องระบุทะเบียนรถ");
+
+    PutterName = c; localStorage.setItem("lastPutter", c);
+    btn.innerText = "⏳ กำลังตรวจสอบ..."; btn.disabled = true;
+
+    const sync = async () => {
+        if (isSyncing) return; // ล็อกชั้นที่ 1
+        isSyncing = true;
+        for (let j of getAllJobData()) {
+            let k = `sent_${j.id}_${j.date}`;
+            if (localStorage.getItem(k)) continue; // เช็คซ้ำก่อนส่งทุกครั้ง
+            
+            j.putter = c; let f = new FormData(); f.append("data", JSON.stringify(j));
+            try { 
+                await fetch(WEB_APP_URL, { method: "POST", body: f, mode: "no-cors", keepalive: true }); 
+                localStorage.setItem(k, "true"); 
+            } catch (e) {}
+        }
+        isSyncing = false; // ปลดล็อกเมื่อเสร็จ
+    };
+
+    // แข่งเวลา 5 วินาที
+    await Promise.race([sync(), new Promise(r => setTimeout(r, 5000))]);
+
+    btn.innerText = "⚙️ แปลงใบงาน"; btn.disabled = false;
+    renderShortOut(); fillPreview();
+
+    let a = document.createElement("div");
+    a.style = "position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:9999;display:flex;align-items:center;justify-content:center";
+    a.innerHTML = '<div style="background:#fff;padding:25px;border-radius:15px;text-align:center;width:80%;max-width:300px"><p style="color:#000;font-weight:bold;font-size:18px">✅ แปลงข้อมูลสำเร็จ<br><span style="font-size:14px;color:#555">คัดลอกส่ง LINE หรือไม่?</span></p><button id="y" style="background:#28a745;color:#fff;width:100%;padding:14px;border:0;border-radius:10px;margin-bottom:10px;font-weight:bold">✂️ คัดลอก</button><button id="n" style="background:#eee;color:#666;width:100%;padding:10px;border:0;border-radius:10px">ปิด</button></div>';
+    document.body.appendChild(a);
+
+    a.querySelector("#y").onclick = () => { currentMode === 2 ? copyShort2() : copyShort1(); a.remove(); };
+    a.querySelector("#n").onclick = () => a.remove();
+    
+    if (isSyncing) sync(); // ถ้ายังส่งไม่เสร็จ ค่อยให้มันรันต่อ (แต่ไม่เริ่มใหม่)
 };
+
 function fillPreview(){
 let j=getAllJobData(),
 c=document.getElementById("preview-container");
