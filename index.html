@@ -1,79 +1,292 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="utf-8" /><title>Job Parser v1 (Full Systems & Fixed PDF)</title>
+<meta charset="utf-8" /><title>Job Parser Multi-Mode (Fixed v1)</title>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700;800;900&family=Kanit+Condensed:wght@400;700;800;900&display=swap" rel="stylesheet">
 <style>
-:root{--primary-color:#007bff;--secondary-color:#28a745;--background-light:rgba(247,247,247,0.8);--background-white:rgba(255,255,255,0.9);--text-color:#000000;--border-radius:8px;--danger:#dc3545}
-body{background-image:url('https://lh3.googleusercontent.com/d/1-hFKUlxvtV30GS77eTkBIrWrjxt7_cv7');background-size:cover;background-attachment:fixed;background-position:center;background-repeat:no-repeat}
-h1{color:#ffffff!important;font-weight:800;margin-bottom:20px;padding-bottom:10px;border-bottom:4px solid #ffffff;display:inline-block;font-size:26px;text-shadow:2px 2px 8px rgba(0,0,0,1),0 0 10px rgba(255,255,255,0.3);cursor:pointer;user-select:none}
-h2{color:#ffffff;font-weight:600;margin-top:20px;margin-bottom:10px}
-#maintenance-screen{display:flex;position:fixed;top:0;left:0;width:100%;height:100%;background:white;z-index:9998;flex-direction:column;align-items:center;justify-content:center;text-align:center}
-#admin-panel{display:none;background:#fff3cd;padding:15px;border-radius:var(--border-radius);margin-bottom:20px;border:1px solid #ffeeba;text-align:center}
-#secret-admin-btn{position:fixed;bottom:0;right:0;width:40px;height:40px;background:rgba(0,0,0,0.01);z-index:9999;cursor:pointer}
+:root{--primary:#007bff;--secondary:#28a745;--radius:8px}
+body{background:url('https://lh3.googleusercontent.com/d/1OjWRJPb3Efxdw5Tz3t5DSA342Ad0HJQe') center/cover fixed no-repeat;font-family:'Kanit',sans-serif;margin:0}
+#mode-selection-screen{position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(10px);z-index:10000;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.mode-card-container{display:grid;grid-template-columns:1fr 1fr;gap:20px;width:90%;max-width:600px}
+.mode-card{padding:40px 20px;border-radius:20px;cursor:pointer;text-align:center;color:#fff;transition:.3s;border:2px solid rgba(255,255,255,.2)}
+.mode-card:hover{transform:translateY(-5px);border-color:#fff}
+.m-1{background:#e91e63;box-shadow:0 10px 20px rgba(233,30,99,.4)}
+.m-2{background:#2196F3;box-shadow:0 10px 20px rgba(33,150,243,.4)}
+h1{color:#ff0000!important;font-weight:800;margin:0 0 20px;padding-bottom:10px;border-bottom:4px solid #ff0000;display:inline-block;font-size:26px;text-shadow:2px 2px 8px #000,0 0 10px rgba(255,255,255,.3);cursor:pointer;user-select:none}
+h2{color:#fff;font-weight:600;margin:20px 0 10px}
+#maintenance-screen{display:none;position:fixed;inset:0;background:#fff;z-index:9998;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+#admin-panel{display:none;background:#fff3cd;padding:15px;border-radius:var(--radius);margin-bottom:20px;border:1px solid #ffeeba;text-align:center;color:#000}
+#secret-admin-btn{position:fixed;right:0;bottom:0;width:40px;height:40px;background:rgba(0,0,0,.01);z-index:9999;cursor:pointer}
 .input-control-wrapper{display:flex;gap:15px;align-items:flex-end}
-textarea{height:200px;font-family:'Kanit',monospace;padding:10px;border:1px solid #ced4da;border-radius:var(--border-radius);box-shadow:inset 0 1px 3px rgba(0,0,0,.06);resize:vertical;width:100%}
-button{padding:10px 15px;font-size:14px;font-weight:600;cursor:pointer;border:none;border-radius:var(--border-radius);transition:all .2s ease-in-out;white-space:nowrap;touch-action:manipulation}
-#btnProcess{background-color:var(--primary-color);color:white}
-#btnPDF,#btnSharePDF,.short-out-section .control-group button,#btnPreviewSheet{background-color:var(--secondary-color);color:white}
-#short-out-container{background:#fff;padding:15px;border-radius:var(--border-radius);border:2px solid #e91e63;margin:10px 0;min-height:100px;max-height:500px;overflow-y:auto;box-shadow:0 4px 6px rgba(0,0,0,0.1)}
-.job-item{border-bottom:1px dashed #ddd;padding:4px 0}
+textarea,#short-out-container{width:100%;display:block;margin:10px auto;box-sizing:border-box;background:rgba(255,255,255,.05)!important;color:#00eaff!important;border:1px solid rgba(255,255,255,.1)!important;border-radius:var(--radius);padding:10px;text-shadow:1px 1px 2px rgba(0,0,0,.8)}
+textarea{height:200px;resize:vertical;font-family:'Kanit',monospace}
+button{padding:10px 15px;font-size:14px;font-weight:600;border:0;border-radius:var(--radius);cursor:pointer;transition:.2s;white-space:nowrap;touch-action:manipulation}
+#btnProcess{background:var(--primary);color:#fff}
+#btnPDF,#btnSharePDF,#btnPreviewSheet,.short-out-section .control-group button{background:var(--secondary);color:#fff}
+#short-out-container{border:2px solid #e91e63;min-height:100px;max-height:500px;overflow-y:auto;box-shadow:0 4px 6px rgba(0,0,0,.1)}
+.job-item{border-bottom:1px dashed rgba(255,255,255,.3);padding:4px 0}
 .job-text{font-size:17px;line-height:1.25;white-space:pre-wrap}
-#preview-container{display:flex;flex-direction:column;gap:15px;margin-top:15px;width:100%;overflow-x:auto;background:#e9ecef;padding:10px;border-radius:var(--border-radius);align-items:center}
-.page-wrap{width:842px;height:595px;min-width:842px;background:white;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:0;border:none;box-shadow:none;position:relative;margin-bottom:20px}
-.slot{box-sizing:border-box;padding:15px;display:flex;flex-direction:column;justify-content:space-between;position:relative;color:#000000!important;font-weight:800!important;background-color:#ffffff!important;border-radius:10px}
+#preview-container{display:flex;flex-direction:column;gap:15px;margin-top:15px;width:100%;overflow-x:auto;background:#e9ecef;padding:10px;border-radius:var(--radius);align-items:center}
+.page-wrap{width:842px;height:595px;min-width:842px;background:#fff;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;margin-bottom:20px}
+.slot{position:relative;display:flex;flex-direction:column;justify-content:space-between;padding:15px;background:#fff!important;color:#000!important;font-family:'Kanit Condensed',sans-serif!important;font-weight:800!important;border-radius:10px}
 .line-top{display:flex;justify-content:space-between;font-size:18px;font-weight:700}
 .line-top>div:first-child{font-size:24px;font-weight:900}
-.passenger{text-align:center;margin-top:15px;margin-bottom:8px;font-size:22px;font-weight:700}
-.route{text-align:center;font-size:16px;margin:0 0 35px 0}
+.passenger{text-align:center;margin:15px 0 8px;font-size:22px;font-weight:700}
+.route{text-align:center;font-size:16px;margin:0 0 35px}
 .code{position:absolute;right:15px;bottom:10px;font-size:18px;font-weight:700}
-@media (max-width:900px){.input-control-wrapper{flex-direction:column;align-items:stretch!important}.page-wrap{zoom:0.45}button{width:100%}}
-.input-section,.short-out-section{background:rgba(255,255,255,0.05)!important;border:1px solid rgba(255,255,255,0.1);border-radius:15px;display:block!important;width:100%;max-width:800px;margin:0 auto 20px auto!important;text-align:center}
-textarea,#short-out-container{background:rgba(255,255,255,0.05)!important;color:white!important;border:1px solid rgba(255,255,255,0.1)!important;width:100%!important;box-sizing:border-box;display:block;margin:10px auto!important;text-shadow:1px 1px 2px rgba(0,0,0,0.8)}
+.input-section,.short-out-section{background:rgba(255,255,255,.05)!important;border:1px solid rgba(255,255,255,.1);border-radius:15px;width:95%;max-width:800px;margin:0 auto 20px;text-align:center;padding:15px}
+.price-container{display:flex;gap:4px;background:#222;padding:5px;border-radius:8px;color:#fff;width:100%;box-sizing:border-box}
+.price-card{flex:1;background:#333;padding:5px 2px;border-radius:4px;border-top:3px solid #444;text-align:center}
+.card-title{font-size:10px;font-weight:bold;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.input-row{display:flex;flex-direction:column;gap:3px;align-items:center}
+.input-item{display:flex;align-items:center;gap:2px;font-size:10px}
+.input-item input{width:38px;background:#000;color:#0f0;border:1px solid #555;border-radius:3px;text-align:center;font-size:10px;padding:1px 0}
 .control-group{display:flex;justify-content:center;gap:10px;width:100%}
-.flight-btn{color:#e91e63!important;text-decoration:none!important;font-weight:bold}
+.flight-btn{color:#e91e63!important;text-decoration:none;font-weight:bold}
+#price-row{display:none;color:#fff;margin-bottom:10px;justify-content:center;gap:15px}
+#price-row input{width:70px;border-radius:5px;border:0;padding:5px;text-align:center}
+@media(max-width:900px){.input-control-wrapper{flex-direction:column;align-items:stretch}.page-wrap{zoom:.45}button{width:100%}}
 </style>
 </head>
 <body>
+<div id="mode-selection-screen"><h1 style="border:none">เลือกรูปแบบการใช้งาน</h1><div class="mode-card-container"><div class="mode-card m-1" onclick="selectMode(1)"><h2>รถทะเบียน</h2><p>แบบย่อ 📍พื้นที่→📍พื้นที่ ไฟท์บิน</p></div><div class="mode-card m-2" onclick="selectMode(2)"><h2>งานทั่วไป</h2><p>แบบย่อ 2 แถว+1แถว + ราคา + Emoji 🛫</p></div></div></div>
 <div id="secret-admin-btn"></div>
 <div id="maintenance-screen"><h1 style="color:var(--danger)">🛠️ ปิดปรับปรุงชั่วคราว</h1><p>กำลังอัปเดตระบบ กรุณาลองใหม่ภายหลัง</p></div>
-<center><h1 id="webHeader">📄 แปลงใบงาน 📋</h1></center>
-<div id="admin-panel"><strong>⚙️ แผงควบคุมระบบ</strong><br>สถานะ: <span id="status-text"></span><br><button id="toggle-system" style="background:var(--danger);color:white;margin-top:5px;">เปิด/ปิด การใช้งานระบบ</button></div>
-<div class="input-section"><div class="input-control-wrapper"><textarea id="input" placeholder="วางข้อมูลใบงาน..."></textarea><div class="control-group"><button id="btnProcess">⚙️ แปลงใบงาน</button></div></div></div><hr>
-<div class="short-out-section"><h2>✅ ผลลัพธ์แบบย่อ(ส่งLINE)</h2><button onclick="copyShort()" style="background-color:#e91e63;color:white;">✂️ คัดลอกแบบย่อส่ง LINE</button><div id="short-out-container">ผลลัพธ์จะแสดงที่นี่...</div></div>
+<center><h1 id="webHeader" onclick="location.reload()">📄 แปลงใบงาน <span id="mode-label"></span> 🗓️</h1></center>
+<div id="admin-panel"><strong>⚙️ แผงควบคุมระบบ</strong><br>สถานะ: <span id="status-text"></span><br><button id="toggle-system" style="background:var(--danger);color:#0000ff;margin-top:5px">เปิด/ปิด การใช้งานระบบ</button></div>
+
+<div class="input-section">
+<div id="price-row" style="display:none;margin-bottom:15px">
+<div class="price-container" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center">
+<div class="price-card" style="border-top-color:#00d4ff;flex:1;min-width:80px"><span class="card-title">🏙️ BK</span><div class="input-row"><div class="input-item"><label>5</label><input type="number" id="p5_bk" value="380"></div><div class="input-item"><label>7</label><input type="number" id="p7_bk" value="480"></div></div></div>
+<div class="price-card" style="border-top-color:#2196F3;flex:1;min-width:80px"><span class="card-title">✈️ S-P</span><div class="input-row"><div class="input-item"><label>5</label><input type="number" id="p5_s_p" value="850"></div><div class="input-item"><label>7</label><input type="number" id="p7_s_p" value="900"></div></div></div>
+<div class="price-card" style="border-top-color:#4CAF50;flex:1;min-width:80px"><span class="card-title">✈️ D-P</span><div class="input-row"><div class="input-item"><label>5</label><input type="number" id="p5_d_p" value="1200"></div><div class="input-item"><label>7</label><input type="number" id="p7_d_p" value="1300"></div></div></div>
+<div class="price-card" style="border-top-color:#ffc107;flex:1;min-width:80px"><span class="card-title">🚗 BK-P</span><div class="input-row"><div class="input-item"><label>5</label><input type="number" id="p5_bk_p" value="1100"></div><div class="input-item"><label>7</label><input type="number" id="p7_bk_p" value="1200"></div></div></div>
+<div class="price-card" style="border-top-color:#9c27b0;flex:1;min-width:80px"><span class="card-title">🐚 HH</span><div class="input-row"><div class="input-item"><label>5</label><input type="number" id="p5_hh" value="1500"></div><div class="input-item"><label>7</label><input type="number" id="p7_hh" value="1600"></div></div></div>
+<div class="price-card" style="border-top-color:#ff5722;flex:1;min-width:120px;background:rgba(255,87,34,.1)"><span class="card-title">🛠️ เส้นทางพิเศษ</span><div class="input-row" style="display:flex;flex-direction:column;gap:2px;align-items:center"><input type="text" id="custom_route" placeholder="เช่น P-HH" style="width:70px;text-align:center;font-size:12px;text-transform:uppercase"><input type="number" id="custom_price" placeholder="ราคา" style="width:70px;text-align:center;font-size:12px"></div></div>
+</div></div>
+
+<div class="input-control-wrapper">
+<textarea id="input" placeholder="วางข้อมูลใบงาน..."></textarea>
+<div class="control-group"><button id="btnProcess">⚙️ แปลงใบงาน</button></div>
+<button onclick="clearData()" style="background:#dc3545;color:#fff">🗑️ ล้างข้อมูล</button>
+</div>
+<button onclick="location.reload()" style="background:none;color:#fff;text-decoration:underline;border:0;margin-top:10px;opacity:.7">← กลับไปเลือกแบบใหม่</button>
+</div>
+
+<hr>
+
+<div class="short-out-section">
+<h2>✅ แบบย่อ(ส่งLINE)</h2>
+<button onclick="copyShort1()" id="btnCopyMode1" style="display:none;background:#e91e63;color:#fff;width:100%;padding:10px;margin-bottom:10px">✂️ คัดลอกแบบรถทะเบียน</button>
+<button onclick="copyShort2()" id="btnCopyMode2" style="display:none;background:#ff9800;color:#fff;width:100%;padding:10px;margin-bottom:10px">✂️ คัดลอกแบบงานทั่วไป</button>
+<div id="short-out-container" style="background:rgba(255,255,255,.05);padding:15px;border-radius:8px;border:1px solid rgba(255,255,255,.2);color:#fff;text-align:left">ผลลัพธ์จะแสดงที่นี่...</div>
+
+<div id="single-row-section" style="display:none;margin-top:30px;border-top:2px dashed #2196F3;padding-top:20px">
+<h2 style="color:#2196F3">✅ แบบย่อแถวเดียว</h2>
+<button onclick="copySingleRow()" style="background:#2196F3;color:#fff;width:100%;padding:10px;margin-bottom:10px">✂️ คัดลอกแบบแถวเดียว</button>
+<div id="single-row-container" style="background:rgba(255,255,255,.05);padding:15px;border-radius:8px;border:2px solid #2196F3;color:#fff;white-space:pre-wrap;text-align:left"></div>
+</div>
+</div>
+
 <center><h2>🖨️ ใบงาน (STB)</h2></center>
-<div class="control-group" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:800px;margin:0 auto;"><button id="btnPreviewSheet">👀 ตัวอย่าง (PDF)</button><button id="btnPDF">💾 ดาวน์โหลด PDF</button><button id="btnSharePDF" style="grid-column:span 2">🔗 แชร์ PDF</button></div>
+<div class="control-group" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:800px;margin:0 auto">
+<button id="btnPreviewSheet">👀 ตัวอย่าง (PDF)</button>
+<button id="btnPDF">💾 ดาวน์โหลด PDF</button>
+<button id="btnSharePDF" style="grid-column:span 2">🔗 แชร์ PDF</button>
+</div>
 <div id="preview-container"></div>
+</body>
 <script>
+let currentMode = 1;
 const WEB_APP_URL='https://script.google.com/macros/s/AKfycbwn9p1uIxVfShlXaXRQ0PMwuGnzSXw7MpkbIFIkCLujyccQJz13AyfmsBVQwtHvgTPI0A/exec';
 let PutterName=localStorage.getItem("lastPutter")||"";let isAdmin=localStorage.getItem("isAdmin")==="true";let isSystemActive=true;updateUI();
 async function syncStatus(){try{const response=await fetch(WEB_APP_URL);const status=await response.text();isSystemActive=(status.trim()==="ON");updateUI();}catch(e){console.error(e)}}
 syncStatus();
-const thaiMap={"charoen krung":"เจริญกรุง","bangkorlaem":"บางคอแหลม","bang kho laem":"บางคอแหลม","sathon":"สาทร","Ratchaprarop":"ราชปรารภ","ratchadamri":"ราชดำริ","ratchada":"รัชดา","silom":"สีลม","sukhumvit":"สุขุมวิท","lang suan":"หลังสวน","pathum wan":"ปทุมวัน","phaya thai":"พญาไท/ราชเทวี","ratchathewi":"พญาไท/ราชเทวี","phetchaburi":"เพชรบุรี","huai khwang":"ห้วยขวาง","bang rak":"บางรัก","khlong toei":"คลองเตย","wattana":"วัฒนา","watthana":"วัฒนา","prawet":"ประเวศ","bang na":"บางนา","on nut":"อ่อนนุช","suan luang":"สวนหลวง","yan nawa":"ยานนาวา","chatuchak":"จตุจักร","don mueang":"ดอนเมือง","lat phrao":"ลาดพร้าว","thong lo":"ทองหล่อ","ekkamai":"เอกมัย","din daeng":"ดินแดง","bangsue":"บางซื่อ","bangkapi":"บางกะปิ","minburi":"มีนบุรี","khlong san":"คลองสาน","ramkhamhaeng":"รามคำแหง","bangbon":"บางบอน","bangkrachao":"บางกระเจ้า","samsen":"สามเสน","ladprao":"ลาดพร้าว","nonthaburi":"นนทบุรี","pathumthani":"ปทุมธานี","samutprakan":"สมุทรปราการ"};
-const ZIP_MAP={"10100":"ป้อมปราบ/สัมพันธวงศ์","10110":"วัฒนา/คลองเตย","10120":"บางคอแหลม/สาทร/ยานนาวา","10140":"ราษฎร์บูรณะ/ทุ่งครุ","10150":"จอมทอง/บางขุนเทียน","10160":"บางแค/ภาษีเจริญ","10170":"ตลิ่งชัน/ทวีวัฒนา","10200":"พระนคร/ราชดำเนิน","10210":"ดอนเมือง/หลักสี่","10220":"สายไหม/บางเขน","10230":"คันนายาว/บึงกุ่ม","10240":"บางกะปิ","10250":"สวนหลวง/ประเวศ","10260":"บางนา/อุดมสุข","10270":"สมุทรปราการ/เมือง","10310":"ห้วยขวาง/รัชดา","10330":"ปทุมวัน/สยาม","10400":"พญาไท/ราชเทวี","10500":"บางรัก/สีลม","10510":"มีนบุรี","10520":"ลาดกระบัง","10540":"บางพลี/กิ่งแก้ว","10600":"คลองสาน/ธนบุรี","10700":"บางพลัด","10800":"บางซื่อ","10900":"จตุจักร","11000":"เมืองนนทบุรี","11110":"บางบัวทอง","11120":"ปากเกร็ด","11130":"บางกรวย","11140":"บางใหญ่","12000":"เมืองปทุมธานี","12120":"คลองหลวง","12130":"รังสิต/ลำลูกกา","12150":"คูคต/สายไหม"};
-const PRIORITY_AREAS={"สยาม":/siam|paragon|สยาม/i,"เซ็นทรัลเวิลด์":/centralworld|central world|เซ็นทรัลเวิลด์|centara grand/i,"ชิดลม/หลังสวน":/phloen chit|chidlom|langsuan|lang suan|เพลินจิต|ชิดลม|หลังสวน/i,"ราชดำริ":/ratchadamri|ราชดำริ|st. regis|waldorf/i,"วิทยุ":/wireless road|ถนนวิทยุ|conrad|embassy/i,"ประตูน้ำ":/pratunam|ประตูน้ำ|baiyoke/i,"พญาไท/ราชเทวี":/phaya thai|ratchathewi|พญาไท|ราชเทวี/i,"บรรทัดทอง":/banthat thong|banthatthong|บรรทัดทอง/i,"นานา":/ nana |นานา|sukhumvit 4|sukhumvit 11/i,"อโศก":/ asoke|asok |อโศก|terminal 21/i,"พร้อมพงษ์":/phrom phong|emquartier|emporium|พร้อมพงษ์|sukhumvit 24/i,"ทองหล่อ":/thonglo|thong lo|ทองหล่อ|sukhumvit 55/i,"เอกมัย":/ekkamai|เอกมัย|sukhumvit 63/i,"พระราม 4":/rama 4|พระราม 4|khlong toei|คลองเตย/i,"อ่อนนุช":/onnut|on nut|อ่อนนุช/i,"ปุณณวิถี":/punna withi|ปุณณวิถี/i,"บางจาก":/bang chak|บางจาก/i,"อุดมสุข":/udomsuk|อุดมสุข/i,"บางนา":/bang na|บางนา|bang na-trad/i,"แบริ่ง/ลาซาล":/bearing|แบริ่ง|lasalle|ลาซาล/i,"สีลม":/silom|สีลม/i,"สาทร":/sathon|sathorn|สาทร/i,"สุรวงศ์/บางรัก":/surawong|bang rak|บางรัก|crowne plaza/i,"เจริญกรุง":/charoen krung|เจริญกรุง/i,"ริมแม่น้ำ/ไอคอนสยาม":/riverside|shangri-la|peninsula|iconsiam|icon siam|charoen nakhon/i,"เยาวราช/ข้าวสาร":/yaowarat|khaosan|เยาวราช|ข้าวสาร/i,"สามเสน":/samsen|สามเสน/i,"มักกะสัน":/makkasan|มักกะสัน/i,"เพชรบุรีตัดใหม่":/new petchaburi|เพชรบุรีตัดใหม่/i,"เพชรบุรี":/petchaburi|เพชรบุรี/i,"พระราม 9":/rama 9|พระราม 9|fortune town/i,"รัชดา":/ratchada|รัชดา|huai khwang|ห้วยขวาง/i,"ลาดพร้าว/บางกะปิ":/ladprao|lat phrao|ลาดพร้าว|bang kapi|บางกะปิ/i,"รามคำแหง":/ramkhamhaeng|รามคำแหง/i,"จตุจักร/หมอชิต":/chatuchak|mo chit|หมอชิต/i,"อารีย์/สนามเป้า":/ ari |ari station|sanam pao|อารีย์|สนามเป้า/i,"พระราม 3":/rama 3|พระราม 3/i,"พระราม 2":/rama 2|rama ii|บางขุนเทียน|bang khun thian/i,"พระประแดง":/phra pradaeng|พระประแดง/i,"สำโรง":/samrong|สำโรง/i,"ศรีนครินทร์":/srinakarin|ศรีนครินทร์/i,"พัฒนาการ":/pattanakarn|พัฒนาการ/i,"กิ่งแก้ว/บางพลี":/kingkaew|king kaew|กิ่งแก้ว|bang phli|บางพลี/i,"บางปู/บางเสาธง":/bang pu|bang sao thong|บางเสาธง/i,"ปิ่นเกล้า/ตลิ่งชัน":/pinklao|ปิ่นเกล้า|taling chan|ตลิ่งชัน/i,"ราชพฤกษ์/ฝั่งธน":/ratchaphruek|ราชพฤกษ์/i,"บางซื่อ":/bang sue|บางซื่อ|bang son|บางซ่อน/i,"งามวงศ์วาน":/ngamwongwan|งามวงศ์วาน/i,"เมืองนนทบุรี":/muang nonthaburi|เมืองนนทบุรี/i,"ปากเกร็ด/เมืองทอง":/pak kret|ปากเกร็ด|แจ้งวัฒนะ|chaeng wattana|muang thong|เมืองทอง|impact|อิมแพ็ค/i,"บางใหญ่":/bang yai|บางใหญ่|บางบัวทอง|bang bua thong/i,"รังสิต/ลำลูกกา":/rangsit|รังสิต|future park|lam luk ka|ลำลูกกา|คูคต/i,"คลองหลวง":/khlong luang|ธรรมศาสตร์/i,"ศูนย์ราชการ":/government complex|ศูนย์ราชการ/i};
+
+function selectMode(mode) {
+    currentMode = mode; 
+    document.getElementById('mode-selection-screen').style.display = 'none';
+    document.getElementById('mode-label').innerText = (mode === 1 ? "(รถทะเบียน)" : "(งานทั่วไป)");
+    document.getElementById('btnCopyMode1').style.display = (mode === 1 ? 'block' : 'none');
+    document.getElementById('btnCopyMode2').style.display = (mode === 2 ? 'block' : 'none');
+    document.getElementById('price-row').style.display = (mode === 2 ? 'block' : 'none');
+    document.getElementById('single-row-section').style.display = (mode === 2 ? 'block' : 'none');
+}
+const ROAD_MAP = {"srinakarin":"ศรีนครินทร์","ratchada":"รัชดา","sukhumvit":"สุขุมวิท","ladprao":"ลาดพร้าว","vibhavadi":"วิภาวดี","phahonyothin":"พหลโยธิน","phetchaburi":"เพชรบุรี","ramkhamhaeng":"รามคำแหง","sathon":"สาทร","silom":"สีลม"};
+const thaiMap = {"charoen krung":"เจริญกรุง","bangkorlaem":"บางคอแหลม","sathon":"สาทร","ratchaprarop":"ราชปรารภ","ratchadamri":"ราชดำริ","ratchada":"รัชดา","silom":"สีลม","sukhumvit":"สุขุมวิท","lang suan":"หลังสวน","pathum wan":"ปทุมวัน","phaya thai":"พญาไท/ราชเทวี","ratchathewi":"พญาไท/ราชเทวี","phetchaburi":"เพชรบุรี","huai khwang":"ห้วยขวาง","bang rak":"บางรัก","khlong toei":"คลองเตย","wattana":"วัฒนา","prawet":"ประเวศ","bang na":"บางนา","on nut":"อ่อนนุช","suan luang":"สวนหลวง","yan nawa":"ยานนาวา","chatuchak":"จตุจักร","don mueang":"ดอนเมือง","lat phrao":"ลาดพร้าว","thong lo":"ทองหล่อ","ekkamai":"เอกมัย","din daeng":"ดินแดง","bangsue":"บางซื่อ","bangkapi":"บางกะปิ","minburi":"มีนบุรี","khlong san":"คลองสาน","ramkhamhaeng":"รามคำแหง","bangbon":"บางบอน","bangkrachao":"บางกระเจ้า","samsen":"สามเสน","nonthaburi":"นนทบุรี","pathumthani":"ปทุมธานี","samutprakan":"สมุทรปราการ","pattaya":"พัทยา","rayong":"ระยอง","hua hin":"หัวหิน","pak kret":"ปากเกร็ด","chaeng wattana":"แจ้งวัฒนะ","bang yai":"บางใหญ่","lam luk ka":"ลำลูกกา"};
+const ZIP_MAP = {"10100":"ป้อมปราบ/สัมพันธวงศ์","10110":"วัฒนา/คลองเตย","10120":"บางคอแหลม/สาทร/ยานนาวา","10140":"ราษฎร์บูรณะ/ทุ่งครุ","10150":"จอมทอง/บางขุนเทียน","10160":"บางแค/ภาษีเจริญ","10170":"ตลิ่งชัน/ทวีวัฒนา","10200":"พระนคร/ราชดำเนิน","10210":"ดอนเมือง/หลักสี่","10220":"สายไหม/บางเขน","10230":"คันนายาว/บึงกุ่ม","10240":"บางกะปิ","10250":"สวนหลวง/ประเวศ","10260":"บางนา/อุดมสุข","10270":"สมุทรปราการ/เมือง","10310":"ห้วยขวาง/รัชดา","10330":"ปทุมวัน/สยาม","10400":"พญาไท/ราชเทวี","10500":"บางรัก/สีลม","10510":"มีนบุรี","10520":"ลาดกระบัง","10540":"บางพลี/กิ่งแก้ว","10560":"บางเสาธง","10600":"คลองสาน/ธนบุรี","10700":"บางพลัด","10800":"บางซื่อ","10900":"จตุจักร","11000":"เมืองนนทบุรี","11110":"บางบัวทอง","11120":"ปากเกร็ด","11130":"บางกรวย","11140":"บางใหญ่","12000":"เมืองปทุมธานี","12120":"คลองหลวง","12130":"รังสิต/ลำลูกกา","12150":"คูคต/สายไหม","20150":"พัทยา/บางละมุง","20260":"พัทยา/จอมเทียน","20180":"ห้วยใหญ่/จอมเทียน","21140":"ระยอง/บ่อวิน/ปลวกแดง","21000":"เมืองระยอง","77110":"หัวหิน","76120":"ชะอำ"};
+const PRIORITY_AREAS = {"ศรีนครินทร์":/srinakarin|ศรีนครินทร์/i,"ลาดพร้าว/บางกะปิ":/centara grand ladprao|ladprao|lat phrao|ลาดพร้าว|bang kapi|บางกะปิ/i,"พัทยา":/pattaya|jomtien|naklua|bang lamung|พัทยา|จอมเทียน|นาเกลือ|บางละมุง|ศรีราชา|sriracha|บางแสน|bang saen/i,"ระยอง/บ่อวิน":/rayong|bowin|pluak daeng|ระยอง|บ่อวิน|ปลวกแดง|จันทบุรี|chanthaburi/i,"หัวหิน":/hua hin|huahin|market village|cicada|หัวหิน/i,"ชะอำ":/cha-am|cha am|chaam|ชะอำ/i,"สยาม":/siam|paragon|สยาม/i,"เซ็นทรัลเวิลด์":/centralworld|central world|เซ็นทรัลเวิลด์|centara grand at centralworld/i,"ชิดลม/หลังสวน":/phloen chit|chidlom|langsuan|lang suan|เพลินจิต|ชิดลม|หลังสวน/i,"ราชดำริ":/ratchadamri|ราชดำริ|st. regis|waldorf/i,"วิทยุ":/wireless road|ถนนวิทยุ|conrad|embassy/i,"ประตูน้ำ":/pratunam|ประตูน้ำ|baiyoke/i,"พญาไท/ราชเทวี":/phaya thai|ratchathewi|พญาไท|ราชเทวี/i,"บรรทัดทอง":/banthat thong|banthatthong|บรรทัดทอง/i,"นานา":/nana|นานา|sukhumvit 4|sukhumvit 11/i,"อโศก":/asoke|asok|อโศก|terminal 21/i,"พร้อมพงษ์":/phrom phong|emquartier|emporium|พร้อมพงษ์|sukhumvit 24/i,"ทองหล่อ":/thonglo|thong lo|ทองหล่อ|sukhumvit 55/i,"เอกมัย":/ekkamai|เอกมัย|sukhumvit 63/i,"พระราม 4":/rama 4|พระราม 4|q sirikit/i,"อ่อนนุช":/onnut|on nut|อ่อนนุช/i,"ปุณณวิถี":/punna withi|ปุณณวิถี/i,"บางจาก":/bang chak|บางจาก/i,"อุดมสุข":/udomsuk|อุดมสุข/i,"บางนา":/bang na|บางนา|bang na-trad/i,"แบริ่ง/ลาซาล":/bearing|แบริ่ง|lasalle|ลาซาล/i,"สีลม":/silom|สีลม/i,"สาทร":/sathon|sathorn|สาทร/i,"สุรวงศ์/บางรัก":/surawong|bang rak|บางรัก|crowne plaza/i,"เจริญกรุง":/charoen krung|เจริญกรุง/i,"ริมแม่น้ำ/ไอคอนสยาม":/riverside|shangri-la|peninsula|iconsiam|icon siam|charoen nakhon/i,"เยาวราช/ข้าวสาร":/yaowarat|khaosan|เยาวราช|ข้าวสาร/i,"สามเสน":/samsen|สามเสน/i,"มักกะสัน":/makkasan|makkasan|มักกะสัน/i,"เพชรบุรีตัดใหม่":/new petchaburi|เพชรบุรีตัดใหม่/i,"เพชรบุรี":/petchaburi|เพชรบุรี/i,"พระราม 9":/rama 9|พระราม 9|fortune town/i,"รัชดา":/ratchada|รัชดา|huai khwang|ห้วยขวาง/i,"รามคำแหง":/ramkhamhaeng|รามคำแหง/i,"จตุจักร/หมอชิต":/chatuchak|mo chit|หมอชิต/i,"อารีย์/สนามเป้า":/ ari |ari station|sanam pao|อารีย์|สนามเป้า/i,"พระราม 3":/rama 3|พระราม 3/i,"พระราม 2":/rama 2|rama ii|บางขุนเทียน|bang khun thian/i,"พระประแดง":/phra pradaeng|พระประแดง/i,"สำโรง":/samrong|สำโรง/i,"พัฒนาการ":/pattanakarn|พัฒนาการ/i,"กิ่งแก้ว/บางพลี":/kingkaew|king kaew|กิ่งแก้ว|bang phli|บางพลี/i,"บางปู/บางเสาธง":/bang pu|bang sao thong|บางเสาธง/i,"ปิ่นเกล้า/ตลิ่งชัน":/pinklao|ปิ่นเกล้า|taling chan|ตลิ่งชัน/i,"ราชพฤกษ์/ฝั่งธน":/ratchaphruek|ราชพฤกษ์/i,"บางซื่อ":/bang sue|บางซื่อ|bang son|บางซ่อน/i,"งามวงศ์วาน":/ngamwongwan|งามวงศ์วาน/i,"เมืองนนทบุรี":/muang nonthaburi|เมืองนนทบุรี/i,"ปากเกร็ด/เมืองทอง":/pak kret|ปากเกร็ด|แจ้งวัฒนะ|chaeng wattana|muang thong|เมืองทอง|impact|อิมแพ็ค/i,"บางใหญ่":/bang yai|บางใหญ่|บางบัวทอง|bang bua thong/i,"รังสิต/ลำลูกกา":/rangsit|รังสิต|future park|lam luk ka|ลำลูกกา|คูคต/i,"คลองหลวง":/khlong luang|ธรรมศาสตร์/i,"ศูนย์ราชการ":/government complex|ศูนย์ราชการ/i,"ตจว./อื่นๆ":/นครปฐม|nakhon pathom|สมุทรสาคร|samut sakhon|จันทบุรี|chanthaburi|กาญจนบุรี|kanchanaburi|อยุธยา|ayutthaya|เขาใหญ่|khao yai|นครนายก|nakhon nayok|อัมพวา|amphawa|แม่กลอง|mae klong/i};
+function getAreaForShort(text){
+    if(!text)return"ระบุพื้นที่";
+    const t=text.toLowerCase().replace(/langsuan/g,'lang suan');
+    if(/dmk|don mueang|ดอนเมือง/i.test(t))return "แอร์ดอน";
+    if(/bkk|suvarnabhumi|สุวรรณภูมิ/i.test(t))return "แอร์สุ";
+    const roadMatch=t.match(/(สุขุมวิท|sukhumvit|ลาดพร้าว|ladprao|เพชรบุรี|petchaburi)\s*(ซ|ซอย|soi|alley)?\s*(\d+)/i);
+    if(roadMatch){var label=/ลาด|lad/.test(roadMatch[1])?"ลาดพร้าว":/เพช|petch/.test(roadMatch[1])?"เพชรบุรี":"สุขุมวิท";return label+" "+roadMatch[3];};
+    for(const [yarn,regex] of Object.entries(PRIORITY_AREAS)){if(regex.test(t))return yarn;}
+    for(const [eng,thai] of Object.entries(thaiMap)){if(t.toLowerCase().includes(eng.toLowerCase())||t.includes(thai)){let label=thai;const ramaMatch=t.match(/rama\s*(\d+)|พระราม\s*(\d+)/i);if(ramaMatch)label="พระราม "+(ramaMatch[1]||ramaMatch[2]);const soiMatch=t.match(/(?:ซอย|ซ\.|soi)\s*([\d\/\-]+)/i);return label+(soiMatch?" "+soiMatch[1]:"")}}
+    const zipMatch=t.match(/\b(\d{5})\b/);if(zipMatch&&ZIP_MAP[zipMatch[1]])return ZIP_MAP[zipMatch[1]];
+    let f=text.split(/[,\(\n]/)[0].trim().replace(/^\d+[\/\d\-]*\s+/,"");return(f.length>25?f.substring(0,25):f)||"กทม."
+}
+
+const MAP_RULES = [
+  ["S", /suvarnabhumi|bkk|สุวรรณภูมิ/i],
+  ["D", /don ?mueang|dmk|ดอนเมือง/i],
+  ["P", /pattaya|jomtien|bali ?hai|นาเกลือ|พัทยา|จอมเทียน|บางละมุง/i],
+  ["HH", /hua ?hin|หัวหิน/i],
+  ["CA", /cha-?am|ชะอำ/i],
+  ["RY", /rayong|bowin|ปลวกแดง|ระยอง|บ่อวิน/i],
+  ["KC", /kanchanaburi|กาญจนบุรี/i],
+  ["AY", /ayutthaya|อยุธยา/i],
+  ["PT", /pathum ?thani|ปทุมธานี|rangsit|รังสิต/i],
+  ["NB", /nonthaburi|นนทบุรี|pak ?kret|ปากเกร็ด/i],
+  ["SP", /samut ?prakan|สมุทรปราการ|bang ?phli|บางพลี/i]
+];
+const MAP = t => {
+  const x = (t || "").toLowerCase();
+  for (const [c, r] of MAP_RULES) if (r.test(x)) return c;
+  return "BK";
+};
+
 function updateUI(){document.getElementById("maintenance-screen").style.display=(isSystemActive||isAdmin)?"none":"flex";document.getElementById("admin-panel").style.display=isAdmin?"block":"none";const st=document.getElementById("status-text");if(st){st.innerText=isSystemActive?"🟢 เปิดใช้งานปกติ":"🔴 ปิดระบบ";st.style.color=isSystemActive?"green":"red"}}
 document.getElementById("secret-admin-btn").ondblclick=()=>{isAdmin=!isAdmin;localStorage.setItem("isAdmin",isAdmin);alert(isAdmin?"🔓 โหมด Admin: เปิด":"🔒 โหมด Admin: ปิด");updateUI()};
 document.getElementById("toggle-system").onclick=async()=>{const nextStatus=isSystemActive?"OFF":"ON";if(!confirm("คุณต้องการ "+(nextStatus==="ON"?"เปิด":"ปิด")+" ระบบใช่หรือไม่?"))return;document.getElementById("status-text").innerText="⏳ กำลังเปิดปิดใช้งาน (Online)...";const f=new FormData();f.append('type','updateStatus');f.append('status',nextStatus);try{await fetch(WEB_APP_URL,{method:'POST',body:f,mode:'no-cors'});setTimeout(()=>{isSystemActive=(nextStatus==="ON");updateUI();alert("ระบบ (Online)สำเร็จ!");},800);}catch(e){alert("Error: "+e)}};
-const MAP=t=>{if(!t)return"BK";const x=t.toLowerCase();return/bkk|suvarn|สุวรรณ/.test(x)?"S":/dmk|don m|ดอนเมือง/.test(x)?"D":/pathum thani|ปทุมธานี/.test(x)?"PT":/nonthaburi|นนทบุรี/.test(x)?"NB":/samut p|สมุทรปราการ/.test(x)?"SP":"BK"};
+
 function mapsLink(a){if(!a)return"#";let q=a.replace(/'/g,"").replace(/\n/g," ");const t=a.toLowerCase();if(/suvarnabhumi|bkk|สุวรรณภูมิ/.test(t))q="Suvarnabhumi Airport";if(/don mueang|dmk|ดอนเมือง/.test(t))q="Don Mueang Airport";return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;}
 function flightLink(f){if(!f)return"#";const cleanFlight=f.trim().replace(/\s+/g,'');return `intent://www.flightradar24.com/data/flights/${cleanFlight}#Intent;scheme=https;package=com.flightradar24free;end`;}
-function getAreaForShort(text){if(!text)return"ระบุพื้นที่";const t=text.toLowerCase().replace(/langsuan/g,'lang suan');if(/dmk|don mueang|ดอนเมือง/i.test(t))return "แอร์ดอน";if(/bkk|suvarnabhumi|สุวรรณภูมิ/i.test(t))return "แอร์สุ";const roadMatch=t.match(/(สุขุมวิท|sukhumvit|ลาดพร้าว|ladprao|เพชรบุรี|petchaburi)\s*(ซ|ซอย|soi|alley)?\s*(\d+)/i);if(roadMatch){var label=/ลาด|lad/.test(roadMatch[1])?"ลาดพร้าว":/เพช|petch/.test(roadMatch[1])?"เพชรบุรี":"สุขุมวิท";return label+" "+roadMatch[3];};for(const [yarn,regex] of Object.entries(PRIORITY_AREAS)){if(regex.test(t))return yarn;}for(const [eng,thai] of Object.entries(thaiMap)){if(t.toLowerCase().includes(eng.toLowerCase())||t.includes(thai)){let label=thai;const ramaMatch=t.match(/rama\s*(\d+)|พระราม\s*(\d+)/i);if(ramaMatch)label="พระราม "+(ramaMatch[1]||ramaMatch[2]);const soiMatch=t.match(/(?:ซอย|ซ\.|soi)\s*([\d\/\-]+)/i);return label+(soiMatch?" "+soiMatch[1]:"")}}const zipMatch=t.match(/\b(\d{5})\b/);if(zipMatch&&ZIP_MAP[zipMatch[1]])return ZIP_MAP[zipMatch[1]];let f=text.split(/[,\(\n]/)[0].trim().replace(/^\d+[\/\d\-]*\s+/,"");return(f.length>25?f.substring(0,25):f)||"กทม."}
-function getVal(t,k){const m=t.match(new RegExp("【"+k+"】([^\\n]*)"));return m?m[1].trim():""}
+
+function getVal(t,k){let m=t.match(new RegExp("【"+k+"】([^\\n]*)"));return m?m[1].trim():""}
+function calculatePrice(f,t,s){let r=(f+"-"+t).toUpperCase(),v=(t+"-"+f).toUpperCase(),is7=s=="7"||s=="C7",g=(a,b)=>is7?document.getElementById(b).value:document.getElementById(a).value;if(r=="S-P"||v=="S-P")return g("p5_s_p","p7_s_p");if(r=="D-P"||v=="D-P")return g("p5_d_p","p7_d_p");if(r=="BK-P"||v=="BK-P")return g("p5_bk_p","p7_bk_p");if(r.includes("HH")||v.includes("HH"))return g("p5_hh","p7_hh");return g("p5_bk","p7_bk")}
+
 function getCode(b){const raw=b.match(/【接驳编码code】(.*)/)||b.match(/code[:：]?\s*(.*)/i);if(!raw)return"";return raw[1].trim().match(/[0-9A-Za-z]+/)?.[0]||""}
-function getAllJobData(){const v=document.getElementById("input").value;if(!v.trim())return[];const bs=v.split(/\n(?=[A-Z]{1,2}\d{2,5}(?:-\d{1,2})?)/).filter(x=>x.trim()&&x.includes('วันที่'));return bs.map(b=>({id:(b.match(/^([A-Z]{1,2}\d{2,5}(?:-\d{1,2})?)/m)||[""])[0],time:getVal(b,"时间เวลา"),flight:getVal(b,"航班flight"),pk:getVal(b,"接รับ"),dp:getVal(b,"送ส่ง"),name:getVal(b,"姓名ชื่อ"),seat:(getVal(b,"车型ขนาดรถ").toLowerCase().includes("camry")||getVal(b,"车型ขนาดรถ").toLowerCase().includes("c7"))?"C7":(getVal(b,"车型ขนาดรถ").toLowerCase().includes("7")?"7":"5"),mapFrom:MAP(getVal(b,"接รับ")),mapTo:MAP(getVal(b,"送ส่ง")),areaFrom:getAreaForShort(getVal(b,"接รับ")),areaTo:getAreaForShort(getVal(b,"送ส่ง")),date:getVal(b,"日期วันที่"),code:getCode(b)}));}
-function renderShortOut(){const jd=getAllJobData(),container=document.getElementById("short-out-container");if(!jd.length)return;jd.sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time));let html="",currentDate="";jd.forEach(j=>{if(j.date!==currentDate){currentDate=j.date;html+=`<div style="margin-top:12px;font-weight:600;color:var(--primary-color);font-size:16px;">📅 ${currentDate}</div>`}const colorFrom=j.areaFrom.includes("แอร์")?"#007FFF":"#FF8C00",colorTo=j.areaTo.includes("แอร์")?"#007FFF":"#FF8C00";html+=`<div class="job-item"><div class="job-text">${j.id}//${j.time}//#${j.seat}${j.mapFrom}-${j.mapTo}\n<a href="${mapsLink(j.pk)}" target="_blank" style="color:${colorFrom};text-decoration:none">📍 ${j.areaFrom}</a>→<a href="${mapsLink(j.dp)}" target="_blank" style="color:${colorTo};text-decoration:none">📍 ${j.areaTo}</a>${j.flight?` <a href="${flightLink(j.flight)}" target="_blank" class="flight-btn">✈️ ${j.flight}</a>`:''}</div></div>`});container.innerHTML=html}
-function copyShort(){const jd=getAllJobData();if(!jd.length)return;let out="",currentDate="";jd.forEach(j=>{if(j.date!==currentDate){currentDate=j.date;out+=`\n${currentDate}\n====================\n`}
-out+=`${j.id}//${j.time}//#${j.seat}${j.mapFrom}-${j.mapTo}\n${j.areaFrom}–${j.areaTo}${j.flight?' ✈️'+j.flight:''}\n\n`});const ta=document.createElement("textarea");ta.value=out.trim();document.body.appendChild(ta);ta.select();document.execCommand("copy");document.body.removeChild(ta);alert("คัดลอกสำเร็จ ✔")}
-function fillPreview(){const w=document.getElementById("preview-container");w.innerHTML="";const jd=getAllJobData();for(let i=0;i<jd.length;i+=4)w.appendChild(makePage(jd.slice(i,i+4)))}
-function makePage(j4){const w=document.createElement("div");w.className="page-wrap";const cleanHotelName=(t)=>{if(!t)return"";let n=t.split(/[,\(\)\n]/)[0].trim();if(/[a-zA-Z]/.test(n)){n=n.replace(/[\u0E00-\u0E7F]/g,"").replace(/\s+/g," ").trim()}return n};for(let i=0;i<4;i++){const j=j4[i],s=document.createElement("div");s.className="slot";s.innerHTML=j?`<div class="line-top"><div>${j.id}</div><div>${j.time}</div><div>${j.date}</div></div><div class="passenger">${j.name}</div><div class="route">${cleanHotelName(j.pk)} → ${cleanHotelName(j.dp)}</div>${j.code?`<div class="code">${j.code}</div>`:""}`:"";w.appendChild(s)}return w}
-async function buildPDF(){const{jsPDF}=window.jspdf,ps=document.querySelectorAll(".page-wrap"),pdf=new jsPDF({orientation:"landscape",unit:"pt",format:[842,595]});for(let i=0;i<ps.length;i++){ps[i].querySelectorAll('.slot, .slot div, .passenger, .route, .code-ui, .line-top').forEach(el=>{el.style.color="#000000";el.style.fontWeight="900";el.style.textShadow="none"});const c=await html2canvas(ps[i],{scale:3,useCORS:true,logging:false,windowWidth:1200,backgroundColor:"#ffffff"});pdf.addImage(c.toDataURL('image/jpeg',1.0),'JPEG',0,0,842,595);if(i<ps.length-1)pdf.addPage()}return pdf}
-document.getElementById("btnProcess").onclick=async()=>{const v=document.getElementById("input").value.trim();if(!v)return;let defaultVal=(!PutterName||PutterName.toLowerCase()==="admin")?"":PutterName;let cur=isAdmin?"Admin":prompt("ทะเบียนรถ:",defaultVal);if(!isAdmin&&(!cur||!cur.trim()))return alert("ต้องระบุทะเบียนรถ");PutterName=cur;localStorage.setItem("lastPutter",cur);const jd=getAllJobData();const btn=document.getElementById("btnProcess");const ot=btn.innerText;btn.innerText="⏳ กำลังตรวจสอบ...";btn.disabled=true;for(const d of jd){const key='sent_'+d.id+'_'+d.date;if(localStorage.getItem(key)){continue}d.putter=cur;const f=new FormData();f.append('data',JSON.stringify(d));try{await fetch(WEB_APP_URL,{method:'POST',body:f,mode:'no-cors'});localStorage.setItem(key,'true')}catch(e){console.error(e)}}btn.innerText=ot;btn.disabled=false;renderShortOut();fillPreview();const ask=document.createElement("div");ask.style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.7);z-index:99999;display:flex;align-items:center;justify-content:center";ask.innerHTML=`<div style="background:white;padding:30px;border-radius:20px;width:85%;max-width:320px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,0.5)"><p style="font-size:20px;margin-bottom:25px;font-weight:600;color:#000!important">${isAdmin?'🔓 Admin Mode':'🚗 ทะเบียน: '+cur}<br><span style="color:#333;font-size:16px;">บันทึกเรียบร้อย!<br>คัดลอกงานย่อหรือไม่?</span></p><button id="btnYes" style="background:#28a745;color:white;width:100%;padding:16px;margin-bottom:12px;border-radius:12px;font-size:18px;border:none;font-weight:600">✂️ คัดลอก</button><button id="btnNo" style="background:#f8f9fa;color:#666;width:100%;padding:12px;border-radius:12px;font-size:15px;border:1px solid #ddd">ไม่คัดลอก</button></div>`;document.body.appendChild(ask);document.getElementById("btnYes").onclick=()=>{copyShort();document.body.removeChild(ask)};document.getElementById("btnNo").onclick=()=>{document.body.removeChild(ask)};};
+
+function getAllJobData() {
+    const v = document.getElementById("input").value;
+    if (!v.trim()) return [];
+    
+    // แยกบล็อกใบงาน
+    const bs = v.split(/\n(?=[A-Z]{1,2}\d{2,5})/).filter(x => x.includes('วันที่'));
+    
+    // ดึงค่าราคาจาก UI เส้นทางพิเศษ
+    const cRouteInput = document.getElementById('custom_route').value || "";
+    const cRoute = cRouteInput.replace(/\s+/g, '').toUpperCase(); 
+    const cPrice = document.getElementById('custom_price').value;
+
+    return bs.map(b => {
+        const id = (b.match(/^([A-Z]{1,2}\d{2,5})/m) || [""])[0];
+        const time = getVal(b, "时间เวลา");
+        const date = getVal(b, "日期วันที่");
+        
+        // ดึงขนาดรถ (5, 7, C7)
+        const rawSeat = getVal(b, "车型ขนาดรถ").toLowerCase();
+        let seat = "5"; 
+        if (rawSeat.includes("camry") || rawSeat.includes("c7")) {
+            seat = "C7";
+        } else if (rawSeat.includes("7")) {
+            seat = "7";
+        }
+        
+        // แปลงสถานที่รับ-ส่ง เป็นตัวย่อ (S, D, P, HH, BK)
+        const rawFrom = MAP(getVal(b, "接รับ"));
+        const rawTo = MAP(getVal(b, "送ส่ง"));
+        const cleanRoute = (rawFrom + "-" + rawTo).toUpperCase();
+        const revRoute = (rawTo + "-" + rawFrom).toUpperCase();
+
+        let price = 0;
+        const is7 = (seat === "C7" || seat === "7");
+
+        // --- ⚙️ Logic คำนวณราคาให้ตรงช่องเป๊ะๆ 100% ---
+
+        // 1. เช็คเส้นทางพิเศษ (Custom)
+        if (cRoute !== "" && (cleanRoute === cRoute || revRoute === cRoute) && cPrice > 0) {
+            price = cPrice;
+        } 
+        // 2. สุวรรณภูมิ <-> พัทยา (S-P, P-S) -> ใช้ช่อง S-P
+        else if (cleanRoute === "S-P" || revRoute === "S-P") {
+            price = is7 ? document.getElementById('p7_s_p').value : document.getElementById('p5_s_p').value;
+        }
+        // 3. ดอนเมือง <-> พัทยา (D-P, P-D) -> ใช้ช่อง D-P
+        else if (cleanRoute === "D-P" || revRoute === "D-P") {
+            price = is7 ? document.getElementById('p7_d_p').value : document.getElementById('p5_d_p').value;
+        }
+        // 4. กรุงเทพ <-> พัทยา (BK-P, P-BK) -> ใช้ช่อง BK-P
+        else if (cleanRoute === "BK-P" || revRoute === "BK-P") {
+            price = is7 ? document.getElementById('p7_bk_p').value : document.getElementById('p5_bk_p').value;
+        }
+        // 5. หัวหิน (HH) -> ใช้ช่อง HH
+        else if (cleanRoute.includes("HH") || revRoute.includes("HH")) {
+            price = is7 ? document.getElementById('p7_hh').value : document.getElementById('p5_hh').value;
+        }
+        // 6. สนามบินเข้าเมือง (D-BK, BK-D, S-BK, BK-S) และ งานในเมือง -> ใช้ช่อง BK
+        else {
+            price = is7 ? document.getElementById('p7_bk').value : document.getElementById('p5_bk').value;
+        }
+
+        return {
+            id, time, date, seat, price,
+            pk: getVal(b, "接รับ"),
+            dp: getVal(b, "送ส่ง"),
+            name: getVal(b, "姓名ชื่อ"),
+            flight: getVal(b, "航班flight"),
+            code: getCode(b), // ใช้ฟังก์ชัน getCode เดิมของคุณ
+            mapFrom: rawFrom, mapTo: rawTo,
+            areaFrom: getAreaForShort(getVal(b, "接รับ")), // ใช้ฟังก์ชัน getAreaForShort เดิมของคุณ
+            areaTo: getAreaForShort(getVal(b, "送ส่ง"))
+        };
+    });
+}
+const getEmoji = r => { r = (r || "").toUpperCase(); return (!(/^(BK|PT|NB|SP|S|D)-(BK|PT|NB|SP|S|D)$/.test(r)) || /P|HH|CA|RY|KC|AY/.test(r)) ? "⭐" : /^(S|D)-/.test(r) ? "🥶" : /-(S|D)$/.test(r) ? "🔥" : "🚗"; };
+
+
+function renderShortOut(){let j=getAllJobData(),c=document.getElementById("short-out-container"),s=document.getElementById("single-row-section"),sc=document.getElementById("single-row-container");if(!j.length)return;j.sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time));let h="",sh="",d="";j.forEach(x=>{if(x.date!==d){d=x.date;h+=`<div style="margin-top:12px;font-weight:600;color:#007bff;">📅 ${d}</div>`;sh+=`\n📅 ${d}\n`}let r=(x.mapFrom+"-"+x.mapTo).toUpperCase(),e=getEmoji(r),sd=x.seat=="C7"?"Cam7":x.seat;if(currentMode===1){s&&(s.style.display="none");let cf=x.areaFrom.includes("แอร์")?"#007FFF":"#FF8C00",ct=x.areaTo.includes("แอร์")?"#007FFF":"#FF8C00";h+=`<div class="job-item"><div class="job-text">${x.id}//${x.time}//#${x.seat}${r}\n<a href="${mapsLink(x.pk)}" target="_blank" style="color:${cf};text-decoration:none">📍 ${x.areaFrom}</a>→<a href="${mapsLink(x.dp)}" target="_blank" style="color:${ct};text-decoration:none">📍 ${x.areaTo}</a>${x.flight?` <a href="${flightLink(x.flight)}" target="_blank" class="flight-btn">✈️ ${x.flight}</a>`:""}</div></div>`}else{s&&(s.style.display="block");let rt=`${x.id}(${e})${x.time}/${x.price}#${sd}${r}\n${x.areaFrom} - ${x.areaTo}${x.flight?" ✈️"+x.flight:""}`;h+=`<div class="job-item"><div class="job-text">${rt}</div></div>`;sh+=`${x.id}(${e})${x.time}/${x.price}#${sd}${r}\n`}});c.innerHTML=h;sc&&(sc.innerText=sh.trim())}
+function copyShort1(){let j=getAllJobData().sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time)),o="",d="";j.forEach(x=>{if(x.date!==d){d=x.date;o+=(o?"\n":"")+d+"\n====================\n"}let s=x.seat=="C7"?"Cam7":x.seat,i=x.id.split("-")[0],r=(x.mapFrom+"-"+x.mapTo).toUpperCase();o+=`${i}//${x.time}//#${s}${r}\n${x.areaFrom}–${x.areaTo}${x.flight?" ✈️"+x.flight:""}\n\n`});executeManualCopy(o.trim())}
+function copyShort2(){let j=getAllJobData().sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time)),o="",d="";j.forEach(x=>{if(x.date!==d){d=x.date;o+=(o?"\n":"")+"📅 "+d+"\n"}let r=(x.mapFrom+"-"+x.mapTo).toUpperCase(),s=x.seat=="C7"?"Cam7":x.seat,e=getEmoji(r);o+=`${x.id}(${e})${x.time}/${x.price}#${s}${r}\n${x.areaFrom} - ${x.areaTo}${x.flight?" ✈️"+x.flight:""}\n`});executeManualCopy(o.trim())}
+function copySingleRow(){let j=getAllJobData();if(!j.length)return alert("ไม่มีข้อมูล");j.sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time));let o="",d="";j.forEach(x=>{if(x.date!==d){d=x.date;o+=(o?"\n":"")+"📅 "+d+"\n"}let r=(x.mapFrom+"-"+x.mapTo).toUpperCase(),s=x.seat=="C7"?"Cam7":x.seat,e=getEmoji(r);o+=`${x.id}(${e})${x.time}/${x.price}#${s}${r}\n`});executeManualCopy(o.trim())}
+function executeManualCopy(t){let e=document.createElement("textarea");e.value=t;document.body.appendChild(e);e.select();document.execCommand("copy");e.remove();alert("✂️ คัดลอกแล้ว!")}
+
+function makePage(j4){let w=document.createElement("div");w.className="page-wrap";let c=t=>{if(!t)return"";let n=t.split(/[,\(\)\n]/)[0].trim();return/[a-zA-Z]/.test(n)?n.replace(/[\u0E00-\u0E7F]/g,"").replace(/\s+/g," ").trim():n};for(let i=0;i<4;i++){let j=j4[i],s=document.createElement("div");s.className="slot";s.innerHTML=j?`<div class="line-top"><div>${j.id}</div><div>${j.time}</div><div>${j.date}</div></div><div class="passenger">${j.name}</div><div class="route">${c(j.pk)} → ${c(j.dp)}</div>${j.code?`<div class="code">${j.code}</div>`:""}`:"";w.appendChild(s)}return w}
+async function buildPDF(){let{jsPDF:j}=window.jspdf,p=document.querySelectorAll(".page-wrap"),d=new j({orientation:"landscape",unit:"pt",format:[842,595]});for(let i=0;i<p.length;i++){let c=await html2canvas(p[i],{scale:3,useCORS:!0,logging:!1,windowWidth:1200,backgroundColor:"#ffffff"});d.addImage(c.toDataURL("image/jpeg",1),"JPEG",0,0,842,595);i<p.length-1&&d.addPage()}return d}
+
+document.getElementById("btnProcess").onclick=async()=>{
+let v=document.getElementById("input").value.trim();if(!v)return;
+let d=!PutterName||PutterName.toLowerCase()=="admin"?"":PutterName,
+c=isAdmin?"Admin":prompt("ทะเบียนรถ:",d);
+if(!isAdmin&&(!c||!c.trim()))return alert("ต้องระบุทะเบียนรถ");
+PutterName=c;localStorage.setItem("lastPutter",c);
+renderShortOut();fillPreview();
+let a=document.createElement("div");
+a.style="position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:9999;display:flex;align-items:center;justify-content:center";
+a.innerHTML='<div style="background:#fff;padding:25px;border-radius:15px;text-align:center;width:80%;max-width:300px"><p style="color:#000;font-weight:bold;font-size:18px">✅ แปลงข้อมูลสำเร็จ<br><span style="font-size:14px;color:#555">คัดลอกส่ง LINE หรือไม่?</span></p><button id="y" style="background:#28a745;color:#fff;width:100%;padding:14px;border:0;border-radius:10px;margin-bottom:10px;font-weight:bold">✂️ คัดลอก</button><button id="n" style="background:#eee;color:#666;width:100%;padding:10px;border:0;border-radius:10px">ปิด</button></div>';
+document.body.appendChild(a);
+let y=a.querySelector("#y"),n=a.querySelector("#n"),r=()=>a.remove();
+y.onclick=()=>{currentMode===2?copyShort2():copyShort1();r()};
+n.onclick=r;
+(async()=>{for(let d of getAllJobData()){
+let k=`sent_${d.id}_${d.date}`;
+if(localStorage.getItem(k))continue;
+d.putter=c;let f=new FormData;
+f.append("data",JSON.stringify(d));
+try{await fetch(WEB_APP_URL,{method:"POST",body:f,mode:"no-cors"});
+localStorage.setItem(k,"true")}catch(e){}
+}})()
+};
+function fillPreview(){
+let j=getAllJobData(),
+c=document.getElementById("preview-container");
+c.innerHTML="";
+for(let i=0;i<j.length;i+=4)c.appendChild(makePage(j.slice(i,i+4)))
+}
 document.getElementById("btnPreviewSheet").onclick=fillPreview;
-document.getElementById("btnSharePDF").onclick=async()=>{const pdf=await buildPDF(),blob=pdf.output('blob'),fn=(document.getElementById("input").value.match(/^([A-Z]{1,2}\d{2,5})/m)||["","JobSheet"])[1]+".pdf",file=new File([blob],fn,{type:'application/pdf'});if(navigator.share){try{await navigator.share({files:[file],title:fn});}catch(e){}}else{alert("ไม่รองรับการแชร์")}};
+document.getElementById("btnPDF").onclick=async()=>{ const pdf=await buildPDF(); pdf.save("JobSheet.pdf"); };
+document.getElementById("btnSharePDF").onclick=async()=>{
+    const pdf=await buildPDF(),blob=pdf.output('blob'),fn=(document.getElementById("input").value.match(/^([A-Z]{1,2}\d{2,5})/m)||["","JobSheet"])[1]+".pdf",file=new File([blob],fn,{type:'application/pdf'});
+    if(navigator.share) navigator.share({files:[file]}); else alert("เบราว์เซอร์ไม่รองรับการแชร์");
+};
+function clearData() { if(confirm("ล้างข้อมูล?")){ document.getElementById("input").value=""; document.getElementById("short-out-container").innerHTML=""; document.getElementById("preview-container").innerHTML=""; document.getElementById("single-row-container").innerText=""; } }
 </script>
 </body>
 </html>
