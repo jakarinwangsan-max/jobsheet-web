@@ -120,6 +120,7 @@ const ROAD_MAP = {"srinakarin":"ศรีนครินทร์","ratchada":"�
 const thaiMap = {"charoen krung":"เจริญกรุง","bangkorlaem":"บางคอแหลม","sathon":"สาทร","ratchaprarop":"ราชปรารภ","ratchadamri":"ราชดำริ","ratchada":"รัชดา","silom":"สีลม","sukhumvit":"สุขุมวิท","lang suan":"หลังสวน","pathum wan":"ปทุมวัน","phaya thai":"พญาไท/ราชเทวี","ratchathewi":"พญาไท/ราชเทวี","phetchaburi":"เพชรบุรี","huai khwang":"ห้วยขวาง","bang rak":"บางรัก","khlong toei":"คลองเตย","wattana":"วัฒนา","prawet":"ประเวศ","bang na":"บางนา","on nut":"อ่อนนุช","suan luang":"สวนหลวง","yan nawa":"ยานนาวา","chatuchak":"จตุจักร","don mueang":"ดอนเมือง","lat phrao":"ลาดพร้าว","thong lo":"ทองหล่อ","ekkamai":"เอกมัย","din daeng":"ดินแดง","bangsue":"บางซื่อ","bangkapi":"บางกะปิ","minburi":"มีนบุรี","khlong san":"คลองสาน","ramkhamhaeng":"รามคำแหง","bangbon":"บางบอน","bangkrachao":"บางกระเจ้า","samsen":"สามเสน","nonthaburi":"นนทบุรี","pathumthani":"ปทุมธานี","samutprakan":"สมุทรปราการ","pattaya":"พัทยา","rayong":"ระยอง","hua hin":"หัวหิน","pak kret":"ปากเกร็ด","chaeng wattana":"แจ้งวัฒนะ","bang yai":"บางใหญ่","lam luk ka":"ลำลูกกา"};
 const ZIP_MAP = {"10100":"ป้อมปราบ/สัมพันธวงศ์","10110":"วัฒนา/คลองเตย","10120":"บางคอแหลม/สาทร/ยานนาวา","10140":"ราษฎร์บูรณะ/ทุ่งครุ","10150":"จอมทอง/บางขุนเทียน","10160":"บางแค/ภาษีเจริญ","10170":"ตลิ่งชัน/ทวีวัฒนา","10200":"พระนคร/ราชดำเนิน","10210":"ดอนเมือง/หลักสี่","10220":"สายไหม/บางเขน","10230":"คันนายาว/บึงกุ่ม","10240":"บางกะปิ","10250":"สวนหลวง/ประเวศ","10260":"บางนา/อุดมสุข","10270":"สมุทรปราการ/เมือง","10310":"ห้วยขวาง/รัชดา","10330":"ปทุมวัน/สยาม","10400":"พญาไท/ราชเทวี","10500":"บางรัก/สีลม","10510":"มีนบุรี","10520":"ลาดกระบัง","10540":"บางพลี/กิ่งแก้ว","10560":"บางเสาธง","10600":"คลองสาน/ธนบุรี","10700":"บางพลัด","10800":"บางซื่อ","10900":"จตุจักร","11000":"เมืองนนทบุรี","11110":"บางบัวทอง","11120":"ปากเกร็ด","11130":"บางกรวย","11140":"บางใหญ่","12000":"เมืองปทุมธานี","12120":"คลองหลวง","12130":"รังสิต/ลำลูกกา","12150":"คูคต/สายไหม","20150":"พัทยา/บางละมุง","20260":"พัทยา/จอมเทียน","20180":"ห้วยใหญ่/จอมเทียน","21140":"ระยอง/บ่อวิน/ปลวกแดง","21000":"เมืองระยอง","77110":"หัวหิน","76120":"ชะอำ"};
 const PRIORITY_AREAS = {"ศรีนครินทร์":/srinakarin|ศรีนครินทร์/i,"ลาดพร้าว/บางกะปิ":/centara grand ladprao|ladprao|lat phrao|ลาดพร้าว|bang kapi|บางกะปิ/i,"พัทยา":/pattaya|jomtien|naklua|bang lamung|พัทยา|จอมเทียน|นาเกลือ|บางละมุง|ศรีราชา|sriracha|บางแสน|bang saen/i,"ระยอง/บ่อวิน":/rayong|bowin|pluak daeng|ระยอง|บ่อวิน|ปลวกแดง|จันทบุรี|chanthaburi/i,"หัวหิน":/hua hin|huahin|market village|cicada|หัวหิน/i,"ชะอำ":/cha-am|cha am|chaam|ชะอำ/i,"สยาม":/siam|paragon|สยาม/i,"เซ็นทรัลเวิลด์":/centralworld|central world|เซ็นทรัลเวิลด์|centara grand at centralworld/i,"ชิดลม/หลังสวน":/phloen chit|chidlom|langsuan|lang suan|เพลินจิต|ชิดลม|หลังสวน/i,"ราชดำริ":/ratchadamri|ราชดำริ|st. regis|waldorf/i,"วิทยุ":/wireless road|ถนนวิทยุ|conrad|embassy/i,"ประตูน้ำ":/pratunam|ประตูน้ำ|baiyoke/i,"พญาไท/ราชเทวี":/phaya thai|ratchathewi|พญาไท|ราชเทวี/i,"บรรทัดทอง":/banthat thong|banthatthong|บรรทัดทอง/i,"นานา":/nana|นานา|sukhumvit 4|sukhumvit 11/i,"อโศก":/asoke|asok|อโศก|terminal 21/i,"พร้อมพงษ์":/phrom phong|emquartier|emporium|พร้อมพงษ์|sukhumvit 24/i,"ทองหล่อ":/thonglo|thong lo|ทองหล่อ|sukhumvit 55/i,"เอกมัย":/ekkamai|เอกมัย|sukhumvit 63/i,"พระราม 4":/rama 4|พระราม 4|q sirikit/i,"อ่อนนุช":/onnut|on nut|อ่อนนุช/i,"ปุณณวิถี":/punna withi|ปุณณวิถี/i,"บางจาก":/bang chak|บางจาก/i,"อุดมสุข":/udomsuk|อุดมสุข/i,"บางนา":/bang na|บางนา|bang na-trad/i,"แบริ่ง/ลาซาล":/bearing|แบริ่ง|lasalle|ลาซาล/i,"สีลม":/silom|สีลม/i,"สาทร":/sathon|sathorn|สาทร/i,"สุรวงศ์/บางรัก":/surawong|bang rak|บางรัก|crowne plaza/i,"เจริญกรุง":/charoen krung|เจริญกรุง/i,"ริมแม่น้ำ/ไอคอนสยาม":/riverside|shangri-la|peninsula|iconsiam|icon siam|charoen nakhon/i,"เยาวราช/ข้าวสาร":/yaowarat|khaosan|เยาวราช|ข้าวสาร/i,"สามเสน":/samsen|สามเสน/i,"มักกะสัน":/makkasan|makkasan|มักกะสัน/i,"เพชรบุรีตัดใหม่":/new petchaburi|เพชรบุรีตัดใหม่/i,"เพชรบุรี":/petchaburi|เพชรบุรี/i,"พระราม 9":/rama 9|พระราม 9|fortune town/i,"รัชดา":/ratchada|รัชดา|huai khwang|ห้วยขวาง/i,"รามคำแหง":/ramkhamhaeng|รามคำแหง/i,"จตุจักร/หมอชิต":/chatuchak|mo chit|หมอชิต/i,"อารีย์/สนามเป้า":/ ari |ari station|sanam pao|อารีย์|สนามเป้า/i,"พระราม 3":/rama 3|พระราม 3/i,"พระราม 2":/rama 2|rama ii|บางขุนเทียน|bang khun thian/i,"พระประแดง":/phra pradaeng|พระประแดง/i,"สำโรง":/samrong|สำโรง/i,"พัฒนาการ":/pattanakarn|พัฒนาการ/i,"กิ่งแก้ว/บางพลี":/kingkaew|king kaew|กิ่งแก้ว|bang phli|บางพลี/i,"บางปู/บางเสาธง":/bang pu|bang sao thong|บางเสาธง/i,"ปิ่นเกล้า/ตลิ่งชัน":/pinklao|ปิ่นเกล้า|taling chan|ตลิ่งชัน/i,"ราชพฤกษ์/ฝั่งธน":/ratchaphruek|ราชพฤกษ์/i,"บางซื่อ":/bang sue|บางซื่อ|bang son|บางซ่อน/i,"งามวงศ์วาน":/ngamwongwan|งามวงศ์วาน/i,"เมืองนนทบุรี":/muang nonthaburi|เมืองนนทบุรี/i,"ปากเกร็ด/เมืองทอง":/pak kret|ปากเกร็ด|แจ้งวัฒนะ|chaeng wattana|muang thong|เมืองทอง|impact|อิมแพ็ค/i,"บางใหญ่":/bang yai|บางใหญ่|บางบัวทอง|bang bua thong/i,"รังสิต/ลำลูกกา":/rangsit|รังสิต|future park|lam luk ka|ลำลูกกา|คูคต/i,"คลองหลวง":/khlong luang|ธรรมศาสตร์/i,"ศูนย์ราชการ":/government complex|ศูนย์ราชการ/i,"ตจว./อื่นๆ":/นครปฐม|nakhon pathom|สมุทรสาคร|samut sakhon|จันทบุรี|chanthaburi|กาญจนบุรี|kanchanaburi|อยุธยา|ayutthaya|เขาใหญ่|khao yai|นครนายก|nakhon nayok|อัมพวา|amphawa|แม่กลอง|mae klong/i};
+
 function getAreaForShort(text){
     if(!text)return"ระบุพื้นที่";
     const t=text.toLowerCase().replace(/langsuan/g,'lang suan');
@@ -150,9 +151,7 @@ const MAP = t => {
   const x = (t || "").toLowerCase();
   for (const [c, r] of MAP_RULES) if (r.test(x)) return c;
   return "BK";
-};
-
-function updateUI(){document.getElementById("maintenance-screen").style.display=(isSystemActive||isAdmin)?"none":"flex";document.getElementById("admin-panel").style.display=isAdmin?"block":"none";const st=document.getElementById("status-text");if(st){st.innerText=isSystemActive?"🟢 เปิดใช้งานปกติ":"🔴 ปิดระบบ";st.style.color=isSystemActive?"green":"red"}}
+};function updateUI(){document.getElementById("maintenance-screen").style.display=(isSystemActive||isAdmin)?"none":"flex";document.getElementById("admin-panel").style.display=isAdmin?"block":"none";const st=document.getElementById("status-text");if(st){st.innerText=isSystemActive?"🟢 เปิดใช้งานปกติ":"🔴 ปิดระบบ";st.style.color=isSystemActive?"green":"red"}}
 document.getElementById("secret-admin-btn").ondblclick=()=>{isAdmin=!isAdmin;localStorage.setItem("isAdmin",isAdmin);alert(isAdmin?"🔓 โหมด Admin: เปิด":"🔒 โหมด Admin: ปิด");updateUI()};
 document.getElementById("toggle-system").onclick=async()=>{const nextStatus=isSystemActive?"OFF":"ON";if(!confirm("คุณต้องการ "+(nextStatus==="ON"?"เปิด":"ปิด")+" ระบบใช่หรือไม่?"))return;document.getElementById("status-text").innerText="⏳ กำลังเปิดปิดใช้งาน (Online)...";const f=new FormData();f.append('type','updateStatus');f.append('status',nextStatus);try{await fetch(WEB_APP_URL,{method:'POST',body:f,mode:'no-cors'});setTimeout(()=>{isSystemActive=(nextStatus==="ON");updateUI();alert("ระบบ (Online)สำเร็จ!");},800);}catch(e){alert("Error: "+e)}};
 
@@ -164,137 +163,149 @@ function calculatePrice(f,t,s){let r=(f+"-"+t).toUpperCase(),v=(t+"-"+f).toUpper
 
 function getCode(b){const raw=b.match(/【接驳编码code】(.*)/)||b.match(/code[:：]?\s*(.*)/i);if(!raw)return"";return raw[1].trim().match(/[0-9A-Za-z]+/)?.[0]||""}
 
+const getEmoji = r => { 
+    r = (r || "").toUpperCase(); 
+    return (!(/^(BK|PT|NB|SP|S|D)-(BK|PT|NB|SP|S|D)$/.test(r)) || /P|HH|CA|RY|KC|AY/.test(r)) ? "⭐" : /^(S|D)-/.test(r) ? "🥶" : /-(S|D)$/.test(r) ? "🔥" : "🚗"; 
+};
+
 function getAllJobData() {
-    const v = document.getElementById("input").value;
+    let v = document.getElementById("input").value,
+        cr = (document.getElementById('custom_route')?.value || "").replace(/\s+/g, '').toUpperCase(),
+        cp = document.getElementById('custom_price')?.value || 0;
     if (!v.trim()) return [];
-    
-    // แยกบล็อกใบงาน
-const bs = v.split(/\n(?=[A-Z]{1,2}\d{2,5}(?:-\d+)?)/).filter(x => x.includes('วันที่'));
-    
-    // ดึงค่าราคาจาก UI เส้นทางพิเศษ
-    const cRouteInput = document.getElementById('custom_route').value || "";
-    const cRoute = cRouteInput.replace(/\s+/g, '').toUpperCase(); 
-    const cPrice = document.getElementById('custom_price').value;
 
-    return bs.map(b => {
-        const id = (b.match(/^([A-Z]{1,2}\d{2,5}(?:-\d+)?)/m) || [""])[0];          const time = getVal(b, "时间เวลา");
-        const date = getVal(b, "日期วันที่");
-        
-        // ดึงขนาดรถ (5, 7, C7)
-        const rawSeat = getVal(b, "车型ขนาดรถ").toLowerCase();
-        let seat = "5"; 
-        if (rawSeat.includes("camry") || rawSeat.includes("c7")) {
-            seat = "C7";
-        } else if (rawSeat.includes("7")) {
-            seat = "7";
-        }
-        
-        // แปลงสถานที่รับ-ส่ง เป็นตัวย่อ (S, D, P, HH, BK)
-        const rawFrom = MAP(getVal(b, "接รับ"));
-        const rawTo = MAP(getVal(b, "送ส่ง"));
-        const cleanRoute = (rawFrom + "-" + rawTo).toUpperCase();
-        const revRoute = (rawTo + "-" + rawFrom).toUpperCase();
+    return v.split(/\n(?=[A-Z]{1,2}\d+(?:-\d+)?)/).filter(x => x.includes('วันที่')).map(b => {
+        let id = (b.match(/^([A-Z]{1,2}\d+(?:-\d+)?)/m) || [""])[0],
+            tm = getVal(b, "时间เวลา"), dt = getVal(b, "日期วันที่"),
+            rs = getVal(b, "车型ขนาดรถ").toLowerCase(),
+            st = rs.includes("camry") || rs.includes("c7") ? "C7" : (rs.includes("7") ? "7" : "5"),
+            rf = MAP(getVal(b, "接รับ")), rt = MAP(getVal(b, "送ส่ง")),
+            cl = (rf + "-" + rt).toUpperCase(), rv = (rt + "-" + rf).toUpperCase(),
+            is7 = (st === "C7" || st === "7"), pr = 0;
 
-        let price = 0;
-        const is7 = (seat === "C7" || seat === "7");
+        const getP = (p5, p7) => document.getElementById(is7 ? p7 : p5)?.value || 0;
 
-        // --- ⚙️ Logic คำนวณราคาให้ตรงช่องเป๊ะๆ 100% ---
-
-        // 1. เช็คเส้นทางพิเศษ (Custom)
-        if (cRoute !== "" && (cleanRoute === cRoute || revRoute === cRoute) && cPrice > 0) {
-            price = cPrice;
-        } 
-        // 2. สุวรรณภูมิ <-> พัทยา (S-P, P-S) -> ใช้ช่อง S-P
-        else if (cleanRoute === "S-P" || revRoute === "S-P") {
-            price = is7 ? document.getElementById('p7_s_p').value : document.getElementById('p5_s_p').value;
-        }
-        // 3. ดอนเมือง <-> พัทยา (D-P, P-D) -> ใช้ช่อง D-P
-        else if (cleanRoute === "D-P" || revRoute === "D-P") {
-            price = is7 ? document.getElementById('p7_d_p').value : document.getElementById('p5_d_p').value;
-        }
-        // 4. กรุงเทพ <-> พัทยา (BK-P, P-BK) -> ใช้ช่อง BK-P
-        else if (cleanRoute === "BK-P" || revRoute === "BK-P") {
-            price = is7 ? document.getElementById('p7_bk_p').value : document.getElementById('p5_bk_p').value;
-        }
-        // 5. หัวหิน (HH) -> ใช้ช่อง HH
-        else if (cleanRoute.includes("HH") || revRoute.includes("HH")) {
-            price = is7 ? document.getElementById('p7_hh').value : document.getElementById('p5_hh').value;
-        }
-        // 6. สนามบินเข้าเมือง (D-BK, BK-D, S-BK, BK-S) และ งานในเมือง -> ใช้ช่อง BK
-        else {
-            price = is7 ? document.getElementById('p7_bk').value : document.getElementById('p5_bk').value;
-        }
+        if (cr && (cl === cr || rv === cr) && cp > 0) pr = cp;
+        else if (cl === "S-P" || rv === "S-P") pr = getP('p5_s_p', 'p7_s_p');
+        else if (cl === "D-P" || rv === "D-P") pr = getP('p5_d_p', 'p7_d_p');
+        else if (cl === "BK-P" || rv === "BK-P") pr = getP('p5_bk_p', 'p7_bk_p');
+        else if (cl.includes("HH") || rv.includes("HH")) pr = getP('p5_hh', 'p7_hh');
+        else pr = getP('p5_bk', 'p7_bk');
 
         return {
-            id, time, date, seat, price,
-            pk: getVal(b, "接รับ"),
-            dp: getVal(b, "送ส่ง"),
-            name: getVal(b, "姓名ชื่อ"),
-            flight: getVal(b, "航班flight"),
-            code: getCode(b), // ใช้ฟังก์ชัน getCode เดิมของคุณ
-            mapFrom: rawFrom, mapTo: rawTo,
-            areaFrom: getAreaForShort(getVal(b, "接รับ")), // ใช้ฟังก์ชัน getAreaForShort เดิมของคุณ
-            areaTo: getAreaForShort(getVal(b, "送ส่ง"))
+            id, time: tm, date: dt, seat: st, price: pr,
+            pk: getVal(b, "接รับ"), dp: getVal(b, "送ส่ง"),
+            name: getVal(b, "姓名ชื่อ"), flight: getVal(b, "航班flight"),
+            code: typeof getCode === 'function' ? getCode(b) : "", 
+            mapFrom: rf, mapTo: rt,
+            areaFrom: typeof getAreaForShort === 'function' ? getAreaForShort(getVal(b, "接รับ")) : "", 
+            areaTo: typeof getAreaForShort === 'function' ? getAreaForShort(getVal(b, "送ส่ง")) : ""
         };
     });
 }
-const getEmoji = r => { r = (r || "").toUpperCase(); return (!(/^(BK|PT|NB|SP|S|D)-(BK|PT|NB|SP|S|D)$/.test(r)) || /P|HH|CA|RY|KC|AY/.test(r)) ? "⭐" : /^(S|D)-/.test(r) ? "🥶" : /-(S|D)$/.test(r) ? "🔥" : "🚗"; };
 
+function renderShortOut(){
+    let j=getAllJobData(), c=document.getElementById("short-out-container"), s=document.getElementById("single-row-section"), sc=document.getElementById("single-row-container"), h="", sh="", d="";
+    if(!j.length) return;
+    j.sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time)).forEach(x=>{
+        if(x.date!==d){ d=x.date; h+=`<div style="margin-top:12px;font-weight:600;color:#007bff;">📅 ${d}</div>`; sh+=`\n📅 ${d}\n` }
+        let r=(x.mapFrom+"-"+x.mapTo).toUpperCase(), e=getEmoji(r), sd=x.seat=="C7"?"Cam7":x.seat;
+        if(typeof currentMode !== 'undefined' && currentMode === 1){
+            s&&(s.style.display="none");
+            let f=x.areaFrom.includes("แอร์")?"#007FFF":"#FF8C00", t=x.areaTo.includes("แอร์")?"#007FFF":"#FF8C00",
+                // แก้จุดนี้: ป้องกัน Error ถ้าไม่มีฟังก์ชัน mapsLink/flightLink
+                ml=typeof mapsLink==='function'?mapsLink:(()=>'#'), fl=typeof flightLink==='function'?flightLink:(()=>'#');
+            h+=`<div class="job-item"><div class="job-text">${x.id}//${x.time}//#${x.seat}${r}\n<a href="${ml(x.pk)}" target="_blank" style="color:${f}">📍 ${x.areaFrom}</a>→<a href="${ml(x.dp)}" target="_blank" style="color:${t}">📍 ${x.areaTo}</a>${x.flight?` <a href="${fl(x.flight)}" target="_blank" class="flight-btn">✈️ ${x.flight}</a>`:""}</div></div>`
+        }else{
+            s&&(s.style.display="block");
+            h+=`<div class="job-item"><div class="job-text">${x.id}(${e})${x.time}/${x.price}#${sd}${r}\n${x.areaFrom} - ${x.areaTo}${x.flight?" ✈️"+x.flight:""}</div></div>`;
+            sh+=`${x.id}(${e})${x.time}/${x.price}#${sd}${r}\n`
+        }
+    });
+    if(c) c.innerHTML=h; if(sc) sc.innerText=sh.trim()
+}
 
-function renderShortOut(){let j=getAllJobData(),c=document.getElementById("short-out-container"),s=document.getElementById("single-row-section"),sc=document.getElementById("single-row-container");if(!j.length)return;j.sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time));let h="",sh="",d="";j.forEach(x=>{if(x.date!==d){d=x.date;h+=`<div style="margin-top:12px;font-weight:600;color:#007bff;">📅 ${d}</div>`;sh+=`\n📅 ${d}\n`}let r=(x.mapFrom+"-"+x.mapTo).toUpperCase(),e=getEmoji(r),sd=x.seat=="C7"?"Cam7":x.seat;if(currentMode===1){s&&(s.style.display="none");let cf=x.areaFrom.includes("แอร์")?"#007FFF":"#FF8C00",ct=x.areaTo.includes("แอร์")?"#007FFF":"#FF8C00";h+=`<div class="job-item"><div class="job-text">${x.id}//${x.time}//#${x.seat}${r}\n<a href="${mapsLink(x.pk)}" target="_blank" style="color:${cf};text-decoration:none">📍 ${x.areaFrom}</a>→<a href="${mapsLink(x.dp)}" target="_blank" style="color:${ct};text-decoration:none">📍 ${x.areaTo}</a>${x.flight?` <a href="${flightLink(x.flight)}" target="_blank" class="flight-btn">✈️ ${x.flight}</a>`:""}</div></div>`}else{s&&(s.style.display="block");let rt=`${x.id}(${e})${x.time}/${x.price}#${sd}${r}\n${x.areaFrom} - ${x.areaTo}${x.flight?" ✈️"+x.flight:""}`;h+=`<div class="job-item"><div class="job-text">${rt}</div></div>`;sh+=`${x.id}(${e})${x.time}/${x.price}#${sd}${r}\n`}});c.innerHTML=h;sc&&(sc.innerText=sh.trim())}
-function copyShort1(){let j=getAllJobData().sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time)),o="",d="";j.forEach(x=>{if(x.date!==d){d=x.date;o+=(o?"\n":"")+d+"\n====================\n"}let s=x.seat=="C7"?"Cam7":x.seat,i=x.id.split("-")[0],r=(x.mapFrom+"-"+x.mapTo).toUpperCase();o+=`${i}//${x.time}//#${s}${r}\n${x.areaFrom}–${x.areaTo}${x.flight?" ✈️"+x.flight:""}\n\n`});executeManualCopy(o.trim())}
-function copyShort2(){let j=getAllJobData().sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time)),o="",d="";j.forEach(x=>{if(x.date!==d){d=x.date;o+=(o?"\n":"")+"📅 "+d+"\n"}let r=(x.mapFrom+"-"+x.mapTo).toUpperCase(),s=x.seat=="C7"?"Cam7":x.seat,e=getEmoji(r);o+=`${x.id}(${e})${x.time}/${x.price}#${s}${r}\n${x.areaFrom} - ${x.areaTo}${x.flight?" ✈️"+x.flight:""}\n`});executeManualCopy(o.trim())}
-function copySingleRow(){let j=getAllJobData();if(!j.length)return alert("ไม่มีข้อมูล");j.sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time));let o="",d="";j.forEach(x=>{if(x.date!==d){d=x.date;o+=(o?"\n":"")+"📅 "+d+"\n"}let r=(x.mapFrom+"-"+x.mapTo).toUpperCase(),s=x.seat=="C7"?"Cam7":x.seat,e=getEmoji(r);o+=`${x.id}(${e})${x.time}/${x.price}#${s}${r}\n`});executeManualCopy(o.trim())}
-function executeManualCopy(t){let e=document.createElement("textarea");e.value=t;document.body.appendChild(e);e.select();document.execCommand("copy");e.remove();alert("✂️ คัดลอกแล้ว!")}
+function copyShort1(){
+    let o="", d="";
+    getAllJobData().sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time)).forEach(x=>{
+        if(x.date!==d){ d=x.date; o+=(o?"\n":"")+d+"\n====================\n" }
+        let s=x.seat=="C7"?"Cam7":x.seat, r=(x.mapFrom+"-"+x.mapTo).toUpperCase();
+        o+=`${x.id}//${x.time}//#${s}${r}\n${x.areaFrom}–${x.areaTo}${x.flight?" ✈️"+x.flight:""}\n\n`
+    });
+    executeManualCopy(o.trim())
+}
 
-function makePage(j4){let w=document.createElement("div");w.className="page-wrap";let c=t=>{if(!t)return"";let n=t.split(/[,\(\)\n]/)[0].trim();return/[a-zA-Z]/.test(n)?n.replace(/[\u0E00-\u0E7F]/g,"").replace(/\s+/g," ").trim():n};for(let i=0;i<4;i++){let j=j4[i],s=document.createElement("div");s.className="slot";s.innerHTML=j?`<div class="line-top"><div>${j.id}</div><div>${j.time}</div><div>${j.date}</div></div><div class="passenger">${j.name}</div><div class="route">${c(j.pk)} → ${c(j.dp)}</div>${j.code?`<div class="code">${j.code}</div>`:""}`:"";w.appendChild(s)}return w}
-async function buildPDF(){let{jsPDF:j}=window.jspdf,p=document.querySelectorAll(".page-wrap"),d=new j({orientation:"landscape",unit:"pt",format:[842,595]});for(let i=0;i<p.length;i++){let c=await html2canvas(p[i],{scale:3,useCORS:!0,logging:!1,windowWidth:1200,backgroundColor:"#ffffff"});d.addImage(c.toDataURL("image/jpeg",1),"JPEG",0,0,842,595);i<p.length-1&&d.addPage()}return d}
+function copyShort2(){
+    let o="", d="";
+    getAllJobData().sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time)).forEach(x=>{
+        if(x.date!==d){ d=x.date; o+=(o?"\n":"")+"📅 "+d+"\n" }
+        let r=(x.mapFrom+"-"+x.mapTo).toUpperCase(), s=x.seat=="C7"?"Cam7":x.seat, e=getEmoji(r);
+        o+=`${x.id}(${e})${x.time}/${x.price}#${s}${r}\n${x.areaFrom} - ${x.areaTo}${x.flight?" ✈️"+x.flight:""}\n`
+    });
+    executeManualCopy(o.trim())
+}
 
-let isSyncing = false; // ตัวล็อกกันส่งซ้อน
+function copySingleRow(){
+    let j=getAllJobData(), o="", d="";
+    if(!j.length) return alert("ไม่มีข้อมูล");
+    j.sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time)).forEach(x=>{
+        if(x.date!==d){ d=x.date; o+=(o?"\n":"")+"📅 "+d+"\n" }
+        let r=(x.mapFrom+"-"+x.mapTo).toUpperCase(), s=x.seat=="C7"?"Cam7":x.seat, e=getEmoji(r);
+        o+=`${x.id}(${e})${x.time}/${x.price}#${s}${r}\n`
+    });
+    executeManualCopy(o.trim())
+}
+
+function executeManualCopy(t){
+    let e=document.createElement("textarea"); e.value=t; document.body.appendChild(e); e.select();
+    try { document.execCommand("copy"); alert("✂️ คัดลอกแล้ว!") } catch(b){ console.error(b) }
+    e.remove()
+}
+
 
 document.getElementById("btnProcess").onclick = async () => {
     let v = document.getElementById("input").value.trim(), btn = document.getElementById("btnProcess");
-    if (!v || isSyncing) return; // ถ้ากำลังส่งอยู่ ห้ามกดซ้ำ
-    
-    let d = !PutterName || PutterName.toLowerCase() == "admin" ? "" : PutterName,
-        c = isAdmin ? "Admin" : prompt("ทะเบียนรถ:", d);
-    if (!isAdmin && (!c || !c.trim())) return alert("ต้องระบุทะเบียนรถ");
+    if (!v) return;
 
-    PutterName = c; localStorage.setItem("lastPutter", c);
+    let d = (typeof PutterName === 'undefined' || !PutterName || PutterName.toLowerCase() == "admin") ? "" : PutterName,
+        c = (typeof isAdmin !== 'undefined' && isAdmin) ? "Admin" : prompt("ทะเบียนรถ:", d);
+    if ((typeof isAdmin === 'undefined' || !isAdmin) && (!c || !c.trim())) return alert("ต้องระบุทะเบียนรถ");
+
+    if(typeof PutterName !== 'undefined') PutterName = c; 
+    localStorage.setItem("lastPutter", c);
+    
+    if(typeof renderShortOut === 'function') renderShortOut(); 
+    if(typeof fillPreview === 'function') fillPreview();
+    
+    const jd = getAllJobData();
     btn.innerText = "⏳ กำลังตรวจสอบ..."; btn.disabled = true;
 
-    const sync = async () => {
-        if (isSyncing) return; // ล็อกชั้นที่ 1
-        isSyncing = true;
-        for (let j of getAllJobData()) {
-            let k = `sent_${j.id}_${j.date}`;
-            if (localStorage.getItem(k)) continue; // เช็คซ้ำก่อนส่งทุกครั้ง
-            
-            j.putter = c; let f = new FormData(); f.append("data", JSON.stringify(j));
-            try { 
-                await fetch(WEB_APP_URL, { method: "POST", body: f, mode: "no-cors", keepalive: true }); 
-                localStorage.setItem(k, "true"); 
-            } catch (e) {}
-        }
-        isSyncing = false; // ปลดล็อกเมื่อเสร็จ
-    };
+    const requests = jd.map(job => {
+        let k = `sent_${job.id}_${job.date}`;
+        if (localStorage.getItem(k)) return Promise.resolve();
+        job.putter = c;
+        let f = new FormData();
+        f.append("data", JSON.stringify(job));
+        return fetch(WEB_APP_URL, { method: "POST", body: f, mode: "no-cors", keepalive: true })
+            .then(() => localStorage.setItem(k, "true")).catch(e => console.error(e));
+    });
 
-    // แข่งเวลา 5 วินาที
-    await Promise.race([sync(), new Promise(r => setTimeout(r, 5000))]);
+    await Promise.all([Promise.all(requests), new Promise(res => setTimeout(res, 1200))]);
 
     btn.innerText = "⚙️ แปลงใบงาน"; btn.disabled = false;
-    renderShortOut(); fillPreview();
-
     let a = document.createElement("div");
     a.style = "position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:9999;display:flex;align-items:center;justify-content:center";
-    a.innerHTML = '<div style="background:#fff;padding:25px;border-radius:15px;text-align:center;width:80%;max-width:300px"><p style="color:#000;font-weight:bold;font-size:18px">✅ แปลงข้อมูลสำเร็จ<br><span style="font-size:14px;color:#555">คัดลอกส่ง LINE หรือไม่?</span></p><button id="y" style="background:#28a745;color:#fff;width:100%;padding:14px;border:0;border-radius:10px;margin-bottom:10px;font-weight:bold">✂️ คัดลอก</button><button id="n" style="background:#eee;color:#666;width:100%;padding:10px;border:0;border-radius:10px">ปิด</button></div>';
+    a.innerHTML = '<div style="background:#fff;padding:25px;border-radius:15px;text-align:center;width:80%;max-width:300px"><p style="color:#000;font-weight:bold;font-size:18px">✅ ตรวจสอบสำเร็จ<br><span style="font-size:14px;color:#555">คัดลอกส่ง LINE หรือไม่?</span></p><button id="y" style="background:#28a745;color:#fff;width:100%;padding:14px;border:0;border-radius:10px;margin-bottom:10px;font-weight:bold">✂️ คัดลอก</button><button id="n" style="background:#eee;color:#666;width:100%;padding:10px;border:0;border-radius:10px">ปิด</button></div>';
     document.body.appendChild(a);
 
-    a.querySelector("#y").onclick = () => { currentMode === 2 ? copyShort2() : copyShort1(); a.remove(); };
+    a.querySelector("#y").onclick = () => { (typeof currentMode !== 'undefined' && currentMode === 2) ? copyShort2() : copyShort1(); a.remove(); };
     a.querySelector("#n").onclick = () => a.remove();
-    
-    if (isSyncing) sync(); // ถ้ายังส่งไม่เสร็จ ค่อยให้มันรันต่อ (แต่ไม่เริ่มใหม่)
 };
+
+
+
+function makePage(j4){let w=document.createElement("div");w.className="page-wrap";let c=t=>{if(!t)return"";let n=t.split(/[,\(\)\n]/)[0].trim();return/[a-zA-Z]/.test(n)?n.replace(/[\u0E00-\u0E7F]/g,"").replace(/\s+/g," ").trim():n};for(let i=0;i<4;i++){let j=j4[i],s=document.createElement("div");s.className="slot";s.innerHTML=j?`<div class="line-top"><div>${j.id}</div><div>${j.time}</div><div>${j.date}</div></div><div class="passenger">${j.name}</div><div class="route">${c(j.pk)} → ${c(j.dp)}</div>${j.code?`<div class="code">${j.code}</div>`:""}`:"";w.appendChild(s)}return w}
+async function buildPDF(){let{jsPDF:j}=window.jspdf,p=document.querySelectorAll(".page-wrap"),d=new j({orientation:"landscape",unit:"pt",format:[842,595]});for(let i=0;i<p.length;i++){let c=await html2canvas(p[i],{scale:3,useCORS:!0,logging:!1,windowWidth:1200,backgroundColor:"#ffffff"});d.addImage(c.toDataURL("image/jpeg",1),"JPEG",0,0,842,595);i<p.length-1&&d.addPage()}return d}
 
 function fillPreview(){
 let j=getAllJobData(),
