@@ -8,65 +8,184 @@
 <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700;800;900&family=Kanit+Condensed:wght@400;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{--primary:#007bff;--secondary:#28a745;--radius:8px}
-body{background:url('https://lh3.googleusercontent.com/d/1OjWRJPb3Efxdw5Tz3t5DSA342Ad0HJQe') center/cover fixed no-repeat;font-family:'Kanit',sans-serif;margin:0}
-#mode-selection-screen{position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(10px);z-index:10000;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.mode-card-container{display:grid;grid-template-columns:1fr 1fr;gap:20px;width:90%;max-width:600px}
-.mode-card{padding:40px 20px;border-radius:20px;cursor:pointer;text-align:center;color:#fff;transition:.3s;border:2px solid rgba(255,255,255,.2)}
-.mode-card:hover{transform:translateY(-5px);border-color:#fff}
-.m-1{background:#e91e63;box-shadow:0 10px 20px rgba(233,30,99,.4)}
-.m-2{background:#2196F3;box-shadow:0 10px 20px rgba(33,150,243,.4)}
-h1{color:#ff0000!important;font-weight:800;margin:0 0 20px;padding-bottom:10px;border-bottom:4px solid #ff0000;display:inline-block;font-size:26px;text-shadow:2px 2px 8px #000,0 0 10px rgba(255,255,255,.3);cursor:pointer;user-select:none}
-h2{color:#fff;font-weight:600;margin:20px 0 10px}
-#maintenance-screen{display:none;position:fixed;inset:0;background:#fff;z-index:9998;flex-direction:column;align-items:center;justify-content:center;text-align:center}
-#admin-panel{display:none;background:#fff3cd;padding:15px;border-radius:var(--radius);margin-bottom:20px;border:1px solid #ffeeba;text-align:center;color:#000}
-#secret-admin-btn{position:fixed;right:0;bottom:0;width:40px;height:40px;background:rgba(0,0,0,.01);z-index:9999;cursor:pointer}
-.input-control-wrapper{display:flex;gap:15px;align-items:flex-end}
-textarea,#short-out-container{width:100%;display:block;margin:10px auto;box-sizing:border-box;background:rgba(255,255,255,.05)!important;color:#00eaff!important;border:1px solid rgba(255,255,255,.1)!important;border-radius:var(--radius);padding:10px;text-shadow:1px 1px 2px rgba(0,0,0,.8)}
-textarea{height:200px;resize:vertical;font-family:'Kanit',monospace}
-button{padding:10px 15px;font-size:14px;font-weight:600;border:0;border-radius:var(--radius);cursor:pointer;transition:.2s;white-space:nowrap;touch-action:manipulation}
+body{margin:0;font-family:'Kanit',sans-serif;background:url(https://lh3.googleusercontent.com/d/1OjWRJPb3Efxdw5Tz3t5DSA342Ad0HJQe) center/cover fixed no-repeat}
+
+/* screens */
+#mode-selection-screen,#maintenance-screen{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+#mode-selection-screen{background:rgba(0,0,0,.8);backdrop-filter:blur(10px);z-index:10000}
+#maintenance-screen{display:none;background:#fff;z-index:9998}
+
+/* admin */
+#admin-panel{display:none;position: relative;inset:0;margin:auto;height:fit-content;width:fit-content;background:rgba(255,255,255,.9);backdrop-filter:blur(10px);border-radius:50px;box-shadow:0 15px 35px rgba(0,0,0,.2);border:1px solid rgba(255,255,255,.4);text-align:center;min-width:250px;z-index:9999;}
+#toggle-system{width:70%;padding:10px;border-radius:20px;border:0;color:#fff;font-weight:bold;cursor:pointer;margin-top:10px;transition:.3s}
+#secret-admin-btn{position:fixed;right:10px;bottom:10px;width:70px;height:70px;border-radius:50%;background:rgba(0,0,0,.01);z-index:10000;cursor:pointer}
+
+/* mode */
+.mode-card-container{display:grid;grid-template-columns:1fr 1fr;gap:25px;width:95%;max-width:600px;margin-top:30px}
+.mode-card{padding:50px 20px;border-radius:40px;color:#fff;text-align:center;cursor:pointer;border:2px solid rgba(255,255,255,.1);backdrop-filter:blur(5px);transition:.4s cubic-bezier(.175,.885,.32,1.275);position:relative;overflow:hidden}
+.mode-card:hover{transform:scale(1.05);border-color:rgba(255,255,255,.8);box-shadow:0 15px 30px rgba(0,0,0,.3)}
+.m-1{background:linear-gradient(135deg,#ff4081,#e91e63);box-shadow:0 10px 20px rgba(233,30,99,.3)}
+.m-2{background:linear-gradient(135deg,#00d2ff,#2196f3);box-shadow:0 10px 20px rgba(33,150,243,.3)}
+.mode-card h2{margin:0;font-size:24px;font-weight:800;text-shadow:0 2px 4px rgba(0,0,0,.2)}
+.mode-card p{font-size:14px;opacity:.9;margin-top:10px}
+
+/* heading */
+h1{color:#fff!important;font-weight:800;margin:10px 0 25px;padding:10px 25px;background:linear-gradient(135deg,#ff4757,#ff6b81);border-radius:50px;display:inline-block;font-size:24px;text-shadow:1px 1px 4px rgba(0,0,0,.3);box-shadow:0 4px 15px rgba(255,71,87,.3);cursor:pointer;user-select:none;border:none!important;transition:.3s}
+h1:hover{transform:scale(1.03);box-shadow:0 6px 20px rgba(255,71,87,.5)}
+h2{color:#fff;font-weight:600;margin:25px 0 15px;background:rgba(255,255,255,.1);display:inline-block;padding:5px 20px;border-radius:30px;font-size:18px;backdrop-filter:blur(5px)}
+
+/* input */
+.input-control-wrapper{display:flex;gap:15px;align-items:stretch;margin-top:10px}
+textarea,#short-out-container{width:100%;margin:10px auto;box-sizing:border-box;background:rgba(255,255,255,.07)!important;color:#00eaff!important;border:1px solid rgba(255,255,255,.15)!important;border-radius:25px;padding:18px 25px;text-shadow:1px 1px 2px rgba(0,0,0,.5);backdrop-filter:blur(8px);transition:.3s;box-shadow:inset 0 2px 10px rgba(0,0,0,.1)}
+textarea{height:300px!important;resize:none;font:16px 'Kanit',monospace;outline:0}
+textarea:focus{background:rgba(255,255,255,.1)!important;border-color:#00eaff!important;box-shadow:0 0 15px rgba(0,234,255,.2);transform:translateY(-2px)}
+textarea::-webkit-scrollbar,#short-out-container::-webkit-scrollbar{width:8px}
+textarea::-webkit-scrollbar-thumb,#short-out-container::-webkit-scrollbar-thumb{background:rgba(0,234,255,.3);border-radius:10px}
+
+/* button */
+button{padding:12px 25px;font-size:14px;font-weight:600;border:0;border-radius:50px!important;cursor:pointer;transition:.3s cubic-bezier(.175,.885,.32,1.275)!important;white-space:nowrap;touch-action:manipulation;text-transform:uppercase;letter-spacing:.5px;box-shadow:0 4px 10px rgba(0,0,0,.2)}
+button:hover{transform:translateY(-2px) scale(1.02);box-shadow:0 8px 20px rgba(0,0,0,.3)}
+button:active{transform:translateY(0)}
 #btnProcess{background:var(--primary);color:#fff}
 #btnPDF,#btnSharePDF,#btnPreviewSheet,.short-out-section .control-group button{background:var(--secondary);color:#fff}
+
+/* job */
 #short-out-container{border:2px solid #e91e63;min-height:100px;max-height:500px;overflow-y:auto;box-shadow:0 4px 6px rgba(0,0,0,.1)}
 .job-item{border-bottom:1px dashed rgba(255,255,255,.3);padding:4px 0}
 .job-text{font-size:17px;line-height:1.25;white-space:pre-wrap}
-#preview-container{display:flex;flex-direction:column;gap:15px;margin-top:15px;width:100%;overflow-x:auto;background:#e9ecef;padding:10px;border-radius:var(--radius);align-items:center}
-.page-wrap{width:842px;height:595px;min-width:842px;background:#fff;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;margin-bottom:20px}
-.slot{position:relative;display:flex;flex-direction:column;justify-content:space-between;padding:15px;background:#fff!important;color:#000!important;font-family:'Kanit Condensed',sans-serif!important;font-weight:800!important;border-radius:10px}
+.page-wrap{width:842px;height:595px;min-width:842px;background:#fff;display:grid;grid-template:1fr 1fr/1fr 1fr;margin-bottom:20px}
+.slot{position:relative;display:flex;flex-direction:column;justify-content:space-between;padding:15px;background:#fff!important;color:#000!important;font:800 16px 'Kanit Condensed',sans-serif!important;border-radius:10px}
 .line-top{display:flex;justify-content:space-between;font-size:18px;font-weight:700}
 .line-top>div:first-child{font-size:24px;font-weight:900}
 .passenger{text-align:center;margin:15px 0 8px;font-size:22px;font-weight:700}
 .route{text-align:center;font-size:16px;margin:0 0 35px}
 .code{position:absolute;right:15px;bottom:10px;font-size:18px;font-weight:700}
+
+/* sections */
 .input-section,.short-out-section{background:rgba(255,255,255,.05)!important;border:1px solid rgba(255,255,255,.1);border-radius:15px;width:95%;max-width:800px;margin:0 auto 20px;text-align:center;padding:15px}
-.price-container{display:flex;gap:4px;background:#222;padding:5px;border-radius:8px;color:#fff;width:100%;box-sizing:border-box}
-.price-card{flex:1;background:#333;padding:5px 2px;border-radius:4px;border-top:3px solid #444;text-align:center}
-.card-title{font-size:10px;font-weight:bold;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.input-row{display:flex;flex-direction:column;gap:3px;align-items:center}
-.input-item{display:flex;align-items:center;gap:2px;font-size:10px}
-.input-item input{width:38px;background:#000;color:#0f0;border:1px solid #555;border-radius:3px;text-align:center;font-size:10px;padding:1px 0}
-.control-group{display:flex;justify-content:center;gap:10px;width:100%}
-.flight-btn{color:#e91e63!important;text-decoration:none;font-weight:bold}
-#price-row{display:none;color:#fff;margin-bottom:10px;justify-content:center;gap:15px}
-#price-row input{width:70px;border-radius:5px;border:0;padding:5px;text-align:center}
-@media(max-width:900px){.input-control-wrapper{flex-direction:column;align-items:stretch}.page-wrap{zoom:.45}button{width:100%}}
+
+/* price */
+.price-container{display:flex;flex-wrap:wrap;gap:8px;background:rgba(30,30,30,.6);backdrop-filter:blur(10px);padding:12px;border-radius:25px;color:#fff;width:100%;border:1px solid rgba(255,255,255,.1)}
+.price-card{flex:1;min-width:85px;background:rgba(255,255,255,.05);padding:10px 5px;border-radius:20px;border-top:4px solid #444;text-align:center;transition:.3s}
+.price-card:hover{background:rgba(255,255,255,.1);transform:translateY(-3px)}
+.card-title{font-size:11px;font-weight:bold;margin-bottom:8px;display:block;color:#00eaff}
+.input-row{display:flex;flex-direction:column;gap:5px;align-items:center}
+.input-item{display:flex;align-items:center;gap:5px;font-size:11px}
+.input-item label{color:#ff00ff}
+.input-item input{width:45px;background:rgba(0,0,0,.3);color:#00ff00;border:1px solid rgba(255,255,255,.2);border-radius:10px;text-align:center;font-size:11px;padding:3px 0;outline:0;transition:.3s}
+.input-item input:focus{border-color:#00eaff;background:#000;box-shadow:0 0 8px rgba(0,234,255,.3)}
+#price-row{display:none;color:#fff;margin-bottom:20px;justify-content:center;gap:15px;background:rgba(255,255,255,.05);padding:15px;border-radius:30px;backdrop-filter:blur(5px);border:1px solid rgba(255,255,255,.1)}
+#price-row input{width:80px;border-radius:50px;border:1px solid rgba(0,234,255,.3);background:rgba(0,0,0,.4);color:#00eaff;padding:8px 12px;text-align:center;font-weight:bold;outline:0;transition:.3s}
+#price-row input:focus{background:#000;border-color:#00eaff;box-shadow:0 0 12px rgba(0,234,255,.4);transform:scale(1.05)}
+#em_to_air,#em_from_air,#em_city,#em_prov{border-radius:10px!important}
+
+/* flight btn */
+.flight-btn{color:#ff4757!important;text-decoration:none;font-weight:bold;background:rgba(255,71,87,.1);padding:5px 15px;border-radius:50px;transition:.3s;display:inline-block;border:1px solid rgba(255,71,87,.2)}
+.flight-btn:hover{background:#ff4757;color:#fff!important;box-shadow:0 4px 12px rgba(255,71,87,.3)}
+
+/* mobile */
+@media(max-width:900px){
+.input-control-wrapper{flex-direction:column;gap:10px}
+.page-wrap{zoom:.45;border-radius:40px;margin:0 auto 20px}
+button{width:100%;padding:15px!important;font-size:16px!important}
+.mode-card-container{grid-template-columns:1fr;gap:15px}
+.mode-card{padding:30px 20px;border-radius:35px}
+#admin-panel{width:85%;padding:20px;border-radius:35px;top:10px}
+#copy-circle{
+ position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+ width:100px;height:80px;background:rgba(0,0,0,.8);color:#fff;
+ border-radius:20%;display:none;align-items:center;justify-content:center;
+ flex-direction:column;z-index:99999;border:2px solid #00eaff;font-size:14px;
+}
+}
 </style>
 </head>
 <body>
-<div id="mode-selection-screen"><h1 style="border:none">เลือกรูปแบบการใช้งาน</h1><div class="mode-card-container"><div class="mode-card m-1" onclick="selectMode(1)"><h2>รถทะเบียน</h2><p>แบบย่อ 📍พื้นที่→📍พื้นที่ ไฟท์บิน</p></div><div class="mode-card m-2" onclick="selectMode(2)"><h2>งานทั่วไป</h2><p>แบบย่อ 2 แถว+1แถว + ราคา + Emoji 🛫</p></div></div></div>
+<div id="mode-selection-screen">
+<h1 style="border:none">เลือกรูปแบบการใช้งาน</h1>
+<div class="mode-card-container">
+<div class="mode-card m-1" onclick="selectMode(1)"><h2>รถทะเบียน</h2><p> Dxxx//xx::xx//#xxx-xx</p></div>
+<div class="mode-card m-2" onclick="selectMode(2)"><h2>งานทั่วไป</h2><p>Xxx(🔥🥶⭐)xx:xx/XXX/#xxx-xx</p></div>
+</div></div>
+
+<div id="status-toast"></div>
+
 <div id="secret-admin-btn"></div>
 <div id="maintenance-screen"><h1 style="color:var(--danger)">🛠️ ปิดปรับปรุงชั่วคราว</h1><p>กำลังอัปเดตระบบ กรุณาลองใหม่ภายหลัง</p></div>
-<center><h1 id="webHeader" onclick="location.reload()">📄 แปลงใบงาน <span id="mode-label"></span> 🗓️</h1></center>
-<div id="admin-panel"><strong>⚙️ แผงควบคุมระบบ</strong><br>สถานะ: <span id="status-text"></span><br><button id="toggle-system" style="background:var(--danger);color:#0000ff;margin-top:5px">เปิด/ปิด การใช้งานระบบ</button></div>
+
+<center><h1 id="webHeader" onclick="location.reload()"> แปลงใบงาน <span id="mode-label"></span> </h1></center>
+
+<div id="admin-panel">
+<strong>⚙️ แผงควบคุมระบบ</strong><br>
+สถานะ: <span id="status-text"></span><br>
+<button id="toggle-system" style="background:var(--danger);color:#0000ff;margin-top:5px">เปิด/ปิด การใช้งานระบบ</button>
+</div>
 
 <div class="input-section">
+
 <div id="price-row" style="display:none;margin-bottom:15px">
 <div class="price-container" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center">
-<div class="price-card" style="border-top-color:#00d4ff;flex:1;min-width:80px"><span class="card-title">🏙️ BK</span><div class="input-row"><div class="input-item"><label>5</label><input type="number" id="p5_bk" value="380"></div><div class="input-item"><label>7</label><input type="number" id="p7_bk" value="480"></div></div></div>
-<div class="price-card" style="border-top-color:#2196F3;flex:1;min-width:80px"><span class="card-title">✈️ S-P</span><div class="input-row"><div class="input-item"><label>5</label><input type="number" id="p5_s_p" value="850"></div><div class="input-item"><label>7</label><input type="number" id="p7_s_p" value="900"></div></div></div>
-<div class="price-card" style="border-top-color:#4CAF50;flex:1;min-width:80px"><span class="card-title">✈️ D-P</span><div class="input-row"><div class="input-item"><label>5</label><input type="number" id="p5_d_p" value="1200"></div><div class="input-item"><label>7</label><input type="number" id="p7_d_p" value="1300"></div></div></div>
-<div class="price-card" style="border-top-color:#ffc107;flex:1;min-width:80px"><span class="card-title">🚗 BK-P</span><div class="input-row"><div class="input-item"><label>5</label><input type="number" id="p5_bk_p" value="1100"></div><div class="input-item"><label>7</label><input type="number" id="p7_bk_p" value="1200"></div></div></div>
-<div class="price-card" style="border-top-color:#9c27b0;flex:1;min-width:80px"><span class="card-title">🐚 HH</span><div class="input-row"><div class="input-item"><label>5</label><input type="number" id="p5_hh" value="1500"></div><div class="input-item"><label>7</label><input type="number" id="p7_hh" value="1600"></div></div></div>
-<div class="price-card" style="border-top-color:#ff5722;flex:1;min-width:120px;background:rgba(255,87,34,.1)"><span class="card-title">🛠️ เส้นทางพิเศษ</span><div class="input-row" style="display:flex;flex-direction:column;gap:2px;align-items:center"><input type="text" id="custom_route" placeholder="เช่น P-HH" style="width:70px;text-align:center;font-size:12px;text-transform:uppercase"><input type="number" id="custom_price" placeholder="ราคา" style="width:70px;text-align:center;font-size:12px"></div></div>
+
+<div class="price-card" style="border-top-color:#00d4ff;flex:1;min-width:80px">
+<span class="card-title">🏙️ BK</span>
+<div class="input-row">
+<div class="input-item"><label>5</label><input type="number" id="p5_bk" value="380"></div>
+<div class="input-item"><label>7</label><input type="number" id="p7_bk" value="480"></div>
+</div></div>
+
+<div class="price-card" style="border-top-color:#2196F3;flex:1;min-width:80px">
+<span class="card-title">✈️ S-P</span>
+<div class="input-row">
+<div class="input-item"><label>5</label><input type="number" id="p5_s_p" value="850"></div>
+<div class="input-item"><label>7</label><input type="number" id="p7_s_p" value="900"></div>
+</div></div>
+
+<div class="price-card" style="border-top-color:#4CAF50;flex:1;min-width:80px">
+<span class="card-title">✈️ D-P</span>
+<div class="input-row">
+<div class="input-item"><label>5</label><input type="number" id="p5_d_p" value="1200"></div>
+<div class="input-item"><label>7</label><input type="number" id="p7_d_p" value="1300"></div>
+</div></div>
+
+<div class="price-card" style="border-top-color:#ffc107;flex:1;min-width:80px">
+<span class="card-title">🚗 BK-P</span>
+<div class="input-row">
+<div class="input-item"><label>5</label><input type="number" id="p5_bk_p" value="1100"></div>
+<div class="input-item"><label>7</label><input type="number" id="p7_bk_p" value="1200"></div>
+</div></div>
+
+<div class="price-card" style="border-top-color:#9c27b0;flex:1;min-width:80px">
+<span class="card-title">🐚 HH</span>
+<div class="input-row">
+<div class="input-item"><label>5</label><input type="number" id="p5_hh" value="1500"></div>
+<div class="input-item"><label>7</label><input type="number" id="p7_hh" value="1600"></div>
+</div></div>
+
+<div class="price-card" style="border-top-color:#ff5722;flex:1;min-width:120px;background:rgba(255,87,34,.1)">
+<span class="card-title">🛠️ เส้นทางพิเศษ</span>
+<div class="input-row" style="display:flex;flex-direction:column;gap:2px;align-items:center">
+<input type="text" id="custom_route" placeholder="เช่น P-HH" style="width:70px;text-align:center;font-size:12px;text-transform:uppercase">
+<input type="number" id="custom_price" placeholder="ราคา" style="width:70px;text-align:center;font-size:12px">
+</div></div>
+
+<div style="background:rgba(255,255,255,.08);padding:15px;border-radius:12px;border:1px solid rgba(255,255,255,.2);margin-bottom:15px">
+<h3 style="color:#00d4ff;font-size:14px;margin:0 0 10px 0;text-align:center">🎨 ตั้งค่า Emoji</h3>
+<div style="display:flex;justify-content:center;gap:15px;flex-wrap:wrap">
+
+<div style="text-align:center"><label style="font-size:11px;color:#aaa">🔥 ส่งสนามบิน</label>
+<input type="text" id="em_to_air" value="🔥" style="width:45px;text-align:center;padding:5px;border-radius:6px;border:1px solid #444;background:#222;color:#fff"></div>
+
+<div style="text-align:center"><label style="font-size:11px;color:#aaa">🥶 รับสนามบิน</label>
+<input type="text" id="em_from_air" value="🥶" style="width:45px;text-align:center;padding:5px;border-radius:6px;border:1px solid #444;background:#222;color:#fff"></div>
+
+<div style="text-align:center"><label style="font-size:11px;color:#aaa">🏙️ ในเมือง</label>
+<input type="text" id="em_city" value="🚗" style="width:45px;text-align:center;padding:5px;border-radius:6px;border:1px solid #444;background:#222;color:#fff"></div>
+
+<div style="text-align:center"><label style="font-size:11px;color:#aaa">⭐ ต่างจังหวัด</label>
+<input type="text" id="em_prov" value="⭐" style="width:45px;text-align:center;padding:5px;border-radius:6px;border:1px solid #444;background:#222;color:#fff"></div>
+
+</div></div>
+
 </div></div>
 
 <div class="input-control-wrapper">
@@ -74,6 +193,7 @@ button{padding:10px 15px;font-size:14px;font-weight:600;border:0;border-radius:v
 <div class="control-group"><button id="btnProcess">⚙️ แปลงใบงาน</button></div>
 <button onclick="clearData()" style="background:#dc3545;color:#fff">🗑️ ล้างข้อมูล</button>
 </div>
+
 <button onclick="location.reload()" style="background:none;color:#fff;text-decoration:underline;border:0;margin-top:10px;opacity:.7">← กลับไปเลือกแบบใหม่</button>
 </div>
 
@@ -81,23 +201,294 @@ button{padding:10px 15px;font-size:14px;font-weight:600;border:0;border-radius:v
 
 <div class="short-out-section">
 <h2>✅ แบบย่อ(ส่งLINE)</h2>
+
 <button onclick="copyShort1()" id="btnCopyMode1" style="display:none;background:#e91e63;color:#fff;width:100%;padding:10px;margin-bottom:10px">✂️ คัดลอกแบบรถทะเบียน</button>
 <button onclick="copyShort2()" id="btnCopyMode2" style="display:none;background:#ff9800;color:#fff;width:100%;padding:10px;margin-bottom:10px">✂️ คัดลอกแบบงานทั่วไป</button>
+
 <div id="short-out-container" style="background:rgba(255,255,255,.05);padding:15px;border-radius:8px;border:1px solid rgba(255,255,255,.2);color:#fff;text-align:left">ผลลัพธ์จะแสดงที่นี่...</div>
 
 <div id="single-row-section" style="display:none;margin-top:30px;border-top:2px dashed #2196F3;padding-top:20px">
-<h2 style="color:#2196F3">✅ แบบย่อแถวเดียว</h2>
-<button onclick="copySingleRow()" style="background:#2196F3;color:#fff;width:100%;padding:10px;margin-bottom:10px">✂️ คัดลอกแบบแถวเดียว</button>
-<div id="single-row-container" style="background:rgba(255,255,255,.05);padding:15px;border-radius:8px;border:2px solid #2196F3;color:#fff;white-space:pre-wrap;text-align:left"></div>
-</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:15px">
+
+<div>
+<h2 style="color:#2196F3;font-size:16px">✅ แบบย่อ</h2>
+<button onclick="copySingleRow()" style="background:#2196F3;color:#fff;width:100%;padding:5px;margin-bottom:5px;border:none;border-radius:2px">✂️ คัดลอกแบบย่อ</button>
+<div id="single-row-container" style="background:rgba(255,255,255,.05);padding:10px;border-radius:8px;border:2px solid #2196F3;color:#fff;white-space:nowrap;overflow-x:auto;height:100px;overflow-y:auto;font-size:11px"></div>
 </div>
 
-<center><h2>🖨️ ใบงาน (STB)</h2></center>
-<div class="control-group" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:800px;margin:0 auto">
-<button id="btnPreviewSheet">👀 ตัวอย่าง (PDF)</button>
-<button id="btnPDF">💾 ดาวน์โหลด PDF</button>
-<button id="btnSharePDF" style="grid-column:span 2">🔗 แชร์ PDF</button>
+<div>
+<h2 style="color:#ffc107;font-size:16px">✅ เลข Order</h2>
+<button onclick="copyOrderOnly()" style="background:#ffc107;color:#000;width:100%;padding:5px;margin-bottom:5px;border:none;border-radius:2px;font-weight:bold">✂️ คัดลอกOrder</button>
+<div id="order-only-container" style="background:rgba(255,255,255,.05);padding:10px;border-radius:8px;border:2px solid #ffc107;color:#fff;white-space:nowrap;height:100px;overflow-y:auto;font-size:11px"></div>
 </div>
+
+</div></div></div>
+
+<div id="bts-section">
+    <center><h2>🖨️ ใบงาน (BTS)</h2></center>
+
+    <div style="text-align: center; width: 100%; margin: 15px 0;">
+        <div class="control-group" style="display: inline-flex; justify-content: center; gap: 8px;">
+            <button id="btnPreviewSheet" style="width: auto !important; padding: 6px 12px !important; font-size: 13px !important; min-width: unset !important; flex: none !important;">
+                👀 ตัวอย่าง
+            </button>
+            <button id="btnPDF" style="width: auto !important; padding: 6px 12px !important; font-size: 13px !important; min-width: unset !important; flex: none !important;">
+                💾 ดาวน์โหลด
+            </button>
+            <button id="btnSharePDF" style="width: auto !important; padding: 6px 12px !important; font-size: 13px !important; min-width: unset !important; flex: none !important;">
+                🔗 แชร์
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8" /><title>Job Parser Multi-Mode (Fixed v1)</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700;800;900&family=Kanit+Condensed:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--primary:#007bff;--secondary:#28a745;--radius:8px}
+body{margin:0;font-family:'Kanit',sans-serif;background:url(https://lh3.googleusercontent.com/d/1OjWRJPb3Efxdw5Tz3t5DSA342Ad0HJQe) center/cover fixed no-repeat}
+
+/* screens */
+#mode-selection-screen,#maintenance-screen{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+#mode-selection-screen{background:rgba(0,0,0,.8);backdrop-filter:blur(10px);z-index:10000}
+#maintenance-screen{display:none;background:#fff;z-index:9998}
+
+/* admin */
+#admin-panel{display:none;position: relative;inset:0;margin:auto;height:fit-content;width:fit-content;background:rgba(255,255,255,.9);backdrop-filter:blur(10px);border-radius:50px;box-shadow:0 15px 35px rgba(0,0,0,.2);border:1px solid rgba(255,255,255,.4);text-align:center;min-width:250px;z-index:9999;}
+#toggle-system{width:70%;padding:10px;border-radius:20px;border:0;color:#fff;font-weight:bold;cursor:pointer;margin-top:10px;transition:.3s}
+#secret-admin-btn{position:fixed;right:10px;bottom:10px;width:70px;height:70px;border-radius:50%;background:rgba(0,0,0,.01);z-index:10000;cursor:pointer}
+
+/* mode */
+.mode-card-container{display:grid;grid-template-columns:1fr 1fr;gap:25px;width:95%;max-width:600px;margin-top:30px}
+.mode-card{padding:50px 20px;border-radius:40px;color:#fff;text-align:center;cursor:pointer;border:2px solid rgba(255,255,255,.1);backdrop-filter:blur(5px);transition:.4s cubic-bezier(.175,.885,.32,1.275);position:relative;overflow:hidden}
+.mode-card:hover{transform:scale(1.05);border-color:rgba(255,255,255,.8);box-shadow:0 15px 30px rgba(0,0,0,.3)}
+.m-1{background:linear-gradient(135deg,#ff4081,#e91e63);box-shadow:0 10px 20px rgba(233,30,99,.3)}
+.m-2{background:linear-gradient(135deg,#00d2ff,#2196f3);box-shadow:0 10px 20px rgba(33,150,243,.3)}
+.mode-card h2{margin:0;font-size:24px;font-weight:800;text-shadow:0 2px 4px rgba(0,0,0,.2)}
+.mode-card p{font-size:14px;opacity:.9;margin-top:10px}
+
+/* heading */
+h1{color:#fff!important;font-weight:800;margin:10px 0 25px;padding:10px 25px;background:linear-gradient(135deg,#ff4757,#ff6b81);border-radius:50px;display:inline-block;font-size:24px;text-shadow:1px 1px 4px rgba(0,0,0,.3);box-shadow:0 4px 15px rgba(255,71,87,.3);cursor:pointer;user-select:none;border:none!important;transition:.3s}
+h1:hover{transform:scale(1.03);box-shadow:0 6px 20px rgba(255,71,87,.5)}
+h2{color:#fff;font-weight:600;margin:25px 0 15px;background:rgba(255,255,255,.1);display:inline-block;padding:5px 20px;border-radius:30px;font-size:18px;backdrop-filter:blur(5px)}
+
+/* input */
+.input-control-wrapper{display:flex;gap:15px;align-items:stretch;margin-top:10px}
+textarea,#short-out-container{width:100%;margin:10px auto;box-sizing:border-box;background:rgba(255,255,255,.07)!important;color:#00eaff!important;border:1px solid rgba(255,255,255,.15)!important;border-radius:25px;padding:18px 25px;text-shadow:1px 1px 2px rgba(0,0,0,.5);backdrop-filter:blur(8px);transition:.3s;box-shadow:inset 0 2px 10px rgba(0,0,0,.1)}
+textarea{height:300px!important;resize:none;font:16px 'Kanit',monospace;outline:0}
+textarea:focus{background:rgba(255,255,255,.1)!important;border-color:#00eaff!important;box-shadow:0 0 15px rgba(0,234,255,.2);transform:translateY(-2px)}
+textarea::-webkit-scrollbar,#short-out-container::-webkit-scrollbar{width:8px}
+textarea::-webkit-scrollbar-thumb,#short-out-container::-webkit-scrollbar-thumb{background:rgba(0,234,255,.3);border-radius:10px}
+
+/* button */
+button{padding:12px 25px;font-size:14px;font-weight:600;border:0;border-radius:50px!important;cursor:pointer;transition:.3s cubic-bezier(.175,.885,.32,1.275)!important;white-space:nowrap;touch-action:manipulation;text-transform:uppercase;letter-spacing:.5px;box-shadow:0 4px 10px rgba(0,0,0,.2)}
+button:hover{transform:translateY(-2px) scale(1.02);box-shadow:0 8px 20px rgba(0,0,0,.3)}
+button:active{transform:translateY(0)}
+#btnProcess{background:var(--primary);color:#fff}
+#btnPDF,#btnSharePDF,#btnPreviewSheet,.short-out-section .control-group button{background:var(--secondary);color:#fff}
+
+/* job */
+#short-out-container{border:2px solid #e91e63;min-height:100px;max-height:500px;overflow-y:auto;box-shadow:0 4px 6px rgba(0,0,0,.1)}
+.job-item{border-bottom:1px dashed rgba(255,255,255,.3);padding:4px 0}
+.job-text{font-size:17px;line-height:1.25;white-space:pre-wrap}
+.page-wrap{width:842px;height:595px;min-width:842px;background:#fff;display:grid;grid-template:1fr 1fr/1fr 1fr;margin-bottom:20px}
+.slot{position:relative;display:flex;flex-direction:column;justify-content:space-between;padding:15px;background:#fff!important;color:#000!important;font:800 16px 'Kanit Condensed',sans-serif!important;border-radius:10px}
+.line-top{display:flex;justify-content:space-between;font-size:18px;font-weight:700}
+.line-top>div:first-child{font-size:24px;font-weight:900}
+.passenger{text-align:center;margin:15px 0 8px;font-size:22px;font-weight:700}
+.route{text-align:center;font-size:16px;margin:0 0 35px}
+.code{position:absolute;right:15px;bottom:10px;font-size:18px;font-weight:700}
+
+/* sections */
+.input-section,.short-out-section{background:rgba(255,255,255,.05)!important;border:1px solid rgba(255,255,255,.1);border-radius:15px;width:95%;max-width:800px;margin:0 auto 20px;text-align:center;padding:15px}
+
+/* price */
+.price-container{display:flex;flex-wrap:wrap;gap:8px;background:rgba(30,30,30,.6);backdrop-filter:blur(10px);padding:12px;border-radius:25px;color:#fff;width:100%;border:1px solid rgba(255,255,255,.1)}
+.price-card{flex:1;min-width:85px;background:rgba(255,255,255,.05);padding:10px 5px;border-radius:20px;border-top:4px solid #444;text-align:center;transition:.3s}
+.price-card:hover{background:rgba(255,255,255,.1);transform:translateY(-3px)}
+.card-title{font-size:11px;font-weight:bold;margin-bottom:8px;display:block;color:#00eaff}
+.input-row{display:flex;flex-direction:column;gap:5px;align-items:center}
+.input-item{display:flex;align-items:center;gap:5px;font-size:11px}
+.input-item label{color:#ff00ff}
+.input-item input{width:45px;background:rgba(0,0,0,.3);color:#00ff00;border:1px solid rgba(255,255,255,.2);border-radius:10px;text-align:center;font-size:11px;padding:3px 0;outline:0;transition:.3s}
+.input-item input:focus{border-color:#00eaff;background:#000;box-shadow:0 0 8px rgba(0,234,255,.3)}
+#price-row{display:none;color:#fff;margin-bottom:20px;justify-content:center;gap:15px;background:rgba(255,255,255,.05);padding:15px;border-radius:30px;backdrop-filter:blur(5px);border:1px solid rgba(255,255,255,.1)}
+#price-row input{width:80px;border-radius:50px;border:1px solid rgba(0,234,255,.3);background:rgba(0,0,0,.4);color:#00eaff;padding:8px 12px;text-align:center;font-weight:bold;outline:0;transition:.3s}
+#price-row input:focus{background:#000;border-color:#00eaff;box-shadow:0 0 12px rgba(0,234,255,.4);transform:scale(1.05)}
+#em_to_air,#em_from_air,#em_city,#em_prov{border-radius:10px!important}
+
+/* flight btn */
+.flight-btn{color:#ff4757!important;text-decoration:none;font-weight:bold;background:rgba(255,71,87,.1);padding:5px 15px;border-radius:50px;transition:.3s;display:inline-block;border:1px solid rgba(255,71,87,.2)}
+.flight-btn:hover{background:#ff4757;color:#fff!important;box-shadow:0 4px 12px rgba(255,71,87,.3)}
+
+/* mobile */
+@media(max-width:900px){
+.input-control-wrapper{flex-direction:column;gap:10px}
+.page-wrap{zoom:.45;border-radius:40px;margin:0 auto 20px}
+button{width:100%;padding:15px!important;font-size:16px!important}
+.mode-card-container{grid-template-columns:1fr;gap:15px}
+.mode-card{padding:30px 20px;border-radius:35px}
+#admin-panel{width:85%;padding:20px;border-radius:35px;top:10px}
+#copy-circle{
+ position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+ width:100px;height:80px;background:rgba(0,0,0,.8);color:#fff;
+ border-radius:20%;display:none;align-items:center;justify-content:center;
+ flex-direction:column;z-index:99999;border:2px solid #00eaff;font-size:14px;
+}
+}
+</style>
+</head>
+<body>
+<div id="mode-selection-screen">
+<h1 style="border:none">เลือกรูปแบบการใช้งาน</h1>
+<div class="mode-card-container">
+<div class="mode-card m-1" onclick="selectMode(1)"><h2>รถทะเบียน</h2><p> Dxxx//xx::xx//#xxx-xx</p></div>
+<div class="mode-card m-2" onclick="selectMode(2)"><h2>งานทั่วไป</h2><p>Xxx(🔥🥶⭐)xx:xx/XXX/#xxx-xx</p></div>
+</div></div>
+
+<div id="status-toast"></div>
+
+<div id="secret-admin-btn"></div>
+<div id="maintenance-screen"><h1 style="color:var(--danger)">🛠️ ปิดปรับปรุงชั่วคราว</h1><p>กำลังอัปเดตระบบ กรุณาลองใหม่ภายหลัง</p></div>
+
+<center><h1 id="webHeader" onclick="location.reload()"> แปลงใบงาน <span id="mode-label"></span> </h1></center>
+
+<div id="admin-panel">
+<strong>⚙️ แผงควบคุมระบบ</strong><br>
+สถานะ: <span id="status-text"></span><br>
+<button id="toggle-system" style="background:var(--danger);color:#0000ff;margin-top:5px">เปิด/ปิด การใช้งานระบบ</button>
+</div>
+
+<div class="input-section">
+
+<div id="price-row" style="display:none;margin-bottom:15px">
+<div class="price-container" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center">
+
+<div class="price-card" style="border-top-color:#00d4ff;flex:1;min-width:80px">
+<span class="card-title">🏙️ BK</span>
+<div class="input-row">
+<div class="input-item"><label>5</label><input type="number" id="p5_bk" value="380"></div>
+<div class="input-item"><label>7</label><input type="number" id="p7_bk" value="480"></div>
+</div></div>
+
+<div class="price-card" style="border-top-color:#2196F3;flex:1;min-width:80px">
+<span class="card-title">✈️ S-P</span>
+<div class="input-row">
+<div class="input-item"><label>5</label><input type="number" id="p5_s_p" value="850"></div>
+<div class="input-item"><label>7</label><input type="number" id="p7_s_p" value="900"></div>
+</div></div>
+
+<div class="price-card" style="border-top-color:#4CAF50;flex:1;min-width:80px">
+<span class="card-title">✈️ D-P</span>
+<div class="input-row">
+<div class="input-item"><label>5</label><input type="number" id="p5_d_p" value="1200"></div>
+<div class="input-item"><label>7</label><input type="number" id="p7_d_p" value="1300"></div>
+</div></div>
+
+<div class="price-card" style="border-top-color:#ffc107;flex:1;min-width:80px">
+<span class="card-title">🚗 BK-P</span>
+<div class="input-row">
+<div class="input-item"><label>5</label><input type="number" id="p5_bk_p" value="1100"></div>
+<div class="input-item"><label>7</label><input type="number" id="p7_bk_p" value="1200"></div>
+</div></div>
+
+<div class="price-card" style="border-top-color:#9c27b0;flex:1;min-width:80px">
+<span class="card-title">🐚 HH</span>
+<div class="input-row">
+<div class="input-item"><label>5</label><input type="number" id="p5_hh" value="1500"></div>
+<div class="input-item"><label>7</label><input type="number" id="p7_hh" value="1600"></div>
+</div></div>
+
+<div class="price-card" style="border-top-color:#ff5722;flex:1;min-width:120px;background:rgba(255,87,34,.1)">
+<span class="card-title">🛠️ เส้นทางพิเศษ</span>
+<div class="input-row" style="display:flex;flex-direction:column;gap:2px;align-items:center">
+<input type="text" id="custom_route" placeholder="เช่น P-HH" style="width:70px;text-align:center;font-size:12px;text-transform:uppercase">
+<input type="number" id="custom_price" placeholder="ราคา" style="width:70px;text-align:center;font-size:12px">
+</div></div>
+
+<div style="background:rgba(255,255,255,.08);padding:15px;border-radius:12px;border:1px solid rgba(255,255,255,.2);margin-bottom:15px">
+<h3 style="color:#00d4ff;font-size:14px;margin:0 0 10px 0;text-align:center">🎨 ตั้งค่า Emoji</h3>
+<div style="display:flex;justify-content:center;gap:15px;flex-wrap:wrap">
+
+<div style="text-align:center"><label style="font-size:11px;color:#aaa">🔥 ส่งสนามบิน</label>
+<input type="text" id="em_to_air" value="🔥" style="width:45px;text-align:center;padding:5px;border-radius:6px;border:1px solid #444;background:#222;color:#fff"></div>
+
+<div style="text-align:center"><label style="font-size:11px;color:#aaa">🥶 รับสนามบิน</label>
+<input type="text" id="em_from_air" value="🥶" style="width:45px;text-align:center;padding:5px;border-radius:6px;border:1px solid #444;background:#222;color:#fff"></div>
+
+<div style="text-align:center"><label style="font-size:11px;color:#aaa">🏙️ ในเมือง</label>
+<input type="text" id="em_city" value="🚗" style="width:45px;text-align:center;padding:5px;border-radius:6px;border:1px solid #444;background:#222;color:#fff"></div>
+
+<div style="text-align:center"><label style="font-size:11px;color:#aaa">⭐ ต่างจังหวัด</label>
+<input type="text" id="em_prov" value="⭐" style="width:45px;text-align:center;padding:5px;border-radius:6px;border:1px solid #444;background:#222;color:#fff"></div>
+
+</div></div>
+
+</div></div>
+
+<div class="input-control-wrapper">
+<textarea id="input" placeholder="วางข้อมูลใบงาน..."></textarea>
+<div class="control-group"><button id="btnProcess">⚙️ แปลงใบงาน</button></div>
+<button onclick="clearData()" style="background:#dc3545;color:#fff">🗑️ ล้างข้อมูล</button>
+</div>
+
+<button onclick="location.reload()" style="background:none;color:#fff;text-decoration:underline;border:0;margin-top:10px;opacity:.7">← กลับไปเลือกแบบใหม่</button>
+</div>
+
+<hr>
+
+<div class="short-out-section">
+<h2>✅ แบบย่อ(ส่งLINE)</h2>
+
+<button onclick="copyShort1()" id="btnCopyMode1" style="display:none;background:#e91e63;color:#fff;width:100%;padding:10px;margin-bottom:10px">✂️ คัดลอกแบบรถทะเบียน</button>
+<button onclick="copyShort2()" id="btnCopyMode2" style="display:none;background:#ff9800;color:#fff;width:100%;padding:10px;margin-bottom:10px">✂️ คัดลอกแบบงานทั่วไป</button>
+
+<div id="short-out-container" style="background:rgba(255,255,255,.05);padding:15px;border-radius:8px;border:1px solid rgba(255,255,255,.2);color:#fff;text-align:left">ผลลัพธ์จะแสดงที่นี่...</div>
+
+<div id="single-row-section" style="display:none;margin-top:30px;border-top:2px dashed #2196F3;padding-top:20px">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:15px">
+
+<div>
+<h2 style="color:#2196F3;font-size:16px">✅ แบบย่อ</h2>
+<button onclick="copySingleRow()" style="background:#2196F3;color:#fff;width:100%;padding:5px;margin-bottom:5px;border:none;border-radius:2px">✂️ คัดลอกแบบย่อ</button>
+<div id="single-row-container" style="background:rgba(255,255,255,.05);padding:10px;border-radius:8px;border:2px solid #2196F3;color:#fff;white-space:nowrap;overflow-x:auto;height:100px;overflow-y:auto;font-size:11px"></div>
+</div>
+
+<div>
+<h2 style="color:#ffc107;font-size:16px">✅ เลข Order</h2>
+<button onclick="copyOrderOnly()" style="background:#ffc107;color:#000;width:100%;padding:5px;margin-bottom:5px;border:none;border-radius:2px;font-weight:bold">✂️ คัดลอกOrder</button>
+<div id="order-only-container" style="background:rgba(255,255,255,.05);padding:10px;border-radius:8px;border:2px solid #ffc107;color:#fff;white-space:nowrap;height:100px;overflow-y:auto;font-size:11px"></div>
+</div>
+
+</div></div></div>
+
+<div id="bts-section">
+    <center><h2>🖨️ ใบงาน (BTS)</h2></center>
+
+    <div style="text-align: center; width: 100%; margin: 15px 0;">
+        <div class="control-group" style="display: inline-flex; justify-content: center; gap: 8px;">
+            <button id="btnPreviewSheet" style="width: auto !important; padding: 6px 12px !important; font-size: 13px !important; min-width: unset !important; flex: none !important;">
+                👀 ตัวอย่าง
+            </button>
+            <button id="btnPDF" style="width: auto !important; padding: 6px 12px !important; font-size: 13px !important; min-width: unset !important; flex: none !important;">
+                💾 ดาวน์โหลด
+            </button>
+            <button id="btnSharePDF" style="width: auto !important; padding: 6px 12px !important; font-size: 13px !important; min-width: unset !important; flex: none !important;">
+                🔗 แชร์
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<div id="copy-circle"><span>copy</span><br>คัดลอกแล้ว</div>
 <div id="preview-container"></div>
 </body>
 <script>
@@ -115,12 +506,23 @@ function selectMode(mode) {
     document.getElementById('btnCopyMode2').style.display = (mode === 2 ? 'block' : 'none');
     document.getElementById('price-row').style.display = (mode === 2 ? 'block' : 'none');
     document.getElementById('single-row-section').style.display = (mode === 2 ? 'block' : 'none');
+
+    // --- ส่วนที่สั่งซ่อนปุ่ม BTS และ กระดาษ A4 ---
+    const btsSection = document.getElementById('bts-section');
+    const previewContainer = document.getElementById('preview-container'); // ตัวกระดาษขาวๆ
+
+    if (mode === 1) {
+        if (btsSection) btsSection.style.display = 'block';
+        if (previewContainer) previewContainer.style.display = 'block'; // โชว์กระดาษในแบบ 1
+    } else {
+        if (btsSection) btsSection.style.display = 'none';
+        if (previewContainer) previewContainer.style.display = 'none'; // ซ่อนกระดาษในแบบ 2
+    }
 }
 const ROAD_MAP = {"srinakarin":"ศรีนครินทร์","ratchada":"รัชดา","sukhumvit":"สุขุมวิท","ladprao":"ลาดพร้าว","vibhavadi":"วิภาวดี","phahonyothin":"พหลโยธิน","phetchaburi":"เพชรบุรี","ramkhamhaeng":"รามคำแหง","sathon":"สาทร","silom":"สีลม"};
 const thaiMap = {"charoen krung":"เจริญกรุง","bangkorlaem":"บางคอแหลม","sathon":"สาทร","ratchaprarop":"ราชปรารภ","ratchadamri":"ราชดำริ","ratchada":"รัชดา","silom":"สีลม","sukhumvit":"สุขุมวิท","lang suan":"หลังสวน","pathum wan":"ปทุมวัน","phaya thai":"พญาไท/ราชเทวี","ratchathewi":"พญาไท/ราชเทวี","phetchaburi":"เพชรบุรี","huai khwang":"ห้วยขวาง","bang rak":"บางรัก","khlong toei":"คลองเตย","wattana":"วัฒนา","prawet":"ประเวศ","bang na":"บางนา","on nut":"อ่อนนุช","suan luang":"สวนหลวง","yan nawa":"ยานนาวา","chatuchak":"จตุจักร","don mueang":"ดอนเมือง","lat phrao":"ลาดพร้าว","thong lo":"ทองหล่อ","ekkamai":"เอกมัย","din daeng":"ดินแดง","bangsue":"บางซื่อ","bangkapi":"บางกะปิ","minburi":"มีนบุรี","khlong san":"คลองสาน","ramkhamhaeng":"รามคำแหง","bangbon":"บางบอน","bangkrachao":"บางกระเจ้า","samsen":"สามเสน","nonthaburi":"นนทบุรี","pathumthani":"ปทุมธานี","samutprakan":"สมุทรปราการ","pattaya":"พัทยา","rayong":"ระยอง","hua hin":"หัวหิน","pak kret":"ปากเกร็ด","chaeng wattana":"แจ้งวัฒนะ","bang yai":"บางใหญ่","lam luk ka":"ลำลูกกา"};
 const ZIP_MAP = {"10100":"ป้อมปราบ/สัมพันธวงศ์","10110":"วัฒนา/คลองเตย","10120":"บางคอแหลม/สาทร/ยานนาวา","10140":"ราษฎร์บูรณะ/ทุ่งครุ","10150":"จอมทอง/บางขุนเทียน","10160":"บางแค/ภาษีเจริญ","10170":"ตลิ่งชัน/ทวีวัฒนา","10200":"พระนคร/ราชดำเนิน","10210":"ดอนเมือง/หลักสี่","10220":"สายไหม/บางเขน","10230":"คันนายาว/บึงกุ่ม","10240":"บางกะปิ","10250":"สวนหลวง/ประเวศ","10260":"บางนา/อุดมสุข","10270":"สมุทรปราการ/เมือง","10310":"ห้วยขวาง/รัชดา","10330":"ปทุมวัน/สยาม","10400":"พญาไท/ราชเทวี","10500":"บางรัก/สีลม","10510":"มีนบุรี","10520":"ลาดกระบัง","10540":"บางพลี/กิ่งแก้ว","10560":"บางเสาธง","10600":"คลองสาน/ธนบุรี","10700":"บางพลัด","10800":"บางซื่อ","10900":"จตุจักร","11000":"เมืองนนทบุรี","11110":"บางบัวทอง","11120":"ปากเกร็ด","11130":"บางกรวย","11140":"บางใหญ่","12000":"เมืองปทุมธานี","12120":"คลองหลวง","12130":"รังสิต/ลำลูกกา","12150":"คูคต/สายไหม","20150":"พัทยา/บางละมุง","20260":"พัทยา/จอมเทียน","20180":"ห้วยใหญ่/จอมเทียน","21140":"ระยอง/บ่อวิน/ปลวกแดง","21000":"เมืองระยอง","77110":"หัวหิน","76120":"ชะอำ"};
 const PRIORITY_AREAS = {"ศรีนครินทร์":/srinakarin|ศรีนครินทร์/i,"ลาดพร้าว/บางกะปิ":/centara grand ladprao|ladprao|lat phrao|ลาดพร้าว|bang kapi|บางกะปิ/i,"พัทยา":/pattaya|jomtien|naklua|bang lamung|พัทยา|จอมเทียน|นาเกลือ|บางละมุง|ศรีราชา|sriracha|บางแสน|bang saen/i,"ระยอง/บ่อวิน":/rayong|bowin|pluak daeng|ระยอง|บ่อวิน|ปลวกแดง|จันทบุรี|chanthaburi/i,"หัวหิน":/hua hin|huahin|market village|cicada|หัวหิน/i,"ชะอำ":/cha-am|cha am|chaam|ชะอำ/i,"สยาม":/siam|paragon|สยาม/i,"เซ็นทรัลเวิลด์":/centralworld|central world|เซ็นทรัลเวิลด์|centara grand at centralworld/i,"ชิดลม/หลังสวน":/phloen chit|chidlom|langsuan|lang suan|เพลินจิต|ชิดลม|หลังสวน/i,"ราชดำริ":/ratchadamri|ราชดำริ|st. regis|waldorf/i,"วิทยุ":/wireless road|ถนนวิทยุ|conrad|embassy/i,"ประตูน้ำ":/pratunam|ประตูน้ำ|baiyoke/i,"พญาไท/ราชเทวี":/phaya thai|ratchathewi|พญาไท|ราชเทวี/i,"บรรทัดทอง":/banthat thong|banthatthong|บรรทัดทอง/i,"นานา":/nana|นานา|sukhumvit 4|sukhumvit 11/i,"อโศก":/asoke|asok|อโศก|terminal 21/i,"พร้อมพงษ์":/phrom phong|emquartier|emporium|พร้อมพงษ์|sukhumvit 24/i,"ทองหล่อ":/thonglo|thong lo|ทองหล่อ|sukhumvit 55/i,"เอกมัย":/ekkamai|เอกมัย|sukhumvit 63/i,"พระราม 4":/rama 4|พระราม 4|q sirikit/i,"อ่อนนุช":/onnut|on nut|อ่อนนุช/i,"ปุณณวิถี":/punna withi|ปุณณวิถี/i,"บางจาก":/bang chak|บางจาก/i,"อุดมสุข":/udomsuk|อุดมสุข/i,"บางนา":/bang na|บางนา|bang na-trad/i,"แบริ่ง/ลาซาล":/bearing|แบริ่ง|lasalle|ลาซาล/i,"สีลม":/silom|สีลม/i,"สาทร":/sathon|sathorn|สาทร/i,"สุรวงศ์/บางรัก":/surawong|bang rak|บางรัก|crowne plaza/i,"เจริญกรุง":/charoen krung|เจริญกรุง/i,"ริมแม่น้ำ/ไอคอนสยาม":/riverside|shangri-la|peninsula|iconsiam|icon siam|charoen nakhon/i,"เยาวราช/ข้าวสาร":/yaowarat|khaosan|เยาวราช|ข้าวสาร/i,"สามเสน":/samsen|สามเสน/i,"มักกะสัน":/makkasan|makkasan|มักกะสัน/i,"เพชรบุรีตัดใหม่":/new petchaburi|เพชรบุรีตัดใหม่/i,"เพชรบุรี":/petchaburi|เพชรบุรี/i,"พระราม 9":/rama 9|พระราม 9|fortune town/i,"รัชดา":/ratchada|รัชดา|huai khwang|ห้วยขวาง/i,"รามคำแหง":/ramkhamhaeng|รามคำแหง/i,"จตุจักร/หมอชิต":/chatuchak|mo chit|หมอชิต/i,"อารีย์/สนามเป้า":/ ari |ari station|sanam pao|อารีย์|สนามเป้า/i,"พระราม 3":/rama 3|พระราม 3/i,"พระราม 2":/rama 2|rama ii|บางขุนเทียน|bang khun thian/i,"พระประแดง":/phra pradaeng|พระประแดง/i,"สำโรง":/samrong|สำโรง/i,"พัฒนาการ":/pattanakarn|พัฒนาการ/i,"กิ่งแก้ว/บางพลี":/kingkaew|king kaew|กิ่งแก้ว|bang phli|บางพลี/i,"บางปู/บางเสาธง":/bang pu|bang sao thong|บางเสาธง/i,"ปิ่นเกล้า/ตลิ่งชัน":/pinklao|ปิ่นเกล้า|taling chan|ตลิ่งชัน/i,"ราชพฤกษ์/ฝั่งธน":/ratchaphruek|ราชพฤกษ์/i,"บางซื่อ":/bang sue|บางซื่อ|bang son|บางซ่อน/i,"งามวงศ์วาน":/ngamwongwan|งามวงศ์วาน/i,"เมืองนนทบุรี":/muang nonthaburi|เมืองนนทบุรี/i,"ปากเกร็ด/เมืองทอง":/pak kret|ปากเกร็ด|แจ้งวัฒนะ|chaeng wattana|muang thong|เมืองทอง|impact|อิมแพ็ค/i,"บางใหญ่":/bang yai|บางใหญ่|บางบัวทอง|bang bua thong/i,"รังสิต/ลำลูกกา":/rangsit|รังสิต|future park|lam luk ka|ลำลูกกา|คูคต/i,"คลองหลวง":/khlong luang|ธรรมศาสตร์/i,"ศูนย์ราชการ":/government complex|ศูนย์ราชการ/i,"ตจว./อื่นๆ":/นครปฐม|nakhon pathom|สมุทรสาคร|samut sakhon|จันทบุรี|chanthaburi|กาญจนบุรี|kanchanaburi|อยุธยา|ayutthaya|เขาใหญ่|khao yai|นครนายก|nakhon nayok|อัมพวา|amphawa|แม่กลอง|mae klong/i};
-
 function getAreaForShort(text){
     if(!text)return"ระบุพื้นที่";
     const t=text.toLowerCase().replace(/langsuan/g,'lang suan');
@@ -151,10 +553,39 @@ const MAP = t => {
   const x = (t || "").toLowerCase();
   for (const [c, r] of MAP_RULES) if (r.test(x)) return c;
   return "BK";
-};function updateUI(){document.getElementById("maintenance-screen").style.display=(isSystemActive||isAdmin)?"none":"flex";document.getElementById("admin-panel").style.display=isAdmin?"block":"none";const st=document.getElementById("status-text");if(st){st.innerText=isSystemActive?"🟢 เปิดใช้งานปกติ":"🔴 ปิดระบบ";st.style.color=isSystemActive?"green":"red"}}
-document.getElementById("secret-admin-btn").ondblclick=()=>{isAdmin=!isAdmin;localStorage.setItem("isAdmin",isAdmin);alert(isAdmin?"🔓 โหมด Admin: เปิด":"🔒 โหมด Admin: ปิด");updateUI()};
-document.getElementById("toggle-system").onclick=async()=>{const nextStatus=isSystemActive?"OFF":"ON";if(!confirm("คุณต้องการ "+(nextStatus==="ON"?"เปิด":"ปิด")+" ระบบใช่หรือไม่?"))return;document.getElementById("status-text").innerText="⏳ กำลังเปิดปิดใช้งาน (Online)...";const f=new FormData();f.append('type','updateStatus');f.append('status',nextStatus);try{await fetch(WEB_APP_URL,{method:'POST',body:f,mode:'no-cors'});setTimeout(()=>{isSystemActive=(nextStatus==="ON");updateUI();alert("ระบบ (Online)สำเร็จ!");},800);}catch(e){alert("Error: "+e)}};
+};
 
+
+function updateUI(){
+  const m=document.getElementById("maintenance-screen"), a=document.getElementById("admin-panel"), st=document.getElementById("status-text"), t=document.getElementById("toggle-system");
+  if(m) m.style.display=(isSystemActive||isAdmin)?"none":"flex";
+  if(a) a.style.display=isAdmin?"block":"none";
+  if(st){
+    st.innerHTML = isSystemActive ? "<b>● Online</b>" : "<b>● Offline</b>";
+    st.style.color = isSystemActive ? "#28a745" : "#dc3545";
+  }
+  if(t) t.style.background = isSystemActive ? "#dc3545" : "#28a745"; // สลับสีปุ่ม แดง/เขียว
+}
+
+// ปุ่มลับ Double Click เด้ง alert
+document.getElementById("secret-admin-btn").ondblclick=()=>{
+  isAdmin=!isAdmin; localStorage.setItem("isAdmin",isAdmin);
+  alert(isAdmin?"🔓 แอดมิน: 🟢เปิด":"🔒 แอดมิน: 🔴ปิด"); updateUI();
+};
+
+// ปุ่มสลับสถานะ เด้ง alert
+document.getElementById("toggle-system").onclick=async()=>{
+  const nextStatus=isSystemActive?"OFF":"ON", label=nextStatus==="ON"?"เปิด":"ปิด";
+  if(!confirm(`ยืนยันการ [${label}] ระบบ?`)) return;
+  document.getElementById("status-text").innerText="⏳ โปรดรอ...";
+  const f=new FormData(); f.append('type','updateStatus'); f.append('status',nextStatus);
+  try{
+    await fetch(WEB_APP_URL,{method:'POST',body:f,mode:'no-cors'});
+    setTimeout(()=>{ isSystemActive=(nextStatus==="ON"); updateUI(); alert("ระบบเปลี่ยนสถานะสำเร็จ!"); },800);
+  }catch(e){ alert("Error: "+e); updateUI(); }
+};
+
+updateUI();
 function mapsLink(a){if(!a)return"#";let q=a.replace(/'/g,"").replace(/\n/g," ");const t=a.toLowerCase();if(/suvarnabhumi|bkk|สุวรรณภูมิ/.test(t))q="Suvarnabhumi Airport";if(/don mueang|dmk|ดอนเมือง/.test(t))q="Don Mueang Airport";return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;}
 function flightLink(f){if(!f)return"#";const cleanFlight=f.trim().replace(/\s+/g,'');return `intent://www.flightradar24.com/data/flights/${cleanFlight}#Intent;scheme=https;package=com.flightradar24free;end`;}
 
@@ -163,106 +594,156 @@ function calculatePrice(f,t,s){let r=(f+"-"+t).toUpperCase(),v=(t+"-"+f).toUpper
 
 function getCode(b){const raw=b.match(/【接驳编码code】(.*)/)||b.match(/code[:：]?\s*(.*)/i);if(!raw)return"";return raw[1].trim().match(/[0-9A-Za-z]+/)?.[0]||""}
 
-const getEmoji = r => { 
-    r = (r || "").toUpperCase(); 
-    return (!(/^(BK|PT|NB|SP|S|D)-(BK|PT|NB|SP|S|D)$/.test(r)) || /P|HH|CA|RY|KC|AY/.test(r)) ? "⭐" : /^(S|D)-/.test(r) ? "🥶" : /-(S|D)$/.test(r) ? "🔥" : "🚗"; 
+const getCustomEmoji=r=>{
+r=(r||"").toUpperCase();
+const g=i=>document.getElementById(i)?.value,
+tA=g("em_to_air")||"🔥",
+fA=g("em_from_air")||"🥶",
+cy=g("em_city")||"🚗",
+pv=g("em_prov")||"⭐",
+lc=["BK","PT","NB","SP"],
+[f,t]=r.split("-"),
+isA=x=>x=="S"||x=="D",
+isL=x=>lc.includes(x);
+return(!isL(f)&&!isA(f)||!isL(t)&&!isA(t)||/P|HH|CA|RY|KC|AY/.test(r))?pv:isA(f)&&isL(t)?fA:isL(f)&&isA(t)?tA:cy;
 };
 
-function getAllJobData() {
-    let v = document.getElementById("input").value,
-        cr = (document.getElementById('custom_route')?.value || "").replace(/\s+/g, '').toUpperCase(),
-        cp = document.getElementById('custom_price')?.value || 0;
-    if (!v.trim()) return [];
+function getAllJobData(){
+let v=document.getElementById("input").value,
+cr=(document.getElementById("custom_route")?.value||"").replace(/\s+/g,'').toUpperCase(),
+cp=parseFloat(document.getElementById("custom_price")?.value)||0;
+if(!v.trim())return[];
 
-    return v.split(/\n(?=[A-Z]{1,2}\d+(?:-\d+)?)/).filter(x => x.includes('วันที่')).map(b => {
-        let id = (b.match(/^([A-Z]{1,2}\d+(?:-\d+)?)/m) || [""])[0],
-            tm = getVal(b, "时间เวลา"), dt = getVal(b, "日期วันที่"),
-            rs = getVal(b, "车型ขนาดรถ").toLowerCase(),
-            st = rs.includes("camry") || rs.includes("c7") ? "C7" : (rs.includes("7") ? "7" : "5"),
-            rf = MAP(getVal(b, "接รับ")), rt = MAP(getVal(b, "送ส่ง")),
-            cl = (rf + "-" + rt).toUpperCase(), rv = (rt + "-" + rf).toUpperCase(),
-            is7 = (st === "C7" || st === "7"), pr = 0;
+return v.split(/\n(?=[A-Z]{1,2}\d+(?:-\d+)?)/).filter(x=>x.includes('วันที่')).map(b=>{
+let id=(b.match(/^([A-Z]{1,2}\d+(?:-\d+)?)/m)||[""])[0],
+tm=getVal(b,"时间เวลา"),dt=getVal(b,"日期วันที่"),
+rs=getVal(b,"车型ขนาดรถ").toLowerCase(),
+st=rs.includes("camry")||rs.includes("c7")?"C7":rs.includes("7")?"7":"5",
+rf=MAP(getVal(b,"接รับ")),rt=MAP(getVal(b,"送ส่ง")),
+cl=(rf+"-"+rt).toUpperCase(),rv=(rt+"-"+rf).toUpperCase(),
+is7=st=="C7"||st=="7",pr=0,
+getP=(a,b)=>document.getElementById(is7?b:a)?.value||0;
 
-        const getP = (p5, p7) => document.getElementById(is7 ? p7 : p5)?.value || 0;
-
-        if (cr && (cl === cr || rv === cr) && cp > 0) pr = cp;
-        else if (cl === "S-P" || rv === "S-P") pr = getP('p5_s_p', 'p7_s_p');
-        else if (cl === "D-P" || rv === "D-P") pr = getP('p5_d_p', 'p7_d_p');
-        else if (cl === "BK-P" || rv === "BK-P") pr = getP('p5_bk_p', 'p7_bk_p');
-        else if (cl.includes("HH") || rv.includes("HH")) pr = getP('p5_hh', 'p7_hh');
-        else pr = getP('p5_bk', 'p7_bk');
-
-        return {
-            id, time: tm, date: dt, seat: st, price: pr,
-            pk: getVal(b, "接รับ"), dp: getVal(b, "送ส่ง"),
-            name: getVal(b, "姓名ชื่อ"), flight: getVal(b, "航班flight"),
-            code: typeof getCode === 'function' ? getCode(b) : "", 
-            mapFrom: rf, mapTo: rt,
-            areaFrom: typeof getAreaForShort === 'function' ? getAreaForShort(getVal(b, "接รับ")) : "", 
-            areaTo: typeof getAreaForShort === 'function' ? getAreaForShort(getVal(b, "送ส่ง")) : ""
-        };
-    });
+// custom
+if(cr&&cp>0){
+let g=["BK","PT","NB","SP","S","D"],[f,t]=cr.split("-"),loc=g.includes(f)&&g.includes(t);
+if(loc?cl===cr:(cl===cr||rv===cr))pr=cp;
 }
 
+// standard
+if(!pr){
+const fix={"S-P":[850,900],"D-P":[1200,1300],"BK-P":[1100,1200],"S-HH":[1500,1600],"S-RY":[1200,1300],"S-CA":[1500,1600]},
+map={"S-P":['p5_s_p','p7_s_p'],"D-P":['p5_d_p','p7_d_p'],"BK-P":['p5_bk_p','p7_bk_p'],
+"S-CA":['p5_s_ca','p7_s_ca'],"S-RY":['p5_s_ry','p7_s_ry'],
+"S-HH":['p5_s_hh','p7_s_hh'],"BK-HH":['p5_bk_hh','p7_bk_hh'],
+"S-BK":['p5_s_bk','p7_s_bk'],"BK-S":['p5_bk_s','p7_bk_s']},
+k1=Object.keys(fix).find(k=>cl==k||rv==k),
+k2=Object.keys(map).find(k=>cl==k||rv==k);
+    if(k2) pr=getP(...map[k2]);
+if(!pr&&(cl.includes("HH")||rv.includes("HH"))) pr=getP('p5_hh','p7_hh');
+if(!pr){
+if(k1) pr=is7?fix[k1][1]:fix[k1][0];
+else if(rt=="S"&&rf!="S"||rf=="BK"&&rt=="S") pr=is7?480:380;
+else pr=getP('p5_bk','p7_bk');
+}
+}
+
+return{
+id,time:tm,date:dt,seat:st,price:pr,
+pk:getVal(b,"接รับ"),dp:getVal(b,"送ส่ง"),
+name:getVal(b,"姓名ชื่อ"),flight:getVal(b,"航班flight"),
+code:typeof getCode=="function"?getCode(b):"",
+orderId:getVal(b,"客户订单号"),
+mapFrom:rf,mapTo:rt,
+areaFrom:typeof getAreaForShort=="function"?getAreaForShort(getVal(b,"接รับ")):rf,
+areaTo:typeof getAreaForShort=="function"?getAreaForShort(getVal(b,"送ส่ง")):rt
+};
+});
+}
 function renderShortOut(){
-    let j=getAllJobData(), c=document.getElementById("short-out-container"), s=document.getElementById("single-row-section"), sc=document.getElementById("single-row-container"), h="", sh="", d="";
-    if(!j.length) return;
-    j.sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time)).forEach(x=>{
-        if(x.date!==d){ d=x.date; h+=`<div style="margin-top:12px;font-weight:600;color:#007bff;">📅 ${d}</div>`; sh+=`\n📅 ${d}\n` }
-        let r=(x.mapFrom+"-"+x.mapTo).toUpperCase(), e=getEmoji(r), sd=x.seat=="C7"?"Cam7":x.seat;
-        if(typeof currentMode !== 'undefined' && currentMode === 1){
-            s&&(s.style.display="none");
-            let f=x.areaFrom.includes("แอร์")?"#007FFF":"#FF8C00", t=x.areaTo.includes("แอร์")?"#007FFF":"#FF8C00",
-                // แก้จุดนี้: ป้องกัน Error ถ้าไม่มีฟังก์ชัน mapsLink/flightLink
-                ml=typeof mapsLink==='function'?mapsLink:(()=>'#'), fl=typeof flightLink==='function'?flightLink:(()=>'#');
-            h+=`<div class="job-item"><div class="job-text">${x.id}//${x.time}//#${x.seat}${r}\n<a href="${ml(x.pk)}" target="_blank" style="color:${f}">📍 ${x.areaFrom}</a>→<a href="${ml(x.dp)}" target="_blank" style="color:${t}">📍 ${x.areaTo}</a>${x.flight?` <a href="${fl(x.flight)}" target="_blank" class="flight-btn">✈️ ${x.flight}</a>`:""}</div></div>`
-        }else{
-            s&&(s.style.display="block");
-            h+=`<div class="job-item"><div class="job-text">${x.id}(${e})${x.time}/${x.price}#${sd}${r}\n${x.areaFrom} - ${x.areaTo}${x.flight?" ✈️"+x.flight:""}</div></div>`;
-            sh+=`${x.id}(${e})${x.time}/${x.price}#${sd}${r}\n`
-        }
-    });
-    if(c) c.innerHTML=h; if(sc) sc.innerText=sh.trim()
+let j=getAllJobData(),
+c=document.getElementById("short-out-container"),
+s=document.getElementById("single-row-section"),
+sc=document.getElementById("single-row-container"),
+oc=document.getElementById("order-only-container"),
+h="",sh="",oh="",d="";
+if(!j.length)return;
+
+j.sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time)).forEach(x=>{
+if(x.date!==d){
+d=x.date;
+h+=`<div style="margin-top:12px;font-weight:600;color:#007bff;">📅 ${d}</div>`;
+sh+=`\n📅 ${d}\n`;oh+=`\n📅 ${d}\n`;
 }
 
-function copyShort1(){
-    let o="", d="";
-    getAllJobData().sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time)).forEach(x=>{
-        if(x.date!==d){ d=x.date; o+=(o?"\n":"")+d+"\n====================\n" }
-        let s=x.seat=="C7"?"Cam7":x.seat, r=(x.mapFrom+"-"+x.mapTo).toUpperCase();
-        o+=`${x.id}//${x.time}//#${s}${r}\n${x.areaFrom}–${x.areaTo}${x.flight?" ✈️"+x.flight:""}\n\n`
-    });
-    executeManualCopy(o.trim())
+let r=(x.mapFrom+"-"+x.mapTo).toUpperCase(),
+e=getCustomEmoji(r),
+sd=x.seat=="C7"?"Cam7":x.seat;
+
+if(typeof currentMode!=='undefined'&&currentMode===1){
+s&&(s.style.display="none");
+let f=x.areaFrom.includes("แอร์")?"#007FFF":"#FF8C00",
+t=x.areaTo.includes("แอร์")?"#007FFF":"#FF8C00",
+ml=typeof mapsLink=='function'?mapsLink:(()=>'#'),
+fl=typeof flightLink=='function'?flightLink:(()=>'#');
+
+h+=`<div class="job-item"><div class="job-text">${x.id}//${x.time}//#${x.seat}${r}
+<a href="${ml(x.pk)}" target="_blank" style="color:${f}">🗺️ ${x.areaFrom}</a>→<a href="${ml(x.dp)}" target="_blank" style="color:${t}">🌍 ${x.areaTo}</a>${x.flight?` <a href="${fl(x.flight)}" target="_blank" class="flight-btn">✈️ ${x.flight}</a>`:""}</div></div>`;
+}else{
+s&&(s.style.display="block");
+h+=`<div class="job-item"><div class="job-text">${x.id}(${e})${x.time}/${x.price}#${sd}${r}
+${x.areaFrom} - ${x.areaTo}${x.flight?" ✈️"+x.flight:""}</div></div>`;
+sh+=`${x.id}(${e})${x.time}/${x.price}#${sd}${r}\n`;
+oh+=`${x.orderId||"-"}\n`;
 }
+});
+
+c&&(c.innerHTML=h);
+sc&&(sc.innerText=sh.trim());
+oc&&(oc.innerText=oh.trim());
+}
+
+// ===== COPY =====
 
 function copyShort2(){
-    let o="", d="";
-    getAllJobData().sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time)).forEach(x=>{
-        if(x.date!==d){ d=x.date; o+=(o?"\n":"")+"📅 "+d+"\n" }
-        let r=(x.mapFrom+"-"+x.mapTo).toUpperCase(), s=x.seat=="C7"?"Cam7":x.seat, e=getEmoji(r);
-        o+=`${x.id}(${e})${x.time}/${x.price}#${s}${r}\n${x.areaFrom} - ${x.areaTo}${x.flight?" ✈️"+x.flight:""}\n`
-    });
-    executeManualCopy(o.trim())
+let c=document.getElementById("short-out-container");
+if(!c||c.innerText.includes("ผลลัพธ์"))return alert("ไม่มีข้อมูล");
+executeManualCopy(c.innerText.trim());
 }
 
 function copySingleRow(){
-    let j=getAllJobData(), o="", d="";
-    if(!j.length) return alert("ไม่มีข้อมูล");
-    j.sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time)).forEach(x=>{
-        if(x.date!==d){ d=x.date; o+=(o?"\n":"")+"📅 "+d+"\n" }
-        let r=(x.mapFrom+"-"+x.mapTo).toUpperCase(), s=x.seat=="C7"?"Cam7":x.seat, e=getEmoji(r);
-        o+=`${x.id}(${e})${x.time}/${x.price}#${s}${r}\n`
-    });
-    executeManualCopy(o.trim())
+let sc=document.getElementById("single-row-container");
+if(!sc||!sc.innerText.trim()||!sc.innerText.includes("📅"))return alert("ไม่มีข้อมูล");
+executeManualCopy(sc.innerText.trim());
 }
 
+function copyOrderOnly(){
+let oc=document.getElementById("order-only-container");
+if(!oc||!oc.innerText.trim()||!oc.innerText.includes("📅"))return alert("ไม่มีข้อมูลเลข Order");
+executeManualCopy(oc.innerText.trim());
+}
+
+function copyShort1(){
+let o="",d="",data=getAllJobData().sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time));
+if(!data.length) return alert("ไม่มีข้อมูล");  
+data.forEach(x=>{
+if(x.date!==d){d=x.date;o+=(o?"\n":"")+d+"\n====================\n"}
+let s=x.seat=="C7"?"Cam7":x.seat,r=(x.mapFrom+"-"+x.mapTo).toUpperCase();
+o+=`${x.id}//${x.time}//#${s}${r}\n${x.areaFrom}–${x.areaTo}${x.flight?" ✈️"+x.flight:""}\n\n`;
+});
+executeManualCopy(o.trim());
+}
 function executeManualCopy(t){
-    let e=document.createElement("textarea"); e.value=t; document.body.appendChild(e); e.select();
-    try { document.execCommand("copy"); alert("✂️ คัดลอกแล้ว!") } catch(b){ console.error(b) }
-    e.remove()
+ let e=document.createElement("textarea");
+ e.value=t;document.body.appendChild(e);e.select();
+ try{
+  document.execCommand("copy");
+  let c=document.getElementById("copy-circle");
+  c.style.display="flex";
+  setTimeout(()=>c.style.display="none",1500);
+ }catch(err){console.error(err)}
+ e.remove();
 }
-
-
 document.getElementById("btnProcess").onclick = async () => {
     let v = document.getElementById("input").value.trim(), btn = document.getElementById("btnProcess");
     if (!v) return;
@@ -278,6 +759,10 @@ document.getElementById("btnProcess").onclick = async () => {
     if(typeof fillPreview === 'function') fillPreview();
     
     const jd = getAllJobData();
+    if (!jd || jd.length === 0) {
+        alert("❌ ตรวจสอบไม่สำเร็จ: ไม่พบข้อมูลใบงาน");
+        return; 
+    }
     btn.innerText = "⏳ กำลังตรวจสอบ..."; btn.disabled = true;
 
     const requests = jd.map(job => {
@@ -289,22 +774,62 @@ document.getElementById("btnProcess").onclick = async () => {
         return fetch(WEB_APP_URL, { method: "POST", body: f, mode: "no-cors", keepalive: true })
             .then(() => localStorage.setItem(k, "true")).catch(e => console.error(e));
     });
+    await new Promise(resolve => setTimeout(resolve, 2500));
+    btn.innerText="⚙️ แปลงใบงาน";btn.disabled=false;
 
-    await Promise.all([Promise.all(requests), new Promise(res => setTimeout(res, 1200))]);
+let a = document.createElement("div");
+// ปรับพื้นหลังม่านดำให้เบลอ (Backdrop Blur) เพื่อความสวยงาม
+a.style = "position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(5px);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px";
 
-    btn.innerText = "⚙️ แปลงใบงาน"; btn.disabled = false;
-    let a = document.createElement("div");
-    a.style = "position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:9999;display:flex;align-items:center;justify-content:center";
-    a.innerHTML = '<div style="background:#fff;padding:25px;border-radius:15px;text-align:center;width:80%;max-width:300px"><p style="color:#000;font-weight:bold;font-size:18px">✅ ตรวจสอบสำเร็จ<br><span style="font-size:14px;color:#555">คัดลอกส่ง LINE หรือไม่?</span></p><button id="y" style="background:#28a745;color:#fff;width:100%;padding:14px;border:0;border-radius:10px;margin-bottom:10px;font-weight:bold">✂️ คัดลอก</button><button id="n" style="background:#eee;color:#666;width:100%;padding:10px;border:0;border-radius:10px">ปิด</button></div>';
-    document.body.appendChild(a);
+a.innerHTML = `
+<div style="background:#1e1e1e; padding:30px; border-radius:20px; text-align:center; width:100%; max-width:320px; border:1px solid #333; box-shadow:0 20px 40px rgba(0,0,0,0.4)">
+    
+    <div style="width:60px; height:60px; background:rgba(40,167,69,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 15px">
+        <span style="font-size:30px">✅</span>
+    </div>
 
-    a.querySelector("#y").onclick = () => { (typeof currentMode !== 'undefined' && currentMode === 2) ? copyShort2() : copyShort1(); a.remove(); };
-    a.querySelector("#n").onclick = () => a.remove();
+    <p style="margin:0 0 20px; color:#fff; font-family:sans-serif">
+        <strong style="font-size:20px; display:block; margin-bottom:5px">ตรวจสอบสำเร็จ</strong>
+        <span style="font-size:14px; color:#aaa">คุณต้องการคัดลอกเพื่อส่ง LINE หรือไม่?</span>
+    </p>
+
+    <button id="y" style="background:#2196F3; color:#fff; width:100%; padding:15px; border:0; border-radius:12px; margin-bottom:10px; font-weight:bold; font-size:16px; cursor:pointer; box-shadow:0 4px 15px rgba(33,150,243,0.3)">
+        ✂️ คัดลอกเลย
+    </button>
+
+    <button id="n" style="background:transparent; color:#888; width:100%; padding:10px; border:0; border-radius:12px; font-size:14px; cursor:pointer">
+        ไว้ทีหลัง
+    </button>
+</div>`;
+
+document.body.appendChild(a);
+
+a.querySelector("#y").onclick=()=>{(currentMode===2)?copyShort2():copyShort1();a.remove();}
+a.querySelector("#n").onclick=()=>a.remove();
 };
 
 
+function makePage(j4){
+ let w=document.createElement("div");w.className="page-wrap";
 
-function makePage(j4){let w=document.createElement("div");w.className="page-wrap";let c=t=>{if(!t)return"";let n=t.split(/[,\(\)\n]/)[0].trim();return/[a-zA-Z]/.test(n)?n.replace(/[\u0E00-\u0E7F]/g,"").replace(/\s+/g," ").trim():n};for(let i=0;i<4;i++){let j=j4[i],s=document.createElement("div");s.className="slot";s.innerHTML=j?`<div class="line-top"><div>${j.id}</div><div>${j.time}</div><div>${j.date}</div></div><div class="passenger">${j.name}</div><div class="route">${c(j.pk)} → ${c(j.dp)}</div>${j.code?`<div class="code">${j.code}</div>`:""}`:"";w.appendChild(s)}return w}
+ const clean=t=>t?t.split(/[,\(\)\n]/)[0].trim():"";
+
+ for(let i=0;i<4;i++){
+  let j=j4[i],s=document.createElement("div");s.className="slot";
+
+  s.innerHTML=j?`
+  <div class="line-top">
+    <div>${j.id}</div><div>${j.time}</div><div>${j.date}</div>
+  </div>
+  <div class="passenger">${j.name&&j.name.includes("/")&&j.name.length>20?j.name.replace(/\//g,"/<br>"):j.name||""}</div>
+  <div class="route">${clean(j.pk)} → ${clean(j.dp)}</div>
+  ${j.code?`<div class="code">${j.code}</div>`:""}
+  `:"";
+
+  w.appendChild(s);
+ }
+ return w;
+}
 async function buildPDF(){let{jsPDF:j}=window.jspdf,p=document.querySelectorAll(".page-wrap"),d=new j({orientation:"landscape",unit:"pt",format:[842,595]});for(let i=0;i<p.length;i++){let c=await html2canvas(p[i],{scale:3,useCORS:!0,logging:!1,windowWidth:1200,backgroundColor:"#ffffff"});d.addImage(c.toDataURL("image/jpeg",1),"JPEG",0,0,842,595);i<p.length-1&&d.addPage()}return d}
 
 function fillPreview(){
@@ -319,7 +844,11 @@ document.getElementById("btnSharePDF").onclick=async()=>{
     const pdf=await buildPDF(),blob=pdf.output('blob'),fn=(document.getElementById("input").value.match(/^([A-Z]{1,2}\d{2,5})/m)||["","JobSheet"])[1]+".pdf",file=new File([blob],fn,{type:'application/pdf'});
     if(navigator.share) navigator.share({files:[file]}); else alert("เบราว์เซอร์ไม่รองรับการแชร์");
 };
-function clearData() { if(confirm("ล้างข้อมูล?")){ document.getElementById("input").value=""; document.getElementById("short-out-container").innerHTML=""; document.getElementById("preview-container").innerHTML=""; document.getElementById("single-row-container").innerText=""; } }
+function clearData(){
+  if(!confirm("ล้างข้อมูล?")) return;
+  document.querySelectorAll("input,textarea").forEach(e=>e.value="");
+  document.querySelectorAll("#preview-container,.page-wrap").forEach(e=>e.innerHTML="");
+}
 </script>
 </body>
 </html>
