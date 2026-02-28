@@ -479,48 +479,586 @@ if(!oc||!oc.innerText.trim()||!oc.innerText.includes("📅"))return alert("ไ�
 executeManualCopy(oc.innerText.trim());
 }
 
-function copyShort1(){
-let o="",d="",data=getAllJobData().sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time));
-if(!data.length) return alert("ไม่มีข้อมูล");  
-data.forEach(x=>{
-if(x.date!==d){d=x.date;o+=(o?"\n":"")+d+"\n====================\n"}
-let s=x.seat=="C7"?"Cam7":x.seat,r=(x.mapFrom+"-"+x.mapTo).toUpperCase();
-o+=`${x.id}//${x.time}//#${s}${r}\n${x.areaFrom}–${x.areaTo}${x.flight?" ✈️"+x.flight:""}\n\n`;
-});
-executeManualCopy(o.trim());
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8" /><title>Job Parser Multi-Mode (Fixed v1)</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700;800;900&family=Kanit+Condensed:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--primary:#007bff;--secondary:#28a745;--radius:8px}
+body{margin:0;font-family:'Kanit',sans-serif;background:url(https://lh3.googleusercontent.com/d/1OjWRJPb3Efxdw5Tz3t5DSA342Ad0HJQe) center/cover fixed no-repeat}
+
+/* screens */
+#mode-selection-screen,#maintenance-screen{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+#mode-selection-screen{background:rgba(0,0,0,.8);backdrop-filter:blur(10px);z-index:10000}
+#maintenance-screen{display:none;background:#fff;z-index:9998}
+
+/* admin */
+#admin-panel{display:none;position: relative;inset:0;margin:auto;height:fit-content;width:fit-content;background:rgba(255,255,255,.9);backdrop-filter:blur(10px);border-radius:50px;box-shadow:0 15px 35px rgba(0,0,0,.2);border:1px solid rgba(255,255,255,.4);text-align:center;min-width:250px;z-index:9999;}
+#toggle-system{width:70%;padding:10px;border-radius:20px;border:0;color:#fff;font-weight:bold;cursor:pointer;margin-top:10px;transition:.3s}
+#secret-admin-btn{position:fixed;right:10px;bottom:10px;width:70px;height:70px;border-radius:50%;background:rgba(0,0,0,.01);z-index:10000;cursor:pointer}
+
+/* mode */
+.mode-card-container{display:grid;grid-template-columns:1fr 1fr;gap:25px;width:95%;max-width:600px;margin-top:30px}
+.mode-card{padding:50px 20px;border-radius:40px;color:#fff;text-align:center;cursor:pointer;border:2px solid rgba(255,255,255,.1);backdrop-filter:blur(5px);transition:.4s cubic-bezier(.175,.885,.32,1.275);position:relative;overflow:hidden}
+.mode-card:hover{transform:scale(1.05);border-color:rgba(255,255,255,.8);box-shadow:0 15px 30px rgba(0,0,0,.3)}
+.m-1{background:linear-gradient(135deg,#ff4081,#e91e63);box-shadow:0 10px 20px rgba(233,30,99,.3)}
+.m-2{background:linear-gradient(135deg,#00d2ff,#2196f3);box-shadow:0 10px 20px rgba(33,150,243,.3)}
+.mode-card h2{margin:0;font-size:24px;font-weight:800;text-shadow:0 2px 4px rgba(0,0,0,.2)}
+.mode-card p{font-size:14px;opacity:.9;margin-top:10px}
+
+/* heading */
+h1{color:#fff!important;font-weight:800;margin:10px 0 25px;padding:10px 25px;background:linear-gradient(135deg,#ff4757,#ff6b81);border-radius:50px;display:inline-block;font-size:24px;text-shadow:1px 1px 4px rgba(0,0,0,.3);box-shadow:0 4px 15px rgba(255,71,87,.3);cursor:pointer;user-select:none;border:none!important;transition:.3s}
+h1:hover{transform:scale(1.03);box-shadow:0 6px 20px rgba(255,71,87,.5)}
+h2{color:#fff;font-weight:600;margin:25px 0 15px;background:rgba(255,255,255,.1);display:inline-block;padding:5px 20px;border-radius:30px;font-size:18px;backdrop-filter:blur(5px)}
+
+/* input */
+.input-control-wrapper{display:flex;gap:10px;align-items:stretch;margin-top:10px}
+textarea,#short-out-container{width:100%;margin:10px auto;box-sizing:border-box;background:rgba(255,255,255,.07)!important;color:#00eaff!important;border:1px solid rgba(255,255,255,.15)!important;border-radius:25px;padding:18px 25px;text-shadow:1px 1px 2px rgba(0,0,0,.5);backdrop-filter:blur(8px);transition:.3s;box-shadow:inset 0 2px 10px rgba(0,0,0,.1)}
+textarea{height:300px!important;resize:none;font:16px 'Kanit',monospace;outline:0}
+textarea:focus{background:rgba(255,255,255,.1)!important;border-color:#00eaff!important;box-shadow:0 0 15px rgba(0,234,255,.2);transform:translateY(-2px)}
+textarea::-webkit-scrollbar,#short-out-container::-webkit-scrollbar{width:8px}
+textarea::-webkit-scrollbar-thumb,#short-out-container::-webkit-scrollbar-thumb{background:rgba(0,234,255,.3);border-radius:10px}
+
+/* button */
+button{padding:12px 25px;font-size:14px;font-weight:600;border:0;border-radius:50px!important;cursor:pointer;transition:.3s cubic-bezier(.175,.885,.32,1.275)!important;white-space:nowrap;touch-action:manipulation;text-transform:uppercase;letter-spacing:.5px;box-shadow:0 4px 10px rgba(0,0,0,.2)}
+button:hover{transform:translateY(-2px) scale(1.02);box-shadow:0 8px 20px rgba(0,0,0,.3)}
+button:active{transform:translateY(0)}
+#btnProcess{background:var(--primary);color:#fff}
+#btnPDF,#btnSharePDF,#btnPreviewSheet,.short-out-section .control-group button{background:var(--secondary);color:#fff}
+
+/* job */
+#short-out-container{border:2px solid #e91e63;min-height:100px;max-height:500px;overflow-y:auto;box-shadow:0 4px 6px rgba(0,0,0,.1)}
+.job-item{border-bottom:1px dashed rgba(255,255,255,.3);padding:4px 0}
+.job-text{font-size:17px;line-height:1.25;white-space:pre-wrap}
+.page-wrap{width:842px;height:595px;min-width:842px;background:#fff;display:grid;grid-template:1fr 1fr/1fr 1fr;margin-bottom:20px}
+.slot{position:relative;display:flex;flex-direction:column;justify-content:space-between;padding:15px;background:#fff!important;color:#000!important;font:800 16px 'Kanit Condensed',sans-serif!important;border-radius:10px}
+.line-top{display:flex;justify-content:space-between;font-size:18px;font-weight:700}
+.line-top>div:first-child{font-size:24px;font-weight:900}
+.passenger{text-align:center;margin:15px 0 8px;font-size:22px;font-weight:700}
+.route{text-align:center;font-size:16px;margin:0 0 35px}
+.code{position:absolute;right:15px;bottom:10px;font-size:18px;font-weight:700}
+
+/* sections */
+.input-section,.short-out-section{background:rgba(255,255,255,.05)!important;border:1px solid rgba(255,255,255,.1);border-radius:15px;width:95%;max-width:800px;margin:0 auto 20px;text-align:center;padding:15px}
+
+/* price */
+.price-container{display:flex;flex-wrap:wrap;gap:8px;background:rgba(30,30,30,.6);backdrop-filter:blur(10px);padding:12px;border-radius:25px;color:#fff;width:100%;border:1px solid rgba(255,255,255,.1)}
+.price-card{flex:1;min-width:85px;background:rgba(255,255,255,.05);padding:10px 5px;border-radius:20px;border-top:4px solid #444;text-align:center;transition:.3s}
+.price-card:hover{background:rgba(255,255,255,.1);transform:translateY(-3px)}
+.card-title{font-size:11px;font-weight:bold;margin-bottom:8px;display:block;color:#00eaff}
+.input-row{display:flex;flex-direction:column;gap:5px;align-items:center}
+.input-item{display:flex;align-items:center;gap:5px;font-size:11px}
+.input-item label{color:#ff00ff}
+.input-item input{width:100px;background:rgba(0,0,0,.3);color:#00ff00;border:1px solid rgba(255,255,255,.2);border-radius:10px;text-align:center;font-size:10px;padding:2px 0;outline:0;transition:.2s}
+.input-item input:focus{border-color:#00eaff;background:#000;box-shadow:0 0 8px rgba(0,234,255,.3)}
+#price-row{display:none;color:#fff;margin-bottom:20px;justify-content:center;gap:15px;background:rgba(255,255,255,.05);padding:15px;border-radius:30px;backdrop-filter:blur(5px);border:1px solid rgba(255,255,255,.1)}
+#price-row input{width:80px;border-radius:50px;border:1px solid rgba(0,234,255,.3);background:rgba(0,0,0,.4);color:#00eaff;padding:8px 12px;text-align:center;font-weight:bold;outline:0;transition:.3s}
+#price-row input:focus{background:#000;border-color:#00eaff;box-shadow:0 0 12px rgba(0,234,255,.4);transform:scale(1.05)}
+#em_to_air,#em_from_air,#em_city,#em_prov{border-radius:10px!important}
+
+/* flight btn */
+.flight-btn{color:#ff4757!important;text-decoration:none;font-weight:bold;background:rgba(255,71,87,.1);padding:5px 15px;border-radius:50px;transition:.3s;display:inline-block;border:1px solid rgba(255,71,87,.2)}
+.flight-btn:hover{background:#ff4757;color:#fff!important;box-shadow:0 4px 12px rgba(255,71,87,.3)}
+
+/* mobile */
+@media(max-width:900px){
+.input-control-wrapper{flex-direction:column;gap:10px}
+.page-wrap{zoom:.45;border-radius:40px;margin:0 auto 20px}
+button{width:100%;padding:15px!important;font-size:16px!important}
+.mode-card-container{grid-template-columns:1fr;gap:15px}
+.mode-card{padding:30px 20px;border-radius:35px}
+#admin-panel{width:85%;padding:20px;border-radius:35px;top:10px}
+#copy-circle{
+ position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+ width:100px;height:80px;background:rgba(0,0,0,.8);color:#fff;
+ border-radius:20%;display:none;align-items:center;justify-content:center;
+ flex-direction:column;z-index:99999;border:2px solid #00eaff;font-size:14px;
 }
-function executeManualCopy(t){
- let e=document.createElement("textarea");
- e.value=t;document.body.appendChild(e);e.select();
- try{
-  document.execCommand("copy");
-  let c=document.getElementById("copy-circle");
-  c.style.display="flex";
-  setTimeout(()=>c.style.display="none",1500);
- }catch(err){console.error(err)}
- e.remove();
 }
+</style>
+</head>
+<body>
+<div id="mode-selection-screen">
+<h1 style="border:none">เลือกรูปแบบการใช้งาน</h1>
+<div class="mode-card-container">
+<div class="mode-card m-1" onclick="selectMode(1)"><h2>รถทะเบียน</h2><p> Dxxx//xx::xx//#xxx-xx</p></div>
+<div class="mode-card m-2" onclick="selectMode(2)"><h2>งานทั่วไป</h2><p>Xxx(🔥🥶⭐)xx:xx/XXX/#xxx-xx</p></div>
+</div></div>
+
+<div id="status-toast"></div>
+
+<div id="secret-admin-btn"></div>
+<div id="maintenance-screen"><h1 style="color:var(--danger)">🛠️ ปิดปรับปรุงชั่วคราว</h1><p>กำลังอัปเดตระบบ กรุณาลองใหม่ภายหลัง</p></div>
+
+<center><h1 id="webHeader" onclick="location.reload()"> แปลงใบงาน <span id="mode-label"></span> </h1></center>
+
+<div id="admin-panel">
+<strong>⚙️ แผงควบคุมระบบ</strong><br>
+สถานะ: <span id="status-text"></span><br>
+<button id="toggle-system" style="background:var(--danger);color:#0000ff;margin-top:5px">เปิด/ปิด การใช้งานระบบ</button>
+</div>
+
+<div class="input-section">
+
+<div id="price-row" style="display:none; width:100%; margin-bottom:15px; box-sizing:border-box">
+  <div style="display:grid; grid-template-columns:repeat(6,1fr); gap:2px; margin-bottom:5px">
+    <div style="border-top:2px solid #00d4ff; background:rgba(255,255,255,0.05); text-align:center; padding:4px 1px">
+      <div style="font-size:9px; font-weight:bold; color:#00d4ff; margin-bottom:2px">BK</div>
+      <input type="number" id="p5_bk" value="380" style="width:95%; font-size:10px; text-align:center; border:1px solid #333; background:#111; color:#fff; border-radius:2px; padding:2px 0; margin-bottom:1px">
+      <input type="number" id="p7_bk" value="480" style="width:95%; font-size:10px; text-align:center; border:1px solid #333; background:#111; color:#fff; border-radius:2px; padding:2px 0">
+    </div>
+    <div style="border-top:2px solid #2196F3; background:rgba(255,255,255,0.05); text-align:center; padding:4px 1px">
+      <div style="font-size:9px; font-weight:bold; color:#2196F3; margin-bottom:2px">S-P</div>
+      <input type="number" id="p5_s_p" value="850" style="width:95%; font-size:10px; text-align:center; border:1px solid #333; background:#111; color:#fff; border-radius:2px; padding:2px 0; margin-bottom:1px">
+      <input type="number" id="p7_s_p" value="900" style="width:95%; font-size:10px; text-align:center; border:1px solid #333; background:#111; color:#fff; border-radius:2px; padding:2px 0">
+    </div>
+    <div style="border-top:2px solid #4CAF50; background:rgba(255,255,255,0.05); text-align:center; padding:4px 1px">
+      <div style="font-size:9px; font-weight:bold; color:#4CAF50; margin-bottom:2px">D-P</div>
+      <input type="number" id="p5_d_p" value="1200" style="width:95%; font-size:10px; text-align:center; border:1px solid #333; background:#111; color:#fff; border-radius:2px; padding:2px 0; margin-bottom:1px">
+      <input type="number" id="p7_d_p" value="1300" style="width:95%; font-size:10px; text-align:center; border:1px solid #333; background:#111; color:#fff; border-radius:2px; padding:2px 0">
+    </div>
+    <div style="border-top:2px solid #ffc107; background:rgba(255,255,255,0.05); text-align:center; padding:4px 1px">
+      <div style="font-size:9px; font-weight:bold; color:#ffc107; margin-bottom:2px">BK-P</div>
+      <input type="number" id="p5_bk_p" value="1100" style="width:95%; font-size:10px; text-align:center; border:1px solid #333; background:#111; color:#fff; border-radius:2px; padding:2px 0; margin-bottom:1px">
+      <input type="number" id="p7_bk_p" value="1200" style="width:95%; font-size:10px; text-align:center; border:1px solid #333; background:#111; color:#fff; border-radius:2px; padding:2px 0">
+    </div>
+    <div style="border-top:2px solid #9c27b0; background:rgba(255,255,255,0.05); text-align:center; padding:4px 1px">
+      <div style="font-size:9px; font-weight:bold; color:#9c27b0; margin-bottom:2px">HH</div>
+      <input type="number" id="p5_hh" value="1500" style="width:95%; font-size:10px; text-align:center; border:1px solid #333; background:#111; color:#fff; border-radius:2px; padding:2px 0; margin-bottom:1px">
+      <input type="number" id="p7_hh" value="1600" style="width:95%; font-size:10px; text-align:center; border:1px solid #333; background:#111; color:#fff; border-radius:2px; padding:2px 0">
+    </div>
+    <div style="border-top:2px solid #ff5722; background:rgba(255,87,34,.15); text-align:center; padding:4px 1px">
+      <div style="font-size:9px; font-weight:bold; color:#ff5722; margin-bottom:2px">🛠️</div>
+      <input type="text" id="custom_route" placeholder="HH-P" style="width:95%; font-size:9px; text-align:center; border:1px solid #444; background:#111; color:#fff; border-radius:2px; padding:2px 0; margin-bottom:1px; text-transform:uppercase">
+      <input type="number" id="custom_price" placeholder="ราคา" style="width:95%; font-size:9px; text-align:center; border:1px solid #444; background:#111; color:#fff; border-radius:2px; padding:2px 0">
+    </div>
+  </div>
+
+  <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:4px; background:rgba(255,255,255,.08); padding:5px; border-radius:4px; border:1px solid rgba(255,255,255,.1)">
+    <div style="display:flex; align-items:center; justify-content:center; gap:4px"><span style="font-size:10px; color:#aaa">ส่งออก</span><input type="text" id="em_to_air" value="🔥" style="width:30px; text-align:center; border:1px solid #444; background:#222; color:#fff; font-size:11px; padding:2px; border-radius:3px"></div>
+    <div style="display:flex; align-items:center; justify-content:center; gap:4px"><span style="font-size:10px; color:#aaa">รับเข้า</span><input type="text" id="em_from_air" value="🥶" style="width:30px; text-align:center; border:1px solid #444; background:#222; color:#fff; font-size:11px; padding:2px; border-radius:3px"></div>
+    <div style="display:flex; align-items:center; justify-content:center; gap:4px"><span style="font-size:10px; color:#aaa">เมือง</span><input type="text" id="em_city" value="🚗" style="width:30px; text-align:center; border:1px solid #444; background:#222; color:#fff; font-size:11px; padding:2px; border-radius:3px"></div>
+    <div style="display:flex; align-items:center; justify-content:center; gap:4px"><span style="font-size:10px; color:#aaa">ตจว</span><input type="text" id="em_prov" value="⭐" style="width:30px; text-align:center; border:1px solid #444; background:#222; color:#fff; font-size:11px; padding:2px; border-radius:3px"></div>
+  </div>
+</div>
+
+<div class="input-control-wrapper">
+<textarea id="input" placeholder="วางข้อมูลใบงาน..."></textarea>
+<div class="control-group"><button id="btnProcess">⚙️ แปลงใบงาน</button></div>
+<button onclick="clearData()" style="background:#dc3545;color:#fff">🗑️ ล้างข้อมูล</button>
+</div>
+
+<button onclick="location.reload()" style="background:none;color:#fff;text-decoration:underline;border:0;margin-top:10px;opacity:.7">← กลับไปเลือกแบบใหม่</button>
+</div>
+
+<hr>
+
+<div class="short-out-section">
+<h2>✅ แบบย่อ(ส่งLINE)</h2>
+
+<button onclick="copyShort1()" id="btnCopyMode1" style="display:none;background:#e91e63;color:#fff;width:100%;padding:10px;margin-bottom:10px">✂️ คัดลอกแบบรถทะเบียน</button>
+<button onclick="copyShort2()" id="btnCopyMode2" style="display:none;background:#ff9800;color:#fff;width:100%;padding:10px;margin-bottom:10px">✂️ คัดลอกแบบงานทั่วไป</button>
+
+<div id="short-out-container" style="background:rgba(255,255,255,.05);padding:15px;border-radius:8px;border:1px solid rgba(255,255,255,.2);color:#fff;text-align:left">ผลลัพธ์จะแสดงที่นี่...</div>
+
+<div id="single-row-section" style="display:none;margin-top:30px;border-top:2px dashed #2196F3;padding-top:20px">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:15px">
+
+<div>
+<h2 style="color:#2196F3;font-size:16px">✅ แบบย่อ</h2>
+<button onclick="copySingleRow()" style="background:#2196F3;color:#fff;width:100%;padding:5px;margin-bottom:5px;border:none;border-radius:2px">✂️ คัดลอกแบบย่อ</button>
+<div id="single-row-container" style="background:rgba(255,255,255,.05);padding:10px;border-radius:8px;border:2px solid #2196F3;color:#fff;white-space:nowrap;overflow-x:auto;height:400px;overflow-y:auto;font-size:11px"></div>
+</div>
+
+<div>
+<h2 style="color:#ffc107;font-size:16px">✅ เลข Order</h2>
+<button onclick="copyOrderOnly()" style="background:#ffc107;color:#000;width:100%;padding:5px;margin-bottom:5px;border:none;border-radius:2px;font-weight:bold">✂️ คัดลอกOrder</button>
+<div id="order-only-container" style="background:rgba(255,255,255,.05);padding:10px;border-radius:8px;border:2px solid #ffc107;color:#fff;white-space:nowrap;height:400px;overflow-y:auto;font-size:11px"></div>
+</div>
+
+</div></div></div>
+
+<div id="bts-section">
+    <center><h2>🖨️ ใบงาน (BTS)</h2></center>
+
+    <div style="text-align: center; width: 100%; margin: 15px 0;">
+        <div class="control-group" style="display: inline-flex; justify-content: center; gap: 8px;">
+            <button id="btnPreviewSheet" style="width: auto !important; padding: 6px 12px !important; font-size: 13px !important; min-width: unset !important; flex: none !important;">
+                👀 ตัวอย่าง
+            </button>
+            <button id="btnPDF" style="width: auto !important; padding: 6px 12px !important; font-size: 13px !important; min-width: unset !important; flex: none !important;">
+                💾 ดาวน์โหลด
+            </button>
+            <button id="btnSharePDF" style="width: auto !important; padding: 6px 12px !important; font-size: 13px !important; min-width: unset !important; flex: none !important;">
+                🔗 แชร์
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<div id="copy-circle"><span>copy</span><br>คัดลอกแล้ว</div>
+<div id="preview-container"></div>
+</body>
+<script>
+let currentMode = 1;
+const WEB_APP_URL='https://script.google.com/macros/s/AKfycbwn9p1uIxVfShlXaXRQ0PMwuGnzSXw7MpkbIFIkCLujyccQJz13AyfmsBVQwtHvgTPI0A/exec';
+let PutterName=localStorage.getItem("lastPutter")||"";let isAdmin=localStorage.getItem("isAdmin")==="true";let isSystemActive=true;updateUI();
+async function syncStatus(){try{const response=await fetch(WEB_APP_URL);const status=await response.text();isSystemActive=(status.trim()==="ON");updateUI();}catch(e){console.error(e)}}
+syncStatus();
+
+function selectMode(mode) {
+    currentMode = mode; 
+    document.getElementById('mode-selection-screen').style.display = 'none';
+    document.getElementById('mode-label').innerText = (mode === 1 ? "(รถทะเบียน)" : "(งานทั่วไป)");
+    document.getElementById('btnCopyMode1').style.display = (mode === 1 ? 'block' : 'none');
+    document.getElementById('btnCopyMode2').style.display = (mode === 2 ? 'block' : 'none');
+    document.getElementById('price-row').style.display = (mode === 2 ? 'block' : 'none');
+    document.getElementById('single-row-section').style.display = (mode === 2 ? 'block' : 'none');
+
+    const btsSection = document.getElementById('bts-section');
+    const previewContainer = document.getElementById('preview-container');
+
+    if (mode === 1) {
+        if (btsSection) btsSection.style.display = 'block';
+        if (previewContainer) previewContainer.style.display = 'block';
+    } else {
+        if (btsSection) btsSection.style.display = 'none';
+        if (previewContainer) previewContainer.style.display = 'none';
+    }
+}
+
+const thaiMap = {
+    // === กรุงเทพฯ ครบ 50 เขต ===
+    "phaya thai":"พญาไท","ratchathewi":"ราชเทวี","pathum wan":"ปทุมวัน",
+    "wattana":"วัฒนา","vadhana":"วัฒนา","khlong toei":"คลองเตย","huai khwang":"ห้วยขวาง",
+    "chatuchak":"จตconst PROVINCE_PREFIX = {
+  "10": "กรุงเทพมหานคร", "11": "นนทบุรี", "12": "ปทุมธานี", "13": "พระนครศรีอยุธยา", "14": "อ่างทอง/สุพรรณบุรี",
+  "15": "ลพบุรี/ชัยนาท", "16": "เพชรบูรณ์", "17": "อุทัยธานี", "18": "สระบุรี", "20": "ชลบุรี",
+  "21": "ระยอง", "22": "จันทบุรี", "23": "ตราด", "24": "ฉะเชิงเทรา", "25": "ปราจีนบุรี",
+  "26": "นครนายก", "27": "สระแก้ว", "30": "นครราชสีมา", "31": "บุรีรัมย์", "32": "สุรินทร์",
+  "33": "ศรีสะเกษ", "34": "อุบลราชธานี", "35": "ยโสธร", "36": "ชัยภูมิ", "37": "อำนาจเจริญ",
+  "38": "บึงกาฬ", "39": "หนองบัวลำภู", "40": "ขอนแก่น", "41": "อุดรธานี", "42": "เลย",
+  "43": "หนองคาย", "44": "มหาสารคาม", "45": "ร้อยเอ็ด", "46": "กาฬสินธุ์", "47": "สกลนคร",
+  "48": "นครพนม", "49": "มุกดาหาร", "50": "เชียงใหม่", "51": "ลำพูน", "52": "ลำปาง",
+  "53": "อุตรดิตถ์", "54": "แพร่", "55": "น่าน", "56": "พะเยา", "57": "เชียงราย",
+  "58": "แม่ฮ่องสอน", "60": "นครสวรรค์", "61": "อุทัยธานี", "62": "กำแพงเพชร", "63": "ตาก",
+  "64": "สุโขทัย", "65": "พิษณุโลก", "66": "พิจิตร", "67": "เพชรบูรณ์", "70": "ราชบุรี",
+  "71": "กาญจนบุรี", "72": "สุพรรณบุรี", "73": "นครปฐม", "74": "สมุทรสาคร", "75": "สมุทรสงคราม",
+  "76": "เพชรบุรี", "77": "ประจวบคีรีขันธ์", "80": "นครศรีธรรมราช", "81": "กระบี่", "82": "พังงา",
+  "83": "ภูเก็ต", "84": "สุราษฎร์ธานี", "85": "ระนอง", "86": "ชุมพร", "90": "สงขลา",
+  "91": "สตูล", "92": "ตรัง", "93": "พัทลุง", "94": "ปัตตานี", "95": "ยะลา", "96": "นราธิวาส"
+};
+
+const PRIORITY_AREAS = {
+    "ศรีนครินทร์": /ศรีนครินทร์|srinakarin/i,
+    "พัทยา": /พัทยา|จอมเทียน|นาเกลือ|บางละมุง|pattaya|jomtien|naklua|bang\s*lamung/i,
+    "ศรีราชา/บางแสน": /ศรีราชา|บางแสน|sriracha|bang saen/i,
+    "ระยอง": /ระยอง|rayong/i,
+    "บ่อวิน/ปลวกแดง": /บ่อวิน|ปลวกแดง|bowin|pluak daeng/i,
+    "หัวหิน": /หัวหิน|hua hin|huahin|market village|cicada/i,
+    "ชะอำ": /ชะอำ|cha-am|cha am|chaam/i,
+    "เซ็นทรัลเวิลด์": /เซ็นทรัลเวิลด์|centralworld|central world/i,
+    "ราชดำริ": /ราชดำริ|ratchadamri|st. regis|waldorf/i,
+    "วิทยุ": /วิทยุ|ถนนวิทยุ|wireless road|conrad|embassy/i,
+    "ชิดลม": /ชิดลม|chidlom/i,
+    "หลังสวน": /หลังสวน|langsuan|lang suan/i,
+    "เพลินจิต": /เพลินจิต|phloen chit/i,
+    "สยาม": /สยาม|siam|paragon/i,
+    "ประตูน้ำ": /ประตูน้ำ|pratunam|baiyoke/i,
+    "ราชเทวี": /ราชเทวี|ratchathewi/i,
+    "พญาไท": /พญาไท|phaya thai/i,
+    "บรรทัดทอง": /บรรทัดทอง|banthat thong/i,
+    "นานา": /นานา|nana|sukhumvit 4|sukhumvit 11/i,
+    "อโศก": /อโศก|asoke|asok|terminal 21/i,
+    "พร้อมพงษ์": /พร้อมพงษ์|phrom phong|emquartier|emporium|sukhumvit 24/i,
+    "ทองหล่อ": /ทองหล่อ|thonglo|thong lo|sukhumvit 55/i,
+    "เอกมัย": /เอกมัย|ekkamai|sukhumvit 63/i,
+    "พระราม 4": /พระราม 4|rama 4|q sirikit/i,
+    "อ่อนนุช": /อ่อนนุช|onnut|on nut/i,
+    "ปุณณวิถี": /ปุณณวิถี|punna withi/i,
+    "บางจาก": /บางจาก|bang chak/i,
+    "อุดมสุข": /อุดมสุข|udomsuk/i,
+    "บางนา": /บางนา|bang na|bang na-trad/i,
+    "แบริ่ง": /แบริ่ง|bearing/i,
+    "ลาซาล": /ลาซาล|lasalle/i,
+    "สีลม": /สีลม|silom/i,
+    "สาทร": /สาทร|sathorn|sathon/i,
+    "สุรวงศ์": /สุรวงศ์|surawong/i,
+    "บางรัก": /บางรัก|bang rak|crowne plaza/i,
+    "เจริญกรุง": /เจริญกรุง|charoen krung/i,
+    "ไอคอนสยาม": /ไอคอนสยาม|iconsiam|icon siam|charoen nakhon/i,
+    "ริมแม่น้ำ": /ริมแม่น้ำ|riverside|shangri-la|peninsula/i,
+    "เยาวราช": /เยาวราช|yaowarat/i,
+    "ข้าวสาร": /ข้าวสาร|khaosan/i,
+    "ลาดพร้าว": /ลาดพร้าว|ladprao|lat phrao|centara grand ladprao/i,
+    "บางกะปิ": /บางกะปิ|bang kapi/i,
+    "สามเสน": /สามเสน|samsen/i,
+    "มักกะสัน": /มักกะสัน|makkasan/i,
+    "เพชรบุรีตัดใหม่": /เพชรบุรีตัดใหม่|new petchaburi/i,
+    "เพชรบุรี": /เพชรบุรี|petchaburi/i,
+    "พระราม 9": /พระราม 9|rama 9|fortune town/i,
+    "รัชดา": /รัชดา|ratchada/i,
+    "ห้วยขวาง": /ห้วยขวาง|huai khwang/i,
+    "รามคำแหง": /รามคำแหง|ramkhamhaeng/i,
+    "จตุจักร": /จตุจักร|chatuchak/i,
+    "หมอชิต": /หมอชิต|mo chit/i,
+    "อารีย์": / อารีย์| ari |ari station/i,
+    "สนามเป้า": /สนามเป้า|sanampao|sanam pao/i,
+    "พระราม 3": /พระราม 3|rama 3/i,
+    "พระราม 2": /พระราม 2|rama ii/i,
+    "บางขุนเทียน": /บางขุนเทียน|bang khun thian/i,
+    "พระประแดง": /พระประแดง|phra pradaeng/i,
+    "สำโรง": /สำโรง|samrong/i,
+    "พัฒนาการ": /พัฒนาการ|pattanakarn/i,
+    "กิ่งแก้ว": /กิ่งแก้ว|kingkaew|king kaew/i,
+    "บางพลี": /บางพลี|bang phli/i,
+    "บางปู": /บางปู|bang pu/i,
+    "บางเสาธง": /บางเสาธง|bang sao thong/i,
+    "ปิ่นเกล้า": /ปิ่นเกล้า|pinklao/i,
+    "ตลิ่งชัน": /ตลิ่งชัน|taling chan/i,
+    "ราชพฤกษ์": /ราชพฤกษ์|ratchaphruek/i,
+    "ฝั่งธน": /ฝั่งธน/i,
+    "บางซื่อ": /บางซื่อ|bang sue/i,
+    "บางซ่อน": /บางซ่อน|bang son/i,
+    "งามวงศ์วาน": /งามวงศ์วาน|ngamwongwan/i,
+    "เมืองนนทบุรี": /เมืองนนทบุรี|muang nonthaburi/i,
+    "ปากเกร็ด": /ปากเกร็ด|pak kret/i,
+    "แจ้งวัฒนะ": /แจ้งวัฒนะ|chaeng wattana/i,
+    "เมืองทอง/อิมแพ็ค": /เมืองทอง|impact|อิมแพ็ค|muang thong/i,
+    "บางใหญ่": /บางใหญ่|bang yai/i,
+    "บางบัวทอง": /บางบัวทอง|bang bua thong/i,
+    "รังสิต": /รังสิต|rangsit|future park/i,
+    "ลำลูกกา/คูคต": /ลำลูกกา|คูคต|lam luk ka/i,
+    "คลองหลวง/ธรรมศาสตร์": /คลองหลวง|ธรรมศาสตร์|khlong luang/i,
+    "ศูนย์ราชการ": /ศูนย์ราชการ|government complex/i,
+    "ตจว./อื่นๆ": /นครปฐม|สมุทรสาคร|จันทบุรี|กาญจนบุรี|อยุธยา|เขาใหญ่|นครนายก|อัมพวา|แม่กลอง/i
+};
+
+const MAP_RULES = [
+    ["S", /สุวรรณภูมิ|suvarnabhumi|bkk/i],
+    ["D", /ดอนเมือง|don\s*mueang|dmk/i],
+    ["P", /พัทยา|จอมเทียน|นาเกลือ|บางละมุง|pattaya|jomtien|bali\s*hai/i],
+    ["HH", /หัวหิน|hua\s*hin/i],
+    ["CA", /ชะอำ|cha-?am/i],
+    ["RY", /ระยอง|บ่อวิน|ปลวกแดง|rayong|bowin/i],
+    ["KC", /กาญจนบุรี|kanchanaburi/i],
+    ["AY", /อยุธยา|ayutthaya/i],
+    ["PT", /ปทุมธานี|รังสิต|pathum\s*thani|rangsit/i],
+    ["NB", /นนทบุรี|ปากเกร็ด|nonthaburi|pak\s*kret/i],
+    ["SP", /สมุทรปราการ|บางพลี|samut\s*prakan|bang\s*phli/i],
+    ["BK", /กรุงเทพ|กทม|bangkok/i]
+];
+const MAP = t => {
+  if (!t) return "BK";
+  let x = t.toString().replace(/\s+/g, '').toLowerCase();
+  if (x.includes("ศรีอยุธยา")) return "BK";
+  const found = MAP_RULES.find(([_, regex]) => regex.test(x));
+  return found ? found[0] : "BK";
+};
+
+
+// --- แก้ไข: ปรับการดึงชื่อย่านให้สวยงามและเน้นคำยาว ---
+function getAreaForShort(text) {
+    if (!text) return "ระบุพื้นที่";
+    
+    const t = text.toLowerCase().replace(/langsuan/g, 'lang suan');
+    const hasMainRoad = /suk|สุขุมวิท|lad|ลาด|petch|เพช/.test(t);
+    const getSoi = (str) => (str.match(/(?:ซอย|ซ\.|ซ|soi|alley)\s*([\d\/\-]+)/i) || [])[1] || "";
+
+    // [1] สนามบิน
+    if (/dmk|don mueang|ดอนเมือง/.test(t)) return "แอร์ดอน";
+    if (/bkk|suvarnabhumi|สุวรรณภูมิ/.test(t)) return "แอร์สุ";
+
+    // [2] ถนนหลัก + เลขซอย (บังคับเลขตามชื่อถนน)
+    const road = t.match(/(สุขุมวิท|suk|ลาด|lad|เพช|petch)\D*?\b(\d{1,3})\b/i);
+    if (road && !(road[2] === "113" && /thong ?lo|ทองหล่อ/.test(t))) {
+        const label = /ลาด|lad/.test(road[1]) ? "ลาดพร้าว" : /เพช|petch/.test(road[1]) ? "เพชรบุรี" : "สุขุมวิท";
+        return `${label} ${road[2]}`;
+    }
+
+    // [3] พื้นที่ลำดับความสำคัญ (PRIORITY_AREAS)
+    for (const [yarn, reg] of Object.entries(PRIORITY_AREAS)) if (reg.test(t)) return yarn;
+
+    // [4] ThaiMap (ย่าน + พระราม)
+    for (const [eng, thai] of Object.entries(thaiMap)) {
+        if (t.includes(eng.toLowerCase()) || t.includes(thai)) {
+            const rm = t.match(/rama\s*(\d+)|พระราม\s*(\d+)/i);
+            const soi = hasMainRoad ? "" : getSoi(t); // ถ้ามีถนนหลักแล้ว ไม่ต้องใส่เลขซอยซ้ำ
+            return (rm ? `พระราม ${rm[1] || rm[2]}` : thai) + (soi ? ` ${soi}` : "");
+        }
+    }
+
+    // [5] รหัสไปรษณีย์
+    const zip = (t.match(/\b(\d{5})\b/) || [])[1];
+    if (zip) return ZIP_MAP[zip] || PROVINCE_PREFIX[zip.substring(0, 2)] || "กทม.";
+
+    // [6] สุดท้าย: ตัดชื่อแถวแรก
+    let f = text.split(/[,\(\n]/)[0].trim().replace(/^\d+[\/\d\-]*\s+/, "");
+    return (f.length > 25 ? f.slice(0, 25) : f) || "กทม.";
+ }
+ function updateUI() {
+  const m = document.getElementById("maintenance-screen"), a = document.getElementById("admin-panel"), 
+        st = document.getElementById("status-text"), t = document.getElementById("toggle-system");
+  const active = isSystemActive;
+  if (m) m.style.display = (active || isAdmin) ? "none" : "flex";
+  if (a) a.style.display = isAdmin ? "block" : "none";
+  if (st) {
+    st.innerHTML = `<b>● ${active ? "Online" : "Offline"}</b>`;
+    st.style.color = active ? "#28a745" : "#dc3545";
+  }
+  if (t) t.style.background = active ? "#dc3545" : "#28a745";
+}
+
+document.getElementById("secret-admin-btn").ondblclick = () => {
+  isAdmin = !isAdmin;
+  localStorage.setItem("isAdmin", isAdmin);
+  alert(`แอดมิน: ${isAdmin ? "🔓 🟢เปิด" : "🔒 🔴ปิด"}`);
+  updateUI();
+};
+
+document.getElementById("toggle-system").onclick = async () => {
+  const next = !isSystemActive, label = next ? "เปิด" : "ปิด";
+  if (!confirm(`ยืนยันการ [${label}] ระบบ?`)) return;
+  const st = document.getElementById("status-text");
+  st.innerText = "⏳ โปรดรอ...";
+  const f = new FormData();
+  f.append('type', 'updateStatus');
+  f.append('status', next ? "ON" : "OFF");
+  try {
+    await fetch(WEB_APP_URL, { method: 'POST', body: f });
+    isSystemActive = next;
+    localStorage.setItem("systemStatus", next ? "ON" : "OFF");
+    alert("ระบบเปลี่ยนสถานะสำเร็จ!");
+  } catch (e) { alert("เกิดข้อผิดพลาดในการเชื่อมต่อ Server"); } finally { updateUI(); }
+};
+
+updateUI();
+function mapsLink(a){if(!a)return"#";let q=a.replace(/'/g,"").replace(/\n/g," ");const t=a.toLowerCase();if(/suvarnabhumi|bkk|สุวรรณภูมิ/.test(t))q="Suvarnabhumi Airport";if(/don mueang|dmk|ดอนเมือง/.test(t))q="Don Mueang Airport";return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;}
+function flightLink(f){if(!f)return"#";const cleanFlight=f.trim().replace(/\s+/g,'');return `intent://www.flightradar24.com/data/flights/${cleanFlight}#Intent;scheme=https;package=com.flightradar24free;end`;}
+
+// --- แก้ไข: ดึงค่าทั้งแถวเพื่อความแม่นยำ ---
+function getVal(t, k) {
+  var re = new RegExp("【" + k + "】\\s*([\\s\\S]*?)(?=\\s*【|$)");
+  var m = t.match(re);
+return m ? m[1].replace(/[\n\r]+/g, ' ').replace(/\s+/g, ' ').trim() : "";
+}
+
+function getCode(b){const raw=b.match(/【接驳编码code】(.*)/)||b.match(/code[:：]?\s*(.*)/i);if(!raw)return"";return raw[1].trim().match(/[0-9A-Za-z]+/)?.[0]||""}
+
+
+const getCustomEmoji = r => {
+  if (!r) return "🚗";
+  r = r.toUpperCase();
+  const g = id => document.getElementById(id)?.value || "";
+  const icons = { tA: g("em_to_air"), fA: g("em_from_air"), cy: g("em_city") || "🚗", pv: g("em_prov") || "⭐" };
+  const [f, t] = r.split("-");
+  const isAir = x => x === "S" || x === "D";
+  const isLocal = x => ["BK", "PT", "NB", "SP"].includes(x);
+  if (isLocal(f) && isLocal(t)) return icons.cy;
+  if (isAir(f) && isLocal(t)) return icons.fA;
+  if (isLocal(f) && isAir(t)) return icons.tA;
+  if (/P|HH|CA|RY|KC|AY|20|21|77|76|71|13/.test(r) && !r.includes("ศรีอยุธยา")) return icons.pv;
+  return icons.cy;
+};
+
+function getAllJobData() {
+  const v = document.getElementById("input").value,
+        cr = (document.getElementById("custom_route")?.value || "").replace(/\s+/g, '').toUpperCase(),
+        cp = parseFloat(document.getElementById("custom_price")?.value) || 0;
+  if (!v.trim()) return [];
+
+  return v.split(/\n(?=[A-Z]{1,2}\d+(?:-\d+)?)/).filter(x => x.includes('วันที่')).map(b => {
+    const id = (b.match(/^([A-Z]{1,2}\d+(?:-\d+)?)/m) || [""])[0],
+          tm = getVal(b, "时间เวลา"), rs = getVal(b, "车型ขนาดรถ").toLowerCase(),
+          dt = (b.match(/【日期วันที่】\s*([\d\/\-]+)/) || ["", ""])[1],
+          st = /camry|c7/.test(rs) ? "C7" : rs.includes("7") ? "7" : "5",
+          is7 = st != "5", pk = getVal(b, "接รับ"), dp = getVal(b, "送ส่ง"),
+          rf = MAP(pk), rt = MAP(dp),
+          cl = (rf + "-" + rt).toUpperCase(), rv = (rt + "-" + rf).toUpperCase(),
+          getP = (a, b) => document.getElementById(is7 ? b : a)?.value || 0;
+
+    let pr = 0;
+    if (cr && cp > 0 && cl === cr) pr = cp;
+    if (!pr) {
+      const fix = {"S-P":[850,900],"D-P":[1200,1300],"BK-P":[1100,1200],"S-HH":[1500,1600],"S-RY":[1200,1300],"S-CA":[1500,1600]},
+            map = {"S-P":['p5_s_p','p7_s_p'],"D-P":['p5_d_p','p7_d_p'],"BK-P":['p5_bk_p','p7_bk_p'],"S-CA":['p5_s_ca','p7_s_ca'],"S-RY":['p5_s_ry','p7_s_ry'],"S-HH":['p5_s_hh','p7_s_hh'],"BK-HH":['p5_bk_hh','p7_bk_hh'],"S-BK":['p5_s_bk','p7_s_bk'],"BK-S":['p5_bk_s','p7_bk_s']},
+            k = Object.keys(map).find(key => cl == key || rv == key);
+      if (k) pr = getP(...map[k]);
+      if (!pr && (cl + rv).includes("HH")) pr = getP('p5_hh', 'p7_hh');
+      if (!pr) {
+        if (k && fix[k]) pr = fix[k][is7 ? 1 : 0];
+        else if (cl.includes("BK") || rv.includes("BK") || rt == "S" || rf == "S") pr = getP('p5_bk', 'p7_bk') || (is7 ? 480 : 380);
+        else pr = getP('p5_bk', 'p7_bk');
+      }
+    }
+
+    return {
+      id, time: tm, date: dt, seat: st, price: pr, pk, dp,
+      name: getVal(b, "姓名ชื่อ"), flight: getVal(b, "航班flight"), orderId: getVal(b, "客户订单号"),
+      code: typeof getCode == "function" ? getCode(b) : "",
+      mapFrom: rf, mapTo: rt,
+      areaFrom: getAreaForShort(pk),
+      areaTo: getAreaForShort(dp)
+    };
+  });
+}
+
+function calculatePrice(f, t, s) {
+  const is7 = s == "7" || s == "C7", getP = (a, b) => document.getElementById(is7 ? b : a)?.value || 0;
+  const r = (f + "-" + t).toUpperCase(), v = (t + "-" + f).toUpperCase();
+  const map = {"S-P":['p5_s_p','p7_s_p'],"D-P":['p5_d_p','p7_d_p'],"BK-P":['p5_bk_p','p7_bk_p'],"S-HH":['p5_s_hh','p7_s_hh']};
+  const k = Object.keys(map).find(key => r == key || v == key);
+  return k ? getP(...map[k]) : (r+v).includes("HH") ? getP('p5_hh','p7_hh') : getP('p5_bk','p7_bk');
+}
+
+function renderShortOut(){
+  let j=getAllJobData(), c=document.getElementById("short-out-container"),
+      s=document.getElementById("single-row-section"), sc=document.getElementById("single-row-container"),
+      oc=document.getElementById("order-only-container"), h="", sh="", oh="", d="";
+  if(!j.length)return;
+
+  j.sort((a, b) => 
+    a.date.localeCompare(b.date) || 
+    a.id.localeCompare(b.id, undefined, { numeric: true, sensitivity: 'base' })
+  ).forEach(x => {
+    if(x.date !== d){
+      d = x.date;
+      h += `<div style="margin-top:12px;font-weight:600;color:#007bff;">📅 ${d}</div>`;
+      sh += `\n📅 ${d}\n`; oh += `\n📅 ${d}\n`;
+    }
+    let r=(x.mapFrom+"-"+x.mapTo).toUpperCase(), e=getCustomEmoji(r), sd=x.seat=="C7"?"Cam7":x.seat;
+    if(currentMode===1){
+      s&&(s.style.display="none");
+      let f=x.areaFrom.includes("แอร์")?"#007FFF":"#FF8C00", t=x.areaTo.includes("แอร์")?"#007FFF":"#FF8C00";
+      h+=`<div class="job-item"><div class="job-text">${x.id}//${x.time}//#${x.seat}${r}
+      <a href="${mapsLink(x.pk)}" target="_blank" style="color:${f}">🗺️ ${x.areaFrom}</a>→<a href="${mapsLink(x.dp)}" target="_blank" style="color:${t}">🌍 ${x.areaTo}</a>${x.flight?` <a href="${flightLink(x.flight)}" target="_blank" class="flight-btn">✈️ ${x.flight}</a>`:""}</div></div>`;
+    }else{
+      s&&(s.style.display="block");
+      h+=`<div class="job-item"><div class="job-text">${x.id}(${e})${x.time}/${x.price}#${sd}${r}
+      ${x.areaFrom} - ${x.areaTo}${x.flight?" ✈️"+x.flight:""}</div></div>`;
+      sh+=`${x.id}(${e})${x.time}/${x.price}#${sd}${r}\n`;
+      oh+=`${x.orderId||"-"}\n`;
+    }
+  });
+  c&&(c.innerHTML=h); sc&&(sc.innerText=sh.trim()); oc&&(oc.innerText=oh.trim());
+}
+
 document.getElementById("btnProcess").onclick = async () => {
     let v = document.getElementById("input").value.trim(), btn = document.getElementById("btnProcess");
     if (!v) return;
-
-    let d = (typeof PutterName === 'undefined' || !PutterName || PutterName.toLowerCase() == "admin") ? "" : PutterName,
-        c = (typeof isAdmin !== 'undefined' && isAdmin) ? "Admin" : prompt("ทะเบียนรถ:", d);
-    if ((typeof isAdmin === 'undefined' || !isAdmin) && (!c || !c.trim())) return alert("ต้องระบุทะเบียนรถ");
-
-    if(typeof PutterName !== 'undefined') PutterName = c; 
-    localStorage.setItem("lastPutter", c);
-    
-    if(typeof renderShortOut === 'function') renderShortOut(); 
-    if(typeof fillPreview === 'function') fillPreview();
-    
+    let d = (PutterName && PutterName.toLowerCase() !== "admin") ? PutterName : "",
+        c = (isAdmin) ? "Admin" : prompt("ทะเบียนรถ:", d);
+    if (!isAdmin && (!c || !c.trim())) return alert("ต้องระบุทะเบียนรถ");
+    PutterName = c; localStorage.setItem("lastPutter", c);
+    renderShortOut(); fillPreview();
     const jd = getAllJobData();
-    if (!jd || jd.length === 0) {
-        alert("❌ ตรวจสอบไม่สำเร็จ: ไม่พบข้อมูลใบงาน");
-        return; 
-    }
+    if (!jd || jd.length === 0) return alert("❌ ตรวจสอบไม่สำเร็จ: ไม่พบข้อมูลใบงาน");
     btn.innerText = "⏳ กำลังตรวจสอบ..."; btn.disabled = true;
-
     const requests = jd.map(job => {
         let k = `sent_${job.id}_${job.date}`;
         if (localStorage.getItem(k)) return Promise.resolve();
@@ -532,79 +1070,72 @@ document.getElementById("btnProcess").onclick = async () => {
     });
     await new Promise(resolve => setTimeout(resolve, 2500));
     btn.innerText="⚙️ แปลงใบงาน";btn.disabled=false;
-
-let a = document.createElement("div");
-// ปรับพื้นหลังม่านดำให้เบลอ (Backdrop Blur) เพื่อความสวยงาม
-a.style = "position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(5px);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px";
-
-a.innerHTML = `
-<div style="background:#1e1e1e; padding:30px; border-radius:20px; text-align:center; width:100%; max-width:320px; border:1px solid #333; box-shadow:0 20px 40px rgba(0,0,0,0.4)">
-    
-    <div style="width:60px; height:60px; background:rgba(40,167,69,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 15px">
-        <span style="font-size:30px">✅</span>
-    </div>
-
-    <p style="margin:0 0 20px; color:#fff; font-family:sans-serif">
-        <strong style="font-size:20px; display:block; margin-bottom:5px">ตรวจสอบสำเร็จ</strong>
-        <span style="font-size:14px; color:#aaa">คุณต้องการคัดลอกเพื่อส่ง LINE หรือไม่?</span>
-    </p>
-
-    <button id="y" style="background:#2196F3; color:#fff; width:100%; padding:15px; border:0; border-radius:12px; margin-bottom:10px; font-weight:bold; font-size:16px; cursor:pointer; box-shadow:0 4px 15px rgba(33,150,243,0.3)">
-        ✂️ คัดลอกเลย
-    </button>
-
-    <button id="n" style="background:transparent; color:#888; width:100%; padding:10px; border:0; border-radius:12px; font-size:14px; cursor:pointer">
-        ไว้ทีหลัง
-    </button>
-</div>`;
-
-document.body.appendChild(a);
-
-a.querySelector("#y").onclick=()=>{(currentMode===2)?copyShort2():copyShort1();a.remove();}
-a.querySelector("#n").onclick=()=>a.remove();
+    let a = document.createElement("div");
+    a.style = "position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(5px);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px";
+    a.innerHTML = `<div style="background:#1e1e1e; padding:30px; border-radius:20px; text-align:center; width:100%; max-width:320px; border:1px solid #333; box-shadow:0 20px 40px rgba(0,0,0,0.4)"><div style="width:60px; height:60px; background:rgba(40,167,69,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 15px"><span style="font-size:30px">✅</span></div><p style="margin:0 0 20px; color:#fff; font-family:sans-serif"><strong style="font-size:20px; display:block; margin-bottom:5px">ตรวจสอบสำเร็จ</strong><span style="font-size:14px; color:#aaa">คุณต้องการคัดลอกเพื่อส่ง LINE หรือไม่?</span></p><button id="y" style="background:#2196F3; color:#fff; width:100%; padding:15px; border:0; border-radius:12px; margin-bottom:10px; font-weight:bold; font-size:16px; cursor:pointer; box-shadow:0 4px 15px rgba(33,150,243,0.3)">✂️ คัดลอกเลย</button><button id="n" style="background:transparent; color:#888; width:100%; padding:10px; border:0; border-radius:12px; font-size:14px; cursor:pointer">ไว้ทีหลัง</button></div>`;
+    document.body.appendChild(a);
+    a.querySelector("#y").onclick=()=>{(currentMode===2)?copyShort2():copyShort1();a.remove();}
+    a.querySelector("#n").onclick=()=>a.remove();
 };
 
-
-function makePage(j4){
- let w=document.createElement("div");w.className="page-wrap";
-
- const clean=t=>t?t.split(/[,\(\)\n]/)[0].trim():"";
-
- for(let i=0;i<4;i++){
-  let j=j4[i],s=document.createElement("div");s.className="slot";
-
-  s.innerHTML=j?`
-  <div class="line-top">
-    <div>${j.id}</div><div>${j.time}</div><div>${j.date}</div>
-  </div>
-  <div class="passenger">${j.name&&j.name.includes("/")&&j.name.length>20?j.name.replace(/\//g,"/<br>"):j.name||""}</div>
-  <div class="route">${clean(j.pk)} → ${clean(j.dp)}</div>
-  ${j.code?`<div class="code">${j.code}</div>`:""}
-  `:"";
-
-  w.appendChild(s);
- }
- return w;
+function copyFromID(id, msg = "ไม่มีข้อมูล") {
+  let c = document.getElementById(id), t = c?.innerText.trim();
+  if (!t || t.includes("ผลลัพธ์") || (id !== 'short-out-container' && !t.includes("📅"))) return alert(msg);
+  executeManualCopy(t);
 }
-async function buildPDF(){let{jsPDF:j}=window.jspdf,p=document.querySelectorAll(".page-wrap"),d=new j({orientation:"landscape",unit:"pt",format:[842,595]});for(let i=0;i<p.length;i++){let c=await html2canvas(p[i],{scale:3,useCORS:!0,logging:!1,windowWidth:1200,backgroundColor:"#ffffff"});d.addImage(c.toDataURL("image/jpeg",1),"JPEG",0,0,842,595);i<p.length-1&&d.addPage()}return d}
 
-function fillPreview(){
-let j=getAllJobData(),
-c=document.getElementById("preview-container");
-c.innerHTML="";
-for(let i=0;i<j.length;i+=4)c.appendChild(makePage(j.slice(i,i+4)))
+const copyShort2 = () => copyFromID("short-out-container");
+const copySingleRow = () => copyFromID("single-row-container");
+const copyOrderOnly = () => copyFromID("order-only-container", "ไม่มีข้อมูลเลข Order");
+
+function copyShort1() {
+  let o = "", d = "", data = getAllJobData().sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time));
+  if (!data.length) return alert("ไม่มีข้อมูล");
+  data.forEach(x => {
+    if (x.date !== d) o += (o ? "\n" : "") + (d = x.date) + "\n====================\n";
+    let s = x.seat == "C7" ? "Cam7" : x.seat, r = (x.mapFrom + "-" + x.mapTo).toUpperCase();
+    o += `${x.id}//${x.time}//#${s}${r}\n${x.areaFrom.trim()}–${x.areaTo.trim()}${x.flight ? " ✈️" + x.flight : ""}\n\n`;
+  });
+  executeManualCopy(o.trim());
 }
-document.getElementById("btnPreviewSheet").onclick=fillPreview;
-document.getElementById("btnPDF").onclick=async()=>{ const pdf=await buildPDF(); pdf.save("JobSheet.pdf"); };
-document.getElementById("btnSharePDF").onclick=async()=>{
-    const pdf=await buildPDF(),blob=pdf.output('blob'),fn=(document.getElementById("input").value.match(/^([A-Z]{1,2}\d{2,5})/m)||["","JobSheet"])[1]+".pdf",file=new File([blob],fn,{type:'application/pdf'});
-    if(navigator.share) navigator.share({files:[file]}); else alert("เบราว์เซอร์ไม่รองรับการแชร์");
+
+function executeManualCopy(t) {
+  let e = document.createElement("textarea"), c = document.getElementById("copy-circle");
+  e.value = t; document.body.appendChild(e); e.select();
+  try { document.execCommand("copy"); c.style.display = "flex"; setTimeout(() => c.style.display = "none", 1500); } catch (err) { console.error(err) }
+  e.remove();
+}
+
+const clean = t => t ? t.split(/[,\(\)\n]/)[0].trim() : "";
+function makePage(j4) {
+  let w = document.createElement("div"); w.className = "page-wrap";
+  w.innerHTML = Array.from({length: 4}, (_, i) => {
+    let j = j4[i];
+    return `<div class="slot">${j ? `<div class="line-top"><div>${j.id}</div><div>${j.time}</div><div>${j.date}</div></div><div class="passenger">${j.name?.includes("/") && j.name.length > 20 ? j.name.replace(/\//g, "/<br>") : j.name || ""}</div><div class="route">${clean(j.pk)} → ${clean(j.dp)}</div>${j.code ? `<div class="code">${j.code}</div>` : ""}` : ""}</div>`;
+  }).join("");
+  return w;
+}
+async function buildPDF() {
+  const { jsPDF } = window.jspdf, p = document.querySelectorAll(".page-wrap"), d = new jsPDF("l", "pt", [842, 595]);
+  for (let i = 0; i < p.length; i++) {
+    const c = await html2canvas(p[i], { scale: 3, useCORS: !0, windowWidth: 1200 });
+    d.addImage(c.toDataURL("image/jpeg", 1), "JPEG", 0, 0, 842, 595);
+    if (i < p.length - 1) d.addPage();
+  }
+  return d;
+}
+const fillPreview = () => {
+  const j = getAllJobData(), c = document.getElementById("preview-container");
+  if(c) { c.innerHTML = ""; for (let i = 0; i < j.length; i += 4) c.appendChild(makePage(j.slice(i, i + 4))); }
 };
-function clearData(){
-  if(!confirm("ล้างข้อมูล?")) return;
-  document.querySelectorAll("input,textarea").forEach(e=>e.value="");
-  document.querySelectorAll("#preview-container,.page-wrap").forEach(e=>e.innerHTML="");
-}
+const handlePDF = async (save) => {
+  const pdf = await buildPDF(), fn = (document.getElementById("input").value.match(/[A-Z]{1,2}\d{2,5}/) || ["JobSheet"])[0] + ".pdf";
+  if (save) return pdf.save(fn);
+  const file = new File([pdf.output('blob')], fn, { type: 'application/pdf' });
+  navigator.share ? navigator.share({ files: [file] }) : alert("ไม่รองรับการแชร์");
+};
+document.getElementById("btnPreviewSheet").onclick = fillPreview;
+document.getElementById("btnPDF").onclick = () => handlePDF(true);
+document.getElementById("btnSharePDF").onclick = () => handlePDF(false);
+function clearData() { if (confirm("ล้างข้อมูล?")) { document.querySelectorAll("input,textarea").forEach(e => e.value = ""); document.getElementById("preview-container").innerHTML = ""; } }
 </script>
-</body>
-</html>
