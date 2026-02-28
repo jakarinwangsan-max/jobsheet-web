@@ -86,7 +86,7 @@ button:active{transform:translateY(0)}
 /* mobile */
 @media(max-width:900px){
 .input-control-wrapper{flex-direction:column;gap:10px}
-.page-wrap{zoom:.45;border-radius:40px;margin:0 auto 20px}
+.page-wrap{zoom:.40;border-radius:40px;margin:0 auto 20px}
 button{width:100%;padding:15px!important;font-size:16px!important}
 .mode-card-container{grid-template-columns:1fr;gap:15px}
 .mode-card{padding:30px 20px;border-radius:35px}
@@ -120,6 +120,8 @@ button{width:100%;padding:15px!important;font-size:16px!important}
 สถานะ: <span id="status-text"></span><br>
 <button id="toggle-system" style="background:var(--danger);color:#0000ff;margin-top:5px">เปิด/ปิด การใช้งานระบบ</button>
 </div>
+
+<div class="input-section">
 
 <div class="input-section">
 
@@ -177,80 +179,41 @@ button{width:100%;padding:15px!important;font-size:16px!important}
 <hr>
 
 <div class="short-out-section">
-<h2>✅ แบบย่อ(ส่งLINE)</h2>
+  <h2 style="font-size:18px">✅ แบบย่อ(ส่งLINE)</h2>
+  <button onclick="copyShort1()" id="btnCopyMode1" style="display:none;background:#e91e63;color:#fff;width:100%;padding:10px;margin-bottom:8px;border-radius:4px">✂️ คัดลอกแบบรถทะเบียน</button>
+  <button onclick="copyShort2()" id="btnCopyMode2" style="display:none;background:#ff9800;color:#fff;width:100%;padding:10px;margin-bottom:8px;border-radius:4px">✂️ คัดลอกแบบงานทั่วไป</button>
+  <div id="short-out-container" style="background:rgba(255,255,255,.05);padding:15px;border-radius:8px;border:1px solid rgba(255,255,255,.2);min-height:50px">ผลลัพธ์จะแสดงที่นี่...</div>
 
-<button onclick="copyShort1()" id="btnCopyMode1" style="display:none;background:#e91e63;color:#fff;width:100%;padding:10px;margin-bottom:10px">✂️ คัดลอกแบบรถทะเบียน</button>
-<button onclick="copyShort2()" id="btnCopyMode2" style="display:none;background:#ff9800;color:#fff;width:100%;padding:10px;margin-bottom:10px">✂️ คัดลอกแบบงานทั่วไป</button>
-
-<div id="short-out-container" style="background:rgba(255,255,255,.05);padding:15px;border-radius:8px;border:1px solid rgba(255,255,255,.2);color:#fff;text-align:left">ผลลัพธ์จะแสดงที่นี่...</div>
-
-<div id="single-row-section" style="display:none;margin-top:30px;border-top:2px dashed #2196F3;padding-top:20px">
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:15px">
-
-<div>
-<h2 style="color:#2196F3;font-size:16px">✅ แบบย่อ</h2>
-<button onclick="copySingleRow()" style="background:#2196F3;color:#fff;width:100%;padding:5px;margin-bottom:5px;border:none;border-radius:2px">✂️ คัดลอกแบบย่อ</button>
-<div id="single-row-container" style="background:rgba(255,255,255,.05);padding:10px;border-radius:8px;border:2px solid #2196F3;color:#fff;white-space:nowrap;overflow-x:auto;height:400px;overflow-y:auto;font-size:11px"></div>
-</div>
-
-<div>
-<h2 style="color:#ffc107;font-size:16px">✅ เลข Order</h2>
-<button onclick="copyOrderOnly()" style="background:#ffc107;color:#000;width:100%;padding:5px;margin-bottom:5px;border:none;border-radius:2px;font-weight:bold">✂️ คัดลอกOrder</button>
-<div id="order-only-container" style="background:rgba(255,255,255,.05);padding:10px;border-radius:8px;border:2px solid #ffc107;color:#fff;white-space:nowrap;height:400px;overflow-y:auto;font-size:11px"></div>
-</div>
-
-</div></div></div>
-
-<div id="bts-section">
-    <center><h2>🖨️ ใบงาน (BTS)</h2></center>
-
-    <div style="text-align: center; width: 100%; margin: 15px 0;">
-        <div class="control-group" style="display: inline-flex; justify-content: center; gap: 8px;">
-            <button id="btnPreviewSheet" style="width: auto !important; padding: 6px 12px !important; font-size: 13px !important; min-width: unset !important; flex: none !important;">
-                👀 ตัวอย่าง
-            </button>
-            <button id="btnPDF" style="width: auto !important; padding: 6px 12px !important; font-size: 13px !important; min-width: unset !important; flex: none !important;">
-                💾 ดาวน์โหลด
-            </button>
-            <button id="btnSharePDF" style="width: auto !important; padding: 6px 12px !important; font-size: 13px !important; min-width: unset !important; flex: none !important;">
-                🔗 แชร์
-            </button>
-        </div>
+  <div id="single-row-section" style="display:none;margin-top:20px;border-top:2px dashed #2196F3;padding-top:15px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div>
+        <h2 style="color:#2196F3;font-size:14px;margin-bottom:5px">✅ แบบย่อ</h2>
+        <button onclick="copySingleRow()" style="background:#2196F3;color:#fff;width:100%;padding:6px;margin-bottom:5px;border:none;border-radius:3px;font-size:12px">✂️ คัดลอกแบบย่อ</button>
+        <div id="single-row-container" style="background:rgba(255,255,255,.05);padding:8px;border:2px solid #2196F3;border-radius:6px;height:350px;overflow:auto;font-size:11px;white-space:nowrap"></div>
+      </div>
+      <div>
+        <h2 style="color:#ffc107;font-size:14px;margin-bottom:5px">✅ เลข Order</h2>
+        <button onclick="copyOrderOnly()" style="background:#ffc107;color:#000;width:100%;padding:6px;margin-bottom:5px;border:none;border-radius:3px;font-weight:bold;font-size:12px">✂️ คัดลอกOrder</button>
+        <div id="order-only-container" style="background:rgba(255,255,255,.05);padding:8px;border:2px solid #ffc107;border-radius:6px;height:350px;overflow:auto;font-size:11px;white-space:nowrap"></div>
+      </div>
     </div>
+  </div>
 </div>
 
-
+<div id="bts-section" style="margin-top:25px;text-align:center">
+  <h2 style="margin-bottom:15px">🖨️ ใบงาน (BTS)</h2>
+  <div style="display:flex;justify-content:center;gap:6px">
+    <button id="btnPreviewSheet" style="background:#444;color:#fff;padding:8px 15px;font-size:13px;border-radius:4px;border:1px solid #666">👀 ตัวอย่าง</button>
+    <button id="btnPDF" style="background:#28a745;color:#fff;padding:8px 15px;font-size:13px;border-radius:4px;border:none">💾 ดาวน์โหลด</button>
+    <button id="btnSharePDF" style="background:#007bff;color:#fff;padding:8px 15px;font-size:13px;border-radius:4px;border:none">🔗 แชร์</button>
+  </div>
+</div>
 <div id="copy-circle"><span>copy</span><br>คัดลอกแล้ว</div>
 <div id="preview-container"></div>
 </body>
 <script>
-let currentMode = 1;
-const WEB_APP_URL='https://script.google.com/macros/s/AKfycbwn9p1uIxVfShlXaXRQ0PMwuGnzSXw7MpkbIFIkCLujyccQJz13AyfmsBVQwtHvgTPI0A/exec';
-let PutterName=localStorage.getItem("lastPutter")||"";let isAdmin=localStorage.getItem("isAdmin")==="true";let isSystemActive=true;updateUI();
-async function syncStatus(){try{const response=await fetch(WEB_APP_URL);const status=await response.text();isSystemActive=(status.trim()==="ON");updateUI();}catch(e){console.error(e)}}
-syncStatus();
-
-function selectMode(mode) {
-    currentMode = mode; 
-    document.getElementById('mode-selection-screen').style.display = 'none';
-    document.getElementById('mode-label').innerText = (mode === 1 ? "(รถทะเบียน)" : "(งานทั่วไป)");
-    document.getElementById('btnCopyMode1').style.display = (mode === 1 ? 'block' : 'none');
-    document.getElementById('btnCopyMode2').style.display = (mode === 2 ? 'block' : 'none');
-    document.getElementById('price-row').style.display = (mode === 2 ? 'block' : 'none');
-    document.getElementById('single-row-section').style.display = (mode === 2 ? 'block' : 'none');
-
-    const btsSection = document.getElementById('bts-section');
-    const previewContainer = document.getElementById('preview-container');
-
-    if (mode === 1) {
-        if (btsSection) btsSection.style.display = 'block';
-        if (previewContainer) previewContainer.style.display = 'block';
-    } else {
-        if (btsSection) btsSection.style.display = 'none';
-        if (previewContainer) previewContainer.style.display = 'none';
-    }
-}
- const thaiMap = {
+let currentMode=1, PutterName=localStorage.getItem("lastPutter")||"", isAdmin=localStorage.getItem("isAdmin")==="true", isSystemActive=true; const WEB_APP_URL='https://script.google.com/macros/s/AKfycbwn9p1uIxVfShlXaXRQ0PMwuGnzSXw7MpkbIFIkCLujyccQJz13AyfmsBVQwtHvgTPI0A/exec'; async function syncStatus(){try{const r=await fetch(WEB_APP_URL), s=await r.text(); isSystemActive=(s.trim()==="ON"); updateUI();}catch(e){console.error(e)}} syncStatus(); function selectMode(m){ currentMode=m; document.getElementById('mode-selection-screen').style.display='none'; document.getElementById('mode-label').innerText=(m===1?"(รถทะเบียน)":"(งานทั่วไป)"); document.getElementById('btnCopyMode1').style.display=(m===1?'block':'none'); document.getElementById('btnCopyMode2').style.display=(m===2?'block':'none'); document.getElementById('price-row').style.display=(m===2?'block':'none'); const s=document.getElementById('single-row-section'), b=document.getElementById('bts-section'), p=document.getElementById('preview-container'); if(s)s.style.display=(m===2?'block':'none'); if(b)b.style.display=(m===1?'block':'none'); if(p)p.style.display=(m===1?'block':'none'); }
+const thaiMap = {
     // === กรุงเทพฯ ครบ 50 เขต ===
     "phaya thai":"พญาไท","ratchathewi":"ราชเทวี","pathum wan":"ปทุมวัน",
     "wattana":"วัฒนา","vadhana":"วัฒนา","khlong toei":"คลองเตย","huai khwang":"ห้วยขวาง",
@@ -325,7 +288,7 @@ const PRIORITY_AREAS = {
     "ชะอำ": /ชะอำ|cha-am|cha am|chaam/i,
     "เซ็นทรัลเวิลด์": /เซ็นทรัลเวิลด์|centralworld|central world/i,
     "ราชดำริ": /ราชดำริ|ratchadamri|st. regis|waldorf/i,
-    "วิทยุ": /วิทยุ|ถนนวิทยุ|wireless road|conrad|embassy/i,
+    "วิทยุ": /วิทยุ|ถนนวิทยุ|wireless road|conrad/i,
     "ชิดลม": /ชิดลม|chidlom/i,
     "หลังสวน": /หลังสวน|langsuan|lang suan/i,
     "เพลินจิต": /เพลินจิต|phloen chit/i,
@@ -400,20 +363,13 @@ const PRIORITY_AREAS = {
     "ตจว./อื่นๆ": /นครปฐม|สมุทรสาคร|จันทบุรี|กาญจนบุรี|อยุธยา|เขาใหญ่|นครนายก|อัมพวา|แม่กลอง/i
 };
 
-const MAP_RULES = [
-    ["S", /สุวรรณภูมิ|suvarnabhumi|bkk/i],
-    ["D", /ดอนเมือง|don\s*mueang|dmk/i],
-    ["P", /พัทยา|จอมเทียน|นาเกลือ|บางละมุง|pattaya|jomtien|bali\s*hai/i],
-    ["HH", /หัวหิน|hua\s*hin/i],
-    ["CA", /ชะอำ|cha-?am/i],
-    ["RY", /ระยอง|บ่อวิน|ปลวกแดง|rayong|bowin/i],
-    ["KC", /กาญจนบุรี|kanchanaburi/i],
-    ["AY", /อยุธยา|ayutthaya/i],
-    ["PT", /ปทุมธานี|รังสิต|pathum\s*thani|rangsit/i],
-    ["NB", /นนทบุรี|ปากเกร็ด|nonthaburi|pak\s*kret/i],
-    ["SP", /สมุทรปราการ|บางพลี|samut\s*prakan|bang\s*phli/i],
-    ["BK", /กรุงเทพ|กทม|bangkok/i]
-];
+const MAP_RULES = [ ["S", /สุวรรณภูมิ|suvarnabhumi|bkk/i], ["D", /ดอนเมือง|don\s*mueang|dmk/i], ["P", /พัทยา|จอมเทียน|นาเกลือ|บางละมุง|pattaya|jomtien|bali\s*hai|^20/i], ["HH", /หัวหิน|hua\s*hin|^77/i], ["CA", /ชะอำ|cha-?am/i],
+["RY", /ระยอง|บ่อวิน|ปลวกแดง|rayong|bowin|^21/i], ["KC", /กาญจนบุรี|kanchanaburi|^71/i], ["AY", /อยุธยา|ayutthaya|^13/i], ["PT", /ปทุมธานี|รังสิต|pathum\s*thani|rangsit|^12/i], ["NB", /นนทบุรี|ปากเกร็ด|nonthaburi|pak\s*kret|^11/i], ["SP", /สมุทรปราการ|บางพลี|samut\s*prakan|bang\s*phli/i], ["BK", /กรุงเทพ|กทม|bangkok|^10/i],
+["ANG", /อ่างทอง|^14/i], ["LBI", /ลพบุรี|^15/i], ["PCN", /เพชรบูรณ์|^16/i], ["UTI", /อุทัยธานี|^17/i], ["SRI", /สระบุรี|^18/i], ["CTI", /จันทบุรี|^22/i], ["TRD", /ตราด|^23/i], ["CCO", /ฉะเชิงเทรา|^24/i], ["PRI", /ปราจีนบุรี|^25/i], ["NYK", /นครนายก|^26/i], ["SKW", /สระแก้ว|^27/i],
+["NMA", /นครราชสีมา|โคราช|^30/i], ["BRM", /บุรีรัมย์|^31/i], ["SRN", /สุรินทร์|^32/i], ["SSK", /ศรีสะเกษ|^33/i], ["UBN", /อุบลราชธานี|^34/i], ["YST", /ยโสธร|^35/i], ["CPM", /ชัยภูมิ|^36/i], ["AMN", /อำนาจเจริญ|^37/i], ["BKN", /บึงกาฬ|^38/i], ["NBP", /หนองบัวลำภู|^39/i], ["KKN", /ขอนแก่น|^40/i], ["UDN", /อุดรธานี|^41/i], ["LEI", /เลย|^42/i], ["NKI", /หนองคาย|^43/i], ["MSK", /มหาสารคาม|^44/i], ["RET", /ร้อยเอ็ด|^45/i], ["KSN", /กาฬสินธุ์|^46/i], ["SKN", /สกลนคร|^47/i], ["NPM", /นครพนม|^48/i], ["MDH", /มุกดาหาร|^49/i],
+["CNX", /เชียงใหม่|^50/i], ["LPN", /ลำพูน|^51/i], ["LPG", /ลำปาง|^52/i], ["UTD", /อุตรดิตถ์|^53/i], ["PRE", /แพร่|^54/i], ["NAN", /น่าน|^55/i], ["PYO", /พะเยา|^56/i], ["CEI", /เชียงราย|^57/i], ["MSN", /แม่ฮ่องสอน|^58/i], ["NSN", /นครสวรรค์|^60/i], ["KPT", /กำแพงเพชร|^62/i], ["TAK", /ตาก|^63/i], ["STI", /สุโขทัย|^64/i], ["PLK", /พิษณุโลก|^65/i], ["PCT", /พิจิตร|^66/i],
+["RBR", /ราชบุรี|^70/i], ["SPB", /สุพรรณบุรี|^72/i], ["NPT", /นครปฐม|^73/i], ["SKN", /สมุทรสาคร|^74/i], ["SKM", /สมุทรสงคราม|^75/i], ["PBI", /เพชรบุรี|^76/i], ["NST", /นครศรีธรรมราช|^80/i], ["KBI", /กระบี่|^81/i], ["PNA", /พังงา|^82/i], ["HKT", /ภูเก็ต|^83/i], ["SNI", /สุราษฎร์ธานี|^84/i], ["RNN", /ระนอง|^85/i], ["CPN", /ชุมพร|^86/i], ["SKA", /สงขลา|หาดใหญ่|^90/i], ["STN", /สตูล|^91/i], ["TRG", /ตรัง|^92/i], ["PLG", /พัทลุง|^93/i], ["PTN", /ปัตตานี|^94/i], ["YLA", /ยะลา|^95/i], ["NWT", /นราธิวาส|^96/i] ];
+
 const MAP = t => {
   if (!t) return "BK";
   let x = t.toString().replace(/\s+/g, '').toLowerCase();
@@ -421,280 +377,42 @@ const MAP = t => {
   const found = MAP_RULES.find(([_, regex]) => regex.test(x));
   return found ? found[0] : "BK";
 };
+ function getAreaForShort(t){ if(!t)return "ระบุพื้นที่"; const tx=t.toLowerCase().replace(/langsuan/g,'lang suan'), hm=/suk|สุขุมวิท|lad|ลาด|petch|เพช/.test(tx), gs=s=>(s.match(/(?:ซอย|ซ\.|ซ|soi|alley)\s*([\d\/\-]+)/i)||[])[1]||""; if(/dmk|don mueang|ดอนเมือง/.test(tx))return "แอร์ดอน"; if(/bkk|suvarnabhumi|สุvarnabhumi|สุวรรณภูมิ/.test(tx))return "แอร์สุ"; const rd=tx.match(/(สุขุมวิท|suk|ลาด|lad|เพช|petch)\D*?\b(\d{1,3})\b/i); if(rd&&!(rd[2]==="113"&&/thong ?lo|ทองหล่อ/.test(tx))){ const l=/ลาด|lad/.test(rd[1])?"ลาดพร้าว":/เพช|petch/.test(rd[1])?"เพชรบุรี":"สุขุมวิท"; return `${l} ${rd[2]}`; } if(typeof PRIORITY_AREAS!=='undefined')for(const[y,r]of Object.entries(PRIORITY_AREAS))if(r.test(tx))return y; if(typeof thaiMap!=='undefined'){ const sk=Object.keys(thaiMap).sort((a,b)=>b.length-a.length); for(const e of sk){ const rg=new RegExp(`\\b${e.toLowerCase()}\\b|${thaiMap[e]}`,'i'); if(rg.test(tx)){ const th=thaiMap[e], rm=tx.match(/rama\s*(\d+)|พระราม\s*(\d+)/i), s=hm?"":gs(tx); return (rm?`พระราม ${rm[1]||rm[2]}`:th)+(s?` ${s}`:""); } } } const zm=tx.match(/\b(\d{5})\b/); if(zm){ const z=zm[1]; if(typeof ZIP_MAP!=='undefined'&&ZIP_MAP[z])return ZIP_MAP[z]; if(typeof PROVINCE_PREFIX!=='undefined'){ const p=z.substring(0,2); if(PROVINCE_PREFIX[p])return PROVINCE_PREFIX[p]; } } let f=t.split(/[,\(\n]/)[0].trim().replace(/^\d+[\/\d\-]*\s+/,""); return (f.length>25?f.slice(0,25):f)||"กทม."; }
 
+function updateUI() { const m = document.getElementById("maintenance-screen"), a = document.getElementById("admin-panel"), st = document.getElementById("status-text"), t = document.getElementById("toggle-system"), act = isSystemActive; if (m) m.style.display = (act || isAdmin) ? "none" : "flex"; if (a) a.style.display = isAdmin ? "block" : "none"; if (st) { st.innerHTML = `<b>● ${act ? "Online" : "Offline"}</b>`; st.style.color = act ? "#28a745" : "#dc3545"; } if (t) t.style.background = act ? "#dc3545" : "#28a745"; }
 
-// --- แก้ไข: ปรับการดึงชื่อย่านให้สวยงามและเน้นคำยาว ---
-function getAreaForShort(text) {
-    if (!text) return "ระบุพื้นที่";
-    
-    const t = text.toLowerCase().replace(/langsuan/g, 'lang suan');
-    const hasMainRoad = /suk|สุขุมวิท|lad|ลาด|petch|เพช/.test(t);
-    const getSoi = (str) => (str.match(/(?:ซอย|ซ\.|ซ|soi|alley)\s*([\d\/\-]+)/i) || [])[1] || "";
+document.getElementById("secret-admin-btn").ondblclick = () => { isAdmin = !isAdmin; localStorage.setItem("isAdmin", isAdmin); alert(`แอดมิน: ${isAdmin ? "🔓 🟢เปิด" : "🔒 🔴ปิด"}`); updateUI(); };
 
-    // [1] สนามบิน
-    if (/dmk|don mueang|ดอนเมือง/.test(t)) return "แอร์ดอน";
-    if (/bkk|suvarnabhumi|สุวรรณภูมิ/.test(t)) return "แอร์สุ";
-
-    // [2] ถนนหลัก + เลขซอย (บังคับเลขตามชื่อถนน)
-    const road = t.match(/(สุขุมวิท|suk|ลาด|lad|เพช|petch)\D*?\b(\d{1,3})\b/i);
-    if (road && !(road[2] === "113" && /thong ?lo|ทองหล่อ/.test(t))) {
-        const label = /ลาด|lad/.test(road[1]) ? "ลาดพร้าว" : /เพช|petch/.test(road[1]) ? "เพชรบุรี" : "สุขุมวิท";
-        return `${label} ${road[2]}`;
-    }
-
-    // [3] พื้นที่ลำดับความสำคัญ (PRIORITY_AREAS)
-    for (const [yarn, reg] of Object.entries(PRIORITY_AREAS)) if (reg.test(t)) return yarn;
-
-    // [4] ThaiMap (ย่าน + พระราม)
-    for (const [eng, thai] of Object.entries(thaiMap)) {
-        if (t.includes(eng.toLowerCase()) || t.includes(thai)) {
-            const rm = t.match(/rama\s*(\d+)|พระราม\s*(\d+)/i);
-            const soi = hasMainRoad ? "" : getSoi(t); // ถ้ามีถนนหลักแล้ว ไม่ต้องใส่เลขซอยซ้ำ
-            return (rm ? `พระราม ${rm[1] || rm[2]}` : thai) + (soi ? ` ${soi}` : "");
-        }
-    }
-
-    // [5] รหัสไปรษณีย์
-    const zip = (t.match(/\b(\d{5})\b/) || [])[1];
-    if (zip) return ZIP_MAP[zip] || PROVINCE_PREFIX[zip.substring(0, 2)] || "กทม.";
-
-    // [6] สุดท้าย: ตัดชื่อแถวแรก
-    let f = text.split(/[,\(\n]/)[0].trim().replace(/^\d+[\/\d\-]*\s+/, "");
-    return (f.length > 25 ? f.slice(0, 25) : f) || "กทม.";
- }
- function updateUI() {
-  const m = document.getElementById("maintenance-screen"), a = document.getElementById("admin-panel"), 
-        st = document.getElementById("status-text"), t = document.getElementById("toggle-system");
-  const active = isSystemActive;
-  if (m) m.style.display = (active || isAdmin) ? "none" : "flex";
-  if (a) a.style.display = isAdmin ? "block" : "none";
-  if (st) {
-    st.innerHTML = `<b>● ${active ? "Online" : "Offline"}</b>`;
-    st.style.color = active ? "#28a745" : "#dc3545";
-  }
-  if (t) t.style.background = active ? "#dc3545" : "#28a745";
-}
-
-document.getElementById("secret-admin-btn").ondblclick = () => {
-  isAdmin = !isAdmin;
-  localStorage.setItem("isAdmin", isAdmin);
-  alert(`แอดมิน: ${isAdmin ? "🔓 🟢เปิด" : "🔒 🔴ปิด"}`);
-  updateUI();
-};
-
-document.getElementById("toggle-system").onclick = async () => {
-  const next = !isSystemActive, label = next ? "เปิด" : "ปิด";
-  if (!confirm(`ยืนยันการ [${label}] ระบบ?`)) return;
-  const st = document.getElementById("status-text");
-  st.innerText = "⏳ โปรดรอ...";
-  const f = new FormData();
-  f.append('type', 'updateStatus');
-  f.append('status', next ? "ON" : "OFF");
-  try {
-    await fetch(WEB_APP_URL, { method: 'POST', body: f });
-    isSystemActive = next;
-    localStorage.setItem("systemStatus", next ? "ON" : "OFF");
-    alert("ระบบเปลี่ยนสถานะสำเร็จ!");
-  } catch (e) { alert("เกิดข้อผิดพลาดในการเชื่อมต่อ Server"); } finally { updateUI(); }
-};
+document.getElementById("toggle-system").onclick = async () => { const next = !isSystemActive, label = next ? "เปิด" : "ปิด"; if (!confirm(`ยืนยันการ [${label}] ระบบ?`)) return; const st = document.getElementById("status-text"); st.innerText = "⏳ โปรดรอ..."; const f = new FormData(); f.append('type', 'updateStatus'); f.append('status', next ? "ON" : "OFF"); try { await fetch(WEB_APP_URL, { method: 'POST', body: f }); isSystemActive = next; localStorage.setItem("systemStatus", next ? "ON" : "OFF"); alert("ระบบเปลี่ยนสถานะสำเร็จ!"); } catch (e) { alert("เกิดข้อผิดพลาดในการเชื่อมต่อ Server"); } finally { updateUI(); } };
 
 updateUI();
 function mapsLink(a){if(!a)return"#";let q=a.replace(/'/g,"").replace(/\n/g," ");const t=a.toLowerCase();if(/suvarnabhumi|bkk|สุวรรณภูมิ/.test(t))q="Suvarnabhumi Airport";if(/don mueang|dmk|ดอนเมือง/.test(t))q="Don Mueang Airport";return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;}
 function flightLink(f){if(!f)return"#";const cleanFlight=f.trim().replace(/\s+/g,'');return `intent://www.flightradar24.com/data/flights/${cleanFlight}#Intent;scheme=https;package=com.flightradar24free;end`;}
 
-// --- แก้ไข: ดึงค่าทั้งแถวเพื่อความแม่นยำ ---
-function getVal(t, k) {
-  var re = new RegExp("【" + k + "】\\s*([\\s\\S]*?)(?=\\s*【|$)");
-  var m = t.match(re);
-return m ? m[1].replace(/[\n\r]+/g, ' ').replace(/\s+/g, ' ').trim() : "";
-}
+function getVal(t, k) { const re = new RegExp(`【${k}】\\s*([\\s\\S]*?)(?=\\s*【|$)`), m = t.match(re); return m ? m[1].trim() : ""; }
 
 function getCode(b){const raw=b.match(/【接驳编码code】(.*)/)||b.match(/code[:：]?\s*(.*)/i);if(!raw)return"";return raw[1].trim().match(/[0-9A-Za-z]+/)?.[0]||""}
 
 
-const getCustomEmoji = r => {
-  if (!r) return "🚗";
-  r = r.toUpperCase();
-  const g = id => document.getElementById(id)?.value || "";
-  const icons = { tA: g("em_to_air"), fA: g("em_from_air"), cy: g("em_city") || "🚗", pv: g("em_prov") || "⭐" };
-  const [f, t] = r.split("-");
-  const isAir = x => x === "S" || x === "D";
-  const isLocal = x => ["BK", "PT", "NB", "SP"].includes(x);
-  if (isLocal(f) && isLocal(t)) return icons.cy;
-  if (isAir(f) && isLocal(t)) return icons.fA;
-  if (isLocal(f) && isAir(t)) return icons.tA;
-  if (/P|HH|CA|RY|KC|AY|20|21|77|76|71|13/.test(r) && !r.includes("ศรีอยุธยา")) return icons.pv;
-  return icons.cy;
-};
+const getCustomEmoji = r => { if (!r) return "🚗"; r = r.toUpperCase(); const g = id => document.getElementById(id)?.value || "", icons = { tA: g("em_to_air"), fA: g("em_from_air"), cy: g("em_city") || "🚗", pv: g("em_prov") || "⭐" }, [f, t] = r.split("-"), isAir = x => x === "S" || x === "D", isLocal = x => ["BK", "PT", "NB", "SP"].includes(x); if (isLocal(f) && isLocal(t)) return icons.cy; if (isAir(f) && isLocal(t)) return icons.fA; if (isLocal(f) && isAir(t)) return icons.tA; if (/P|HH|CA|RY|KC|AY|20|21|77|76|71|13/.test(r) && !r.includes("ศรีอยุธยา")) return icons.pv; return icons.cy; };
 
-function getAllJobData() {
-  const v = document.getElementById("input").value,
-        cr = (document.getElementById("custom_route")?.value || "").replace(/\s+/g, '').toUpperCase(),
-        cp = parseFloat(document.getElementById("custom_price")?.value) || 0;
-  if (!v.trim()) return [];
+function getAllJobData(){ const v=document.getElementById("input").value, cr=(document.getElementById("custom_route")?.value||"").replace(/\s+/g,'').toUpperCase(), cp=parseFloat(document.getElementById("custom_price")?.value)||0; if(!v.trim())return[]; return v.split(/\n(?=[A-Z]{1,2}\d+(?:-\d+)?)/).filter(x=>x.includes('วันที่')).map(b=>{ const id=(b.match(/^([A-Z]{1,2}\d+(?:-\d+)?)/m)||[""])[0], tm=getVal(b,"时间เวลา"), rs=getVal(b,"车型ขนาดรถ").toLowerCase(), dt=(b.match(/【日期วันที่】\s*([\d\/\-]+)/)||["",""])[1], st=/camry|c7/.test(rs)?"C7":rs.includes("7")?"7":"5", is7=st!="5", pk=getVal(b,"接รับ"), dp=getVal(b,"送ส่ง"), rf=MAP(pk), rt=MAP(dp), cl=(rf+"-"+rt).toUpperCase(), rv=(rt+"-"+rf).toUpperCase(), getP=(a,b)=>document.getElementById(is7?b:a)?.value||0; let pr=0; if(cr&&cp>0&&cl===cr)pr=cp; if(!pr){ const fix={"S-P":[850,900],"D-P":[1200,1300],"BK-P":[1100,1200],"S-HH":[1500,1600],"S-RY":[1200,1300],"S-CA":[1500,1600]}, map={"S-P":['p5_s_p','p7_s_p'],"D-P":['p5_d_p','p7_d_p'],"BK-P":['p5_bk_p','p7_bk_p'],"S-CA":['p5_s_ca','p7_s_ca'],"S-RY":['p5_s_ry','p7_s_ry'],"S-HH":['p5_s_hh','p7_s_hh'],"BK-HH":['p5_bk_hh','p7_bk_hh'],"S-BK":['p5_s_bk','p7_s_bk'],"BK-S":['p5_bk_s','p7_bk_s']}, k=Object.keys(map).find(key=>cl==key||rv==key); if(k)pr=getP(...map[k]); if(!pr&&(cl+rv).includes("HH"))pr=getP('p5_hh','p7_hh'); if(!pr){ if(k&&fix[k])pr=fix[k][is7?1:0]; else if(cl.includes("BK")||rv.includes("BK")||rt=="S"||rf=="S")pr=getP('p5_bk', 'p7_bk')||(is7?480:380); else pr=getP('p5_bk','p7_bk'); } } return {id,time:tm,date:dt,seat:st,price:pr,pk,dp,name:getVal(b,"姓名ชื่อ"),flight:getVal(b,"航班flight"),orderId:getVal(b,"客户订单号"),code:typeof getCode=="function"?getCode(b):"",mapFrom:rf,mapTo:rt,areaFrom:getAreaForShort(pk),areaTo:getAreaForShort(dp)}; }); } function calculatePrice(f,t,s){ const is7=s=="7"||s=="C7", getP=(a,b)=>document.getElementById(is7?b:a)?.value||0, r=(f+"-"+t).toUpperCase(), v=(t+"-"+f).toUpperCase(), map={"S-P":['p5_s_p','p7_s_p'],"D-P":['p5_d_p','p7_d_p'],"BK-P":['p5_bk_p','p7_bk_p'],"S-HH":['p5_s_hh','p7_s_hh']}, k=Object.keys(map).find(key=>r==key||v==key); return k?getP(...map[k]):(r+v).includes("HH")?getP('p5_hh','p7_hh'):getP('p5_bk','p7_bk'); }
 
-  return v.split(/\n(?=[A-Z]{1,2}\d+(?:-\d+)?)/).filter(x => x.includes('วันที่')).map(b => {
-    const id = (b.match(/^([A-Z]{1,2}\d+(?:-\d+)?)/m) || [""])[0],
-          tm = getVal(b, "时间เวลา"), rs = getVal(b, "车型ขนาดรถ").toLowerCase(),
-          dt = (b.match(/【日期วันที่】\s*([\d\/\-]+)/) || ["", ""])[1],
-          st = /camry|c7/.test(rs) ? "C7" : rs.includes("7") ? "7" : "5",
-          is7 = st != "5", pk = getVal(b, "接รับ"), dp = getVal(b, "送ส่ง"),
-          rf = MAP(pk), rt = MAP(dp),
-          cl = (rf + "-" + rt).toUpperCase(), rv = (rt + "-" + rf).toUpperCase(),
-          getP = (a, b) => document.getElementById(is7 ? b : a)?.value || 0;
+function renderShortOut(){ let j=getAllJobData(), c=document.getElementById("short-out-container"), s=document.getElementById("single-row-section"), sc=document.getElementById("single-row-container"), oc=document.getElementById("order-only-container"), h="", sh="", oh="", d=""; if(!j.length)return; j.sort((a,b)=>a.date.localeCompare(b.date)||a.id.localeCompare(b.id,undefined,{numeric:true})).forEach(x=>{ if(x.date!==d){ d=x.date; h+=`<div style="margin-top:12px;font-weight:600;color:#007bff;text-align:left;">📅 ${d}</div>`; sh+=`📅 ${d}\n`; oh+=`📅 ${d}\n`; } let r=(x.mapFrom+"-"+x.mapTo).toUpperCase(), e=getCustomEmoji(r), sd=x.seat=="C7"?"Cam7":x.seat, tm=(x.time||"").replace(/\s+/g,''); if(currentMode===1){ s&&(s.style.display="none"); let f=x.areaFrom.includes("แอร์")?"#007FFF":"#FF8C00", t=x.areaTo.includes("แอร์")?"#007FFF":"#FF8C00"; h+=`<div style="text-align:left;color:#fff;margin-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:5px;">${x.id}//${tm}//#${x.seat}${r}<br><a href="${mapsLink(x.pk)}" target="_blank" style="color:${f};text-decoration:none;">🗺️ ${x.areaFrom}</a>→<a href="${mapsLink(x.dp)}" target="_blank" style="color:${t};text-decoration:none;">🌍 ${x.areaTo}</a>${x.flight?` <a href="${flightLink(x.flight)}" target="_blank" style="color:#00d4ff;text-decoration:none;">✈️ ${x.flight}</a>`:""}</div>`; }else{ s&&(s.style.display="block"); h+=`<div style="text-align:left;color:#fff;margin-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:5px;">${x.id}(${e})${tm}/${x.price}#${sd}${r}<br>${x.areaFrom.trim()}-${x.areaTo.trim()}${x.flight?" ✈️"+x.flight:""}</div>`; sh+=`${x.id}(${e})${tm}/${x.price}#${sd}${r}\n`; oh+=`${x.orderId||"-"}\n`; } }); if(c){ c.style.color="#fff"; c.style.textAlign="left"; c.innerHTML=h; } if(sc){ sc.style.color="#fff"; sc.style.textAlign="left"; sc.innerText=sh.trim(); } if(oc){ oc.style.color="#fff"; oc.style.textAlign="left"; oc.innerText=oh.trim(); } }
 
-    let pr = 0;
-    if (cr && cp > 0 && cl === cr) pr = cp;
-    if (!pr) {
-      const fix = {"S-P":[850,900],"D-P":[1200,1300],"BK-P":[1100,1200],"S-HH":[1500,1600],"S-RY":[1200,1300],"S-CA":[1500,1600]},
-            map = {"S-P":['p5_s_p','p7_s_p'],"D-P":['p5_d_p','p7_d_p'],"BK-P":['p5_bk_p','p7_bk_p'],"S-CA":['p5_s_ca','p7_s_ca'],"S-RY":['p5_s_ry','p7_s_ry'],"S-HH":['p5_s_hh','p7_s_hh'],"BK-HH":['p5_bk_hh','p7_bk_hh'],"S-BK":['p5_s_bk','p7_s_bk'],"BK-S":['p5_bk_s','p7_bk_s']},
-            k = Object.keys(map).find(key => cl == key || rv == key);
-      if (k) pr = getP(...map[k]);
-      if (!pr && (cl + rv).includes("HH")) pr = getP('p5_hh', 'p7_hh');
-      if (!pr) {
-        if (k && fix[k]) pr = fix[k][is7 ? 1 : 0];
-        else if (cl.includes("BK") || rv.includes("BK") || rt == "S" || rf == "S") pr = getP('p5_bk', 'p7_bk') || (is7 ? 480 : 380);
-        else pr = getP('p5_bk', 'p7_bk');
-      }
-    }
+document.getElementById("btnProcess").onclick = async () => { let v = document.getElementById("input").value.trim(), btn = document.getElementById("btnProcess"); if (!v) return; let d = (typeof PutterName !== 'undefined' && PutterName.toLowerCase() !== "admin") ? PutterName : "", c = (typeof isAdmin !== 'undefined' && isAdmin) ? "Admin" : prompt("ทะเบียนรถ:", d); if ((typeof isAdmin === 'undefined' || !isAdmin) && (!c || !c.trim())) return alert("ต้องระบุทะเบียนรถ"); PutterName = c; localStorage.setItem("lastPutter", c); renderShortOut(); fillPreview(); const jd = getAllJobData(); if (!jd || jd.length === 0) return alert("❌ ไม่พบข้อมูลใบงาน"); btn.innerText = "⏳ กำลังตรวจสอบ..."; btn.disabled = true; jd.forEach(job => { let k = `sent_${job.id}_${job.date}`; if (!localStorage.getItem(k)) { job.putter = c; let f = new FormData(); f.append("data", JSON.stringify(job)); fetch(WEB_APP_URL, { method: "POST", body: f, mode: "no-cors", keepalive: true }).then(() => localStorage.setItem(k, "true")).catch(e => console.error(e)); } }); await new Promise(r => setTimeout(r, 2500)); btn.innerText="⚙️ แปลงใบงาน"; btn.disabled=false; let a = document.createElement("div"); a.style = "position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(5px);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px"; a.innerHTML = `<div style="background:#1e1e1e;padding:30px;border-radius:20px;text-align:center;width:100%;max-width:320px;border:1px solid #333;box-shadow:0 20px 40px rgba(0,0,0,0.4)"><div style="width:60px;height:60px;background:rgba(40,167,69,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 15px"><span style="font-size:30px">✅</span></div><p style="margin:0 0 20px;color:#fff;font-family:sans-serif"><strong style="font-size:20px;display:block;margin-bottom:5px">ตรวจสอบสำเร็จ</strong><span style="font-size:14px;color:#aaa">คัดลอกส่ง LINE หรือไม่?</span></p><button id="y" style="background:#2196F3;color:#fff;width:100%;padding:15px;border:0;border-radius:12px;margin-bottom:10px;font-weight:bold;font-size:16px;cursor:pointer;box-shadow:0 4px 15px rgba(33,150,243,0.3)">✂️ คัดลอกเลย</button><button id="n" style="background:transparent;color:#888;width:100%;padding:10px;border:0;border-radius:12px;font-size:14px;cursor:pointer">ไว้ทีหลัง</button></div>`; document.body.appendChild(a); a.querySelector("#y").onclick=()=>{ (typeof currentMode !== 'undefined' && currentMode===2) ? copyShort2() : copyShort1(); a.remove(); }; a.querySelector("#n").onclick=()=>a.remove(); }; function copyFromID(id, msg = "ไม่มีข้อมูล") { let c = document.getElementById(id), t = c?.innerText.trim(); if (!t || t.includes("ผลลัพธ์") || (id !== 'short-out-container' && !t.includes("📅"))) return alert(msg); let cleanT = t.split('\n').map(l => l.trim()).filter(l => l !== "").join('\n'); executeManualCopy(cleanT); }
 
-    return {
-      id, time: tm, date: dt, seat: st, price: pr, pk, dp,
-      name: getVal(b, "姓名ชื่อ"), flight: getVal(b, "航班flight"), orderId: getVal(b, "客户订单号"),
-      code: typeof getCode == "function" ? getCode(b) : "",
-      mapFrom: rf, mapTo: rt,
-      areaFrom: getAreaForShort(pk),
-      areaTo: getAreaForShort(dp)
-    };
-  });
-}
-
-function calculatePrice(f, t, s) {
-  const is7 = s == "7" || s == "C7", getP = (a, b) => document.getElementById(is7 ? b : a)?.value || 0;
-  const r = (f + "-" + t).toUpperCase(), v = (t + "-" + f).toUpperCase();
-  const map = {"S-P":['p5_s_p','p7_s_p'],"D-P":['p5_d_p','p7_d_p'],"BK-P":['p5_bk_p','p7_bk_p'],"S-HH":['p5_s_hh','p7_s_hh']};
-  const k = Object.keys(map).find(key => r == key || v == key);
-  return k ? getP(...map[k]) : (r+v).includes("HH") ? getP('p5_hh','p7_hh') : getP('p5_bk','p7_bk');
-}
-
-function renderShortOut(){
-  let j=getAllJobData(), c=document.getElementById("short-out-container"),
-      s=document.getElementById("single-row-section"), sc=document.getElementById("single-row-container"),
-      oc=document.getElementById("order-only-container"), h="", sh="", oh="", d="";
-  if(!j.length)return;
-
-  j.sort((a, b) => 
-    a.date.localeCompare(b.date) || 
-    a.id.localeCompare(b.id, undefined, { numeric: true, sensitivity: 'base' })
-  ).forEach(x => {
-    if(x.date !== d){
-      d = x.date;
-      h += `<div style="margin-top:12px;font-weight:600;color:#007bff;">📅 ${d}</div>`;
-      sh += `\n📅 ${d}\n`; oh += `\n📅 ${d}\n`;
-    }
-    let r=(x.mapFrom+"-"+x.mapTo).toUpperCase(), e=getCustomEmoji(r), sd=x.seat=="C7"?"Cam7":x.seat;
-    if(currentMode===1){
-      s&&(s.style.display="none");
-      let f=x.areaFrom.includes("แอร์")?"#007FFF":"#FF8C00", t=x.areaTo.includes("แอร์")?"#007FFF":"#FF8C00";
-      h+=`<div class="job-item"><div class="job-text">${x.id}//${x.time}//#${x.seat}${r}
-      <a href="${mapsLink(x.pk)}" target="_blank" style="color:${f}">🗺️ ${x.areaFrom}</a>→<a href="${mapsLink(x.dp)}" target="_blank" style="color:${t}">🌍 ${x.areaTo}</a>${x.flight?` <a href="${flightLink(x.flight)}" target="_blank" class="flight-btn">✈️ ${x.flight}</a>`:""}</div></div>`;
-    }else{
-      s&&(s.style.display="block");
-      h+=`<div class="job-item"><div class="job-text">${x.id}(${e})${x.time}/${x.price}#${sd}${r}
-      ${x.areaFrom} - ${x.areaTo}${x.flight?" ✈️"+x.flight:""}</div></div>`;
-      sh+=`${x.id}(${e})${x.time}/${x.price}#${sd}${r}\n`;
-      oh+=`${x.orderId||"-"}\n`;
-    }
-  });
-  c&&(c.innerHTML=h); sc&&(sc.innerText=sh.trim()); oc&&(oc.innerText=oh.trim());
-}
-
-document.getElementById("btnProcess").onclick = async () => {
-    let v = document.getElementById("input").value.trim(), btn = document.getElementById("btnProcess");
-    if (!v) return;
-    let d = (PutterName && PutterName.toLowerCase() !== "admin") ? PutterName : "",
-        c = (isAdmin) ? "Admin" : prompt("ทะเบียนรถ:", d);
-    if (!isAdmin && (!c || !c.trim())) return alert("ต้องระบุทะเบียนรถ");
-    PutterName = c; localStorage.setItem("lastPutter", c);
-    renderShortOut(); fillPreview();
-    const jd = getAllJobData();
-    if (!jd || jd.length === 0) return alert("❌ ตรวจสอบไม่สำเร็จ: ไม่พบข้อมูลใบงาน");
-    btn.innerText = "⏳ กำลังตรวจสอบ..."; btn.disabled = true;
-    const requests = jd.map(job => {
-        let k = `sent_${job.id}_${job.date}`;
-        if (localStorage.getItem(k)) return Promise.resolve();
-        job.putter = c;
-        let f = new FormData();
-        f.append("data", JSON.stringify(job));
-        return fetch(WEB_APP_URL, { method: "POST", body: f, mode: "no-cors", keepalive: true })
-            .then(() => localStorage.setItem(k, "true")).catch(e => console.error(e));
-    });
-    await new Promise(resolve => setTimeout(resolve, 2500));
-    btn.innerText="⚙️ แปลงใบงาน";btn.disabled=false;
-    let a = document.createElement("div");
-    a.style = "position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(5px);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px";
-    a.innerHTML = `<div style="background:#1e1e1e; padding:30px; border-radius:20px; text-align:center; width:100%; max-width:320px; border:1px solid #333; box-shadow:0 20px 40px rgba(0,0,0,0.4)"><div style="width:60px; height:60px; background:rgba(40,167,69,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 15px"><span style="font-size:30px">✅</span></div><p style="margin:0 0 20px; color:#fff; font-family:sans-serif"><strong style="font-size:20px; display:block; margin-bottom:5px">ตรวจสอบสำเร็จ</strong><span style="font-size:14px; color:#aaa">คุณต้องการคัดลอกเพื่อส่ง LINE หรือไม่?</span></p><button id="y" style="background:#2196F3; color:#fff; width:100%; padding:15px; border:0; border-radius:12px; margin-bottom:10px; font-weight:bold; font-size:16px; cursor:pointer; box-shadow:0 4px 15px rgba(33,150,243,0.3)">✂️ คัดลอกเลย</button><button id="n" style="background:transparent; color:#888; width:100%; padding:10px; border:0; border-radius:12px; font-size:14px; cursor:pointer">ไว้ทีหลัง</button></div>`;
-    document.body.appendChild(a);
-    a.querySelector("#y").onclick=()=>{(currentMode===2)?copyShort2():copyShort1();a.remove();}
-    a.querySelector("#n").onclick=()=>a.remove();
-};
-
-function copyFromID(id, msg = "ไม่มีข้อมูล") {
-  let c = document.getElementById(id), t = c?.innerText.trim();
-  if (!t || t.includes("ผลลัพธ์") || (id !== 'short-out-container' && !t.includes("📅"))) return alert(msg);
-  executeManualCopy(t);
-}
-
-const copyShort2 = () => copyFromID("short-out-container");
+const copyShort2 = () => { let c = document.getElementById("short-out-container"), t = c?.innerText.trim(); if (!t || t.includes("ผลลัพธ์")) return alert("ไม่มีข้อมูล"); let cleanT = t.split('\n').map(line => line.trim()).join('\n'); executeManualCopy(cleanT); };
 const copySingleRow = () => copyFromID("single-row-container");
 const copyOrderOnly = () => copyFromID("order-only-container", "ไม่มีข้อมูลเลข Order");
 
-function copyShort1() {
-  let o = "", d = "", data = getAllJobData().sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time));
-  if (!data.length) return alert("ไม่มีข้อมูล");
-  data.forEach(x => {
-    if (x.date !== d) o += (o ? "\n" : "") + (d = x.date) + "\n====================\n";
-    let s = x.seat == "C7" ? "Cam7" : x.seat, r = (x.mapFrom + "-" + x.mapTo).toUpperCase();
-    o += `${x.id}//${x.time}//#${s}${r}\n${x.areaFrom.trim()}–${x.areaTo.trim()}${x.flight ? " ✈️" + x.flight : ""}\n\n`;
-  });
-  executeManualCopy(o.trim());
-}
+function copyShort1() { let o = "", d = "", data = getAllJobData().sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time)); if (!data.length) return alert("ไม่มีข้อมูล"); data.forEach(x => { if (x.date !== d) o += (o ? "\n" : "") + (d = x.date) + "\n====================\n"; let s = x.seat == "C7" ? "Cam7" : x.seat, r = (x.mapFrom + "-" + x.mapTo).toUpperCase(); o += `${x.id}//${x.time}//#${s}${r}\n${x.areaFrom.trim()}–${x.areaTo.trim()}${x.flight ? " ✈️" + x.flight : ""}\n\n`; }); executeManualCopy(o.trim()); }
 
-function executeManualCopy(t) {
-  let e = document.createElement("textarea"), c = document.getElementById("copy-circle");
-  e.value = t; document.body.appendChild(e); e.select();
-  try { document.execCommand("copy"); c.style.display = "flex"; setTimeout(() => c.style.display = "none", 1500); } catch (err) { console.error(err) }
-  e.remove();
-}
+function executeManualCopy(t) { let e = document.createElement("textarea"), c = document.getElementById("copy-circle"); e.value = t; document.body.appendChild(e); e.select(); try { document.execCommand("copy"); if(c){ c.style.display = "flex"; setTimeout(() => c.style.display = "none", 1500); } } catch (err) { console.error(err) } e.remove(); }
 
-const clean = t => t ? t.split(/[,\(\)\n]/)[0].trim() : "";
-function makePage(j4) {
-  let w = document.createElement("div"); w.className = "page-wrap";
-  w.innerHTML = Array.from({length: 4}, (_, i) => {
-    let j = j4[i];
-    return `<div class="slot">${j ? `<div class="line-top"><div>${j.id}</div><div>${j.time}</div><div>${j.date}</div></div><div class="passenger">${j.name?.includes("/") && j.name.length > 20 ? j.name.replace(/\//g, "/<br>") : j.name || ""}</div><div class="route">${clean(j.pk)} → ${clean(j.dp)}</div>${j.code ? `<div class="code">${j.code}</div>` : ""}` : ""}</div>`;
-  }).join("");
-  return w;
-}
-async function buildPDF() {
-  const { jsPDF } = window.jspdf, p = document.querySelectorAll(".page-wrap"), d = new jsPDF("l", "pt", [842, 595]);
-  for (let i = 0; i < p.length; i++) {
-    const c = await html2canvas(p[i], { scale: 3, useCORS: !0, windowWidth: 1200 });
-    d.addImage(c.toDataURL("image/jpeg", 1), "JPEG", 0, 0, 842, 595);
-    if (i < p.length - 1) d.addPage();
-  }
-  return d;
-}
-const fillPreview = () => {
-  const j = getAllJobData(), c = document.getElementById("preview-container");
-  if(c) { c.innerHTML = ""; for (let i = 0; i < j.length; i += 4) c.appendChild(makePage(j.slice(i, i + 4))); }
-};
-const handlePDF = async (save) => {
-  const pdf = await buildPDF(), fn = (document.getElementById("input").value.match(/[A-Z]{1,2}\d{2,5}/) || ["JobSheet"])[0] + ".pdf";
-  if (save) return pdf.save(fn);
-  const file = new File([pdf.output('blob')], fn, { type: 'application/pdf' });
-  navigator.share ? navigator.share({ files: [file] }) : alert("ไม่รองรับการแชร์");
-};
+const clean = t => t ? t.split(/[,\(\)\n]/)[0].trim() : ""; function makePage(j4) { let w = document.createElement("div"); w.className = "page-wrap"; w.innerHTML = Array.from({length: 4}, (_, i) => { let j = j4[i]; return `<div class="slot">${j ? `<div class="line-top"><div>${j.id}</div><div>${j.time}</div><div>${j.date}</div></div><div class="passenger">${j.name?.includes("/") && j.name.length > 20 ? j.name.replace(/\//g, "/<br>") : j.name || ""}</div><div class="route">${clean(j.pk)} → ${clean(j.dp)}</div>${j.code ? `<div class="code">${j.code}</div>` : ""}` : ""}</div>`; }).join(""); return w; } async function buildPDF() { const { jsPDF } = window.jspdf, p = document.querySelectorAll(".page-wrap"), d = new jsPDF("l", "pt", [842, 595]); for (let i = 0; i < p.length; i++) { const c = await html2canvas(p[i], { scale: 3, useCORS: !0, windowWidth: 1200 }); d.addImage(c.toDataURL("image/jpeg", 1), "JPEG", 0, 0, 842, 595); if (i < p.length - 1) d.addPage(); } return d; }
+
+const fillPreview = () => { const j = getAllJobData(), c = document.getElementById("preview-container"); if(c) { c.innerHTML = ""; for (let i = 0; i < j.length; i += 4) c.appendChild(makePage(j.slice(i, i + 4))); } }; const handlePDF = async (save) => { const pdf = await buildPDF(), fn = (document.getElementById("input").value.match(/[A-Z]{1,2}\d{2,5}/) || ["JobSheet"])[0] + ".pdf"; if (save) return pdf.save(fn); const file = new File([pdf.output('blob')], fn, { type: 'application/pdf' }); navigator.share ? navigator.share({ files: [file] }) : alert("ไม่รองรับการแชร์"); };
 document.getElementById("btnPreviewSheet").onclick = fillPreview;
 document.getElementById("btnPDF").onclick = () => handlePDF(true);
 document.getElementById("btnSharePDF").onclick = () => handlePDF(false);
