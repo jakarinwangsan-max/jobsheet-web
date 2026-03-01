@@ -199,7 +199,6 @@ button{width:100%;padding:15px!important;font-size:16px!important}
     </div>
   </div>
 </div>
-
 <div id="bts-section" style="margin-top:25px;text-align:center">
   <h2 style="margin-bottom:15px">🖨️ ใบงาน (BTS)</h2>
   <div style="display:flex;justify-content:center;gap:6px">
@@ -213,6 +212,7 @@ button{width:100%;padding:15px!important;font-size:16px!important}
 </body>
 <script>
 let currentMode=1, PutterName=localStorage.getItem("lastPutter")||"", isAdmin=localStorage.getItem("isAdmin")==="true", isSystemActive=true; const WEB_APP_URL='https://script.google.com/macros/s/AKfycbwn9p1uIxVfShlXaXRQ0PMwuGnzSXw7MpkbIFIkCLujyccQJz13AyfmsBVQwtHvgTPI0A/exec'; async function syncStatus(){try{const r=await fetch(WEB_APP_URL), s=await r.text(); isSystemActive=(s.trim()==="ON"); updateUI();}catch(e){console.error(e)}} syncStatus(); function selectMode(m){ currentMode=m; document.getElementById('mode-selection-screen').style.display='none'; document.getElementById('mode-label').innerText=(m===1?"(รถทะเบียน)":"(งานทั่วไป)"); document.getElementById('btnCopyMode1').style.display=(m===1?'block':'none'); document.getElementById('btnCopyMode2').style.display=(m===2?'block':'none'); document.getElementById('price-row').style.display=(m===2?'block':'none'); const s=document.getElementById('single-row-section'), b=document.getElementById('bts-section'), p=document.getElementById('preview-container'); if(s)s.style.display=(m===2?'block':'none'); if(b)b.style.display=(m===1?'block':'none'); if(p)p.style.display=(m===1?'block':'none'); }
+
 const thaiMap = {
     // === กรุงเทพฯ ครบ 50 เขต ===
     "phaya thai":"พญาไท","ratchathewi":"ราชเทวี","pathum wan":"ปทุมวัน",
@@ -244,156 +244,7 @@ const thaiMap = {
     "pattaya":"พัทยา","jomtien":"จอมเทียน","rayong":"ระยอง","hua hin":"หัวหิน","huahin":"หัวหิน",
     "cha am":"ชะอำ","chaam":"ชะอำ","chonburi":"ชลบุรี","ayutthaya":"อยุธยา","saraburi":"สระบุรี"
 };
-const ZIP_MAP = {
-  "10100":"ป้อมปราบ/สัมพันธวงศ์", "10110":"วัฒนา/คลองเตย", "10120":"บางคอแหลม/สาทร/ยานนาวา",
-  "10140":"ราษฎร์บูรณะ/ทุ่งครุ", "10150":"จอมทอง/บางขุนเทียน", "10160":"บางแค/ภาษีเจริญ",
-  "10170":"ตลิ่งชัน/ทวีวัฒนา", "10200":"พระนคร/ราชดำเนิน", "10210":"ดอนเมือง/หลักสี่",
-  "10220":"สายไหม/บางเขน", "10230":"คันนายาว/บึงกุ่ม", "10240":"บางกะปิ",
-  "10250":"สวนหลวง/ประเวศ", "10260":"บางนา/อุดมสุข", "10270":"สมุทรปราการ/เมือง",
-  "10310":"ห้วยขวาง/รัชดา", "10330":"ปทุมวัน/สยาม", "10400":"พญาไท/ราชเทวี",
-  "10500":"บางรัก/สีลม", "10510":"มีนบุรี", "10520":"ลาดกระบัง",
-  "10540":"บางพลี/กิ่งแก้ว", "10560":"บางเสาธง", "10600":"คลองสาน/ธนบุรี",
-  "10700":"บางพลัด", "10800":"บางซื่อ", "10900":"จตุจักร",
-  "11000":"เมืองนนทบุรี", "11110":"บางบัวทอง", "11120":"ปากเกร็ด",
-  "11130":"บางกรวย", "11140":"บางใหญ่", "12000":"เมืองปทุมธานี",
-  "12120":"คลองหลวง", "12130":"รังสิต/ลำลูกกา", "12150":"คูคต/สายไหม",
-  "20150":"พัทยา/บางละมุง", "20260":"พัทยา/จอมเทียน", "20180":"ห้วยใหญ่/จอมเทียน",
-  "21140":"ระยอง/บ่อวิน/ปลวกแดง", "21000":"เมืองระยอง", "77110":"หัวหิน", "76120":"ชะอำ"
-};
-const PROVINCE_PREFIX = {
-  "10": "กรุงเทพมหานคร", "11": "นนทบุรี", "12": "ปทุมธานี", "13": "พระนครศรีอยุธยา", "14": "อ่างทอง/สุพรรณบุรี",
-  "15": "ลพบุรี/ชัยนาท", "16": "เพชรบูรณ์", "17": "อุทัยธานี", "18": "สระบุรี", "20": "ชลบุรี",
-  "21": "ระยอง", "22": "จันทบุรี", "23": "ตราด", "24": "ฉะเชิงเทรา", "25": "ปราจีนบุรี",
-  "26": "นครนายก", "27": "สระแก้ว", "30": "นครราชสีมา", "31": "บุรีรัมย์", "32": "สุรินทร์",
-  "33": "ศรีสะเกษ", "34": "อุบลราชธานี", "35": "ยโสธร", "36": "ชัยภูมิ", "37": "อำนาจเจริญ",
-  "38": "บึงกาฬ", "39": "หนองบัวลำภู", "40": "ขอนแก่น", "41": "อุดรธานี", "42": "เลย",
-  "43": "หนองคาย", "44": "มหาสารคาม", "45": "ร้อยเอ็ด", "46": "กาฬสินธุ์", "47": "สกลนคร",
-  "48": "นครพนม", "49": "มุกดาหาร", "50": "เชียงใหม่", "51": "ลำพูน", "52": "ลำปาง",
-  "53": "อุตรดิตถ์", "54": "แพร่", "55": "น่าน", "56": "พะเยา", "57": "เชียงราย",
-  "58": "แม่ฮ่องสอน", "60": "นครสวรรค์", "61": "อุทัยธานี", "62": "กำแพงเพชร", "63": "ตาก",
-  "64": "สุโขทัย", "65": "พิษณุโลก", "66": "พิจิตร", "67": "เพชรบูรณ์", "70": "ราชบุรี",
-  "71": "กาญจนบุรี", "72": "สุพรรณบุรี", "73": "นครปฐม", "74": "สมุทรสาคร", "75": "สมุทรสงคราม",
-  "76": "เพชรบุรี", "77": "ประจวบคีรีขันธ์", "80": "นครศรีธรรมราช", "81": "กระบี่", "82": "พังงา",
-  "83": "ภูเก็ต", "84": "สุราษฎร์ธานี", "85": "ระนอง", "86": "ชุมพร", "90": "สงขลา",
-  "91": "สตูล", "92": "ตรัง", "93": "พัทลุง", "94": "ปัตตานี", "95": "ยะลา", "96": "นราธิวาส"
-};
-
-const PRIORITY_AREAS = {
-    "ศรีนครินทร์": /ศรีนครินทร์|srinakarin/i,
-    "พัทยา": /พัทยา|จอมเทียน|นาเกลือ|บางละมุง|pattaya|jomtien|naklua|bang\s*lamung/i,
-    "ศรีราชา/บางแสน": /ศรีราชา|บางแสน|sriracha|bang saen/i,
-    "ระยอง": /ระยอง|rayong/i,
-    "บ่อวิน/ปลวกแดง": /บ่อวิน|ปลวกแดง|bowin|pluak daeng/i,
-    "หัวหิน": /หัวหิน|hua hin|huahin|market village|cicada/i,
-    "ชะอำ": /ชะอำ|cha-am|cha am|chaam/i,
-    "เซ็นทรัลเวิลด์": /เซ็นทรัลเวิลด์|centralworld|central world/i,
-    "ราชดำริ": /ราชดำริ|ratchadamri|st. regis|waldorf/i,
-    "วิทยุ": /วิทยุ|ถนนวิทยุ|wireless road|conrad/i,
-    "ชิดลม": /ชิดลม|chidlom/i,
-    "หลังสวน": /หลังสวน|langsuan|lang suan/i,
-    "เพลินจิต": /เพลินจิต|phloen chit/i,
-    "สยาม": /สยาม|siam|paragon/i,
-    "ประตูน้ำ": /ประตูน้ำ|pratunam|baiyoke/i,
-    "ราชเทวี": /ราชเทวี|ratchathewi/i,
-    "พญาไท": /พญาไท|phaya thai/i,
-    "บรรทัดทอง": /บรรทัดทอง|banthat thong/i,
-    "นานา": /นานา|nana|sukhumvit 4|sukhumvit 11/i,
-    "อโศก": /อโศก|asoke|asok|terminal 21/i,
-    "พร้อมพงษ์": /พร้อมพงษ์|phrom phong|emquartier|emporium|sukhumvit 24/i,
-    "ทองหล่อ": /ทองหล่อ|thonglo|thong lo|sukhumvit 55/i,
-    "เอกมัย": /เอกมัย|ekkamai|sukhumvit 63/i,
-    "พระราม 4": /พระราม 4|rama 4|q sirikit/i,
-    "อ่อนนุช": /อ่อนนุช|onnut|on nut/i,
-    "ปุณณวิถี": /ปุณณวิถี|punna withi/i,
-    "บางจาก": /บางจาก|bang chak/i,
-    "อุดมสุข": /อุดมสุข|udomsuk/i,
-    "บางนา": /บางนา|bang na|bang na-trad/i,
-    "แบริ่ง": /แบริ่ง|bearing/i,
-    "ลาซาล": /ลาซาล|lasalle/i,
-    "สีลม": /สีลม|silom/i,
-    "สาทร": /สาทร|sathorn|sathon/i,
-    "สุรวงศ์": /สุรวงศ์|surawong/i,
-    "บางรัก": /บางรัก|bang rak|crowne plaza/i,
-    "เจริญกรุง": /เจริญกรุง|charoen krung/i,
-    "ไอคอนสยาม": /ไอคอนสยาม|iconsiam|icon siam|charoen nakhon/i,
-    "ริมแม่น้ำ": /ริมแม่น้ำ|riverside|shangri-la|peninsula/i,
-    "เยาวราช": /เยาวราช|yaowarat/i,
-    "ข้าวสาร": /ข้าวสาร|khaosan/i,
-    "ลาดพร้าว": /ลาดพร้าว|ladprao|lat phrao|centara grand ladprao/i,
-    "บางกะปิ": /บางกะปิ|bang kapi/i,
-    "สามเสน": /สามเสน|samsen/i,
-    "มักกะสัน": /มักกะสัน|makkasan/i,
-    "เพชรบุรีตัดใหม่": /เพชรบุรีตัดใหม่|new petchaburi/i,
-    "เพชรบุรี": /เพชรบุรี|petchaburi/i,
-    "พระราม 9": /พระราม 9|rama 9|fortune town/i,
-    "รัชดา": /รัชดา|ratchada/i,
-    "ห้วยขวาง": /ห้วยขวาง|huai khwang/i,
-    "รามคำแหง": /รามคำแหง|ramkhamhaeng/i,
-    "จตุจักร": /จตุจักร|chatuchak/i,
-    "หมอชิต": /หมอชิต|mo chit/i,
-    "อารีย์": / อารีย์| ari |ari station/i,
-    "สนามเป้า": /สนามเป้า|sanampao|sanam pao/i,
-    "พระราม 3": /พระราม 3|rama 3/i,
-    "พระราม 2": /พระราม 2|rama ii/i,
-    "บางขุนเทียน": /บางขุนเทียน|bang khun thian/i,
-    "พระประแดง": /พระประแดง|phra pradaeng/i,
-    "สำโรง": /สำโรง|samrong/i,
-    "พัฒนาการ": /พัฒนาการ|pattanakarn/i,
-    "กิ่งแก้ว": /กิ่งแก้ว|kingkaew|king kaew/i,
-    "บางพลี": /บางพลี|bang phli/i,
-    "บางปู": /บางปู|bang pu/i,
-    "บางเสาธง": /บางเสาธง|bang sao thong/i,
-    "ปิ่นเกล้า": /ปิ่นเกล้า|pinklao/i,
-    "ตลิ่งชัน": /ตลิ่งชัน|taling chan/i,
-    "ราชพฤกษ์": /ราชพฤกษ์|ratchaphruek/i,
-    "ฝั่งธน": /ฝั่งธน/i,
-    "บางซื่อ": /บางซื่อ|bang sue/i,
-    "บางซ่อน": /บางซ่อน|bang son/i,
-    "งามวงศ์วาน": /งามวงศ์วาน|ngamwongwan/i,
-    "เมืองนนทบุรี": /เมืองนนทบุรี|muang nonthaburi/i,
-    "ปากเกร็ด": /ปากเกร็ด|pak kret/i,
-    "แจ้งวัฒนะ": /แจ้งวัฒนะ|chaeng wattana/i,
-    "เมืองทอง/อิมแพ็ค": /เมืองทอง|impact|อิมแพ็ค|muang thong/i,
-    "บางใหญ่": /บางใหญ่|bang yai/i,
-    "บางบัวทอง": /บางบัวทอง|bang bua thong/i,
-    "รังสิต": /รังสิต|rangsit|future park/i,
-    "ลำลูกกา/คูคต": /ลำลูกกา|คูคต|lam luk ka/i,
-    "คลองหลวง/ธรรมศาสตร์": /คลองหลวง|ธรรมศาสตร์|khlong luang/i,
-    "ศูนย์ราชการ": /ศูนย์ราชการ|government complex/i,
-    "ตจว./อื่นๆ": /นครปฐม|สมุทรสาคร|จันทบุรี|กาญจนบุรี|อยุธยา|เขาใหญ่|นครนายก|อัมพวา|แม่กลอง/i
-};
-const thaiMap = {
-    // === กรุงเทพฯ ครบ 50 เขต ===
-    "phaya thai":"พญาไท","ratchathewi":"ราชเทวี","pathum wan":"ปทุมวัน",
-    "wattana":"วัฒนา","vadhana":"วัฒนา","khlong toei":"คลองเตย","huai khwang":"ห้วยขวาง",
-    "chatuchak":"จตุจักร","bang rak":"บางรัก","sathorn":"สาทร","sathon":"สาทร",
-    "din daeng":"ดินแดง","lat phrao":"ลาดพร้าว","don mueang":"ดอนเมือง","bang na":"บางนา",
-    "phra khanong":"พระโขนง","prawet":"ประเวศ","suan luang":"สวนหลวง","yan nawa":"ยานนาวา",
-    "bang kho laem":"บางคอแหลม","bangkorlaem":"บางคอแหลม","bang sue":"บางซื่อ","bangsue":"บางซื่อ",
-    "lak si":"หลักสี่","sai mai":"สายไหม","khannayao":"คันนายาว","saphan sung":"สะพานสูง",
-    "wang thonglang":"วังทองหลาง","bueng kum":"บึงกุ่ม","bang kapi":"บางกะปิ","bangkapi":"บางกะปิ",
-    "min buri":"มีนบุรี","minburi":"มีนบุรี","lat krabang":"ลาดกระบัง","nong chok":"หนองจอก",
-    "khlong sam wa":"คลองสามวา","samphanthawong":"สัมพันธวงศ์","pom prap":"ป้อมปราบฯ",
-    "phra nakhon":"พระนคร","dusit":"ดุสิต","thon buri":"ธนบุรี","khlong san":"คลองสาน",
-    "bang kok yai":"บางกอกใหญ่","bang kok noi":"บางกอกน้อย","bang phlat":"บางพลัด",
-    "taling chan":"ตลิ่งชัน","phasi charoen":"ภาษีเจริญ","bang kae":"บางแค","nong khaem":"หนองแขม",
-    "bang khun thian":"บางขุนเทียน","chom thong":"จอมทอง","rat burana":"ราษฎร์บูรณะ",
-    "thung khru":"ทุ่งครุ","bang bon":"บางบอน","bangbon":"บางบอน","thawi watthana":"ทวีวัฒนา",
-    "bang khen":"บางเขน","samphen":"สำเพ็ง","charoen krung":"เจริญกรุง",
-
-    // === ปริมณฑล & พุทธมณฑล ===
-    "phutthamonthon":"พุทธมณฑล","salaya":"ศาลายา","sam phran":"สามพราน","nakhon pathom":"นครปฐม",
-    "pak kret":"ปากเกร็ด","pakkret":"ปากเกร็ด","bang yai":"บางใหญ่","bang bua thong":"บางบัวทอง",
-    "khlong luang":"คลองหลวง","thanyaburi":"ธัญบุรี","lam luk ka":"ลำลูกกา","lamlukka":"ลำลูกกา",
-    "bang phli":"บางพลี","bangphli":"บางพลี","samrong":"สำโรง","phra pradaeng":"พระประแดง",
-    "krathum baen":"กระทุ่มแบน","mahachai":"มหาชัย","samut sakhon":"สมุทรสาคร",
-    "nonthaburi":"นนทบุรี","pathumthani":"ปทุมธานี","samutprakan":"สมุทรปราการ",
-
-    // === ต่างจังหวัดสำคัญ ===
-    "pattaya":"พัทยา","jomtien":"จอมเทียน","rayong":"ระยอง","hua hin":"หัวหิน","huahin":"หัวหิน",
-    "cha am":"ชะอำ","chaam":"ชะอำ","chonburi":"ชลบุรี","ayutthaya":"อยุธยา","saraburi":"สระบุรี"
-};
-const ZIP_MAP = {
+ const ZIP_MAP = {
   "10100":"ป้อมปราบ/สัมพันธวงศ์", "10110":"วัฒนา/คลองเตย", "10120":"บางคอแหลม/สาทร/ยานนาวา",
   "10140":"ราษฎร์บูรณะ/ทุ่งครุ", "10150":"จอมทอง/บางขุนเทียน", "10160":"บางแค/ภาษีเจริญ",
   "10170":"ตลิ่งชัน/ทวีวัฒนา", "10200":"พระนคร/ราชดำเนิน", "10210":"ดอนเมือง/หลักสี่",
@@ -541,8 +392,7 @@ const MAP_RULES = [
   ["TRG", /ตรัง|\b92\d{3}/i], ["PLG", /พัทลุง|\b93\d{3}/i], ["PTN", /ปัตตานี|\b94\d{3}/i], 
   ["YLA", /ยะลา|\b95\d{3}/i], ["NWT", /นราธิวาส|\b96\d{3}/i] 
 ];
-
-const MAP = t => {
+ const MAP = t => {
   if (!t) return "BK";
   let x = t.toString().trim().replace(/^\d+\s*/, ''); 
   let lowerX = x.toLowerCase();
@@ -623,8 +473,7 @@ function getAreaForShort(t) {
 
     return t.split(/[,\(\n]/)[0].trim().slice(0, 25) || "กทม.";
 }
-
-function updateUI() { const m = document.getElementById("maintenance-screen"), a = document.getElementById("admin-panel"), st = document.getElementById("status-text"), t = document.getElementById("toggle-system"), act = isSystemActive; if (m) m.style.display = (act || isAdmin) ? "none" : "flex"; if (a) a.style.display = isAdmin ? "block" : "none"; if (st) { st.innerHTML = `<b>● ${act ? "Online" : "Offline"}</b>`; st.style.color = act ? "#28a745" : "#dc3545"; } if (t) t.style.background = act ? "#dc3545" : "#28a745"; }
+ function updateUI() { const m = document.getElementById("maintenance-screen"), a = document.getElementById("admin-panel"), st = document.getElementById("status-text"), t = document.getElementById("toggle-system"), act = isSystemActive; if (m) m.style.display = (act || isAdmin) ? "none" : "flex"; if (a) a.style.display = isAdmin ? "block" : "none"; if (st) { st.innerHTML = `<b>● ${act ? "Online" : "Offline"}</b>`; st.style.color = act ? "#28a745" : "#dc3545"; } if (t) t.style.background = act ? "#dc3545" : "#28a745"; }
 
 document.getElementById("secret-admin-btn").ondblclick = () => { isAdmin = !isAdmin; localStorage.setItem("isAdmin", isAdmin); alert(`แอดมิน: ${isAdmin ? "🔓 🟢เปิด" : "🔒 🔴ปิด"}`); updateUI(); };
 
