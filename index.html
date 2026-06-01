@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700;800;900&family=Kanit+Condensed:wght@400;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{--primary:#007bff;--secondary:#28a745;--radius:8px}
-body{margin:0;font-family:'Kanit',sans-serif;background:url(https://lh3.googleusercontent.com/d/1OjWRJPb3Efxdw5Tz3t5DSA342Ad0HJQe) center/cover fixed no-repeat}
+body{margin:0;fo,nt-family:'Kanit',sans-serif;background:url(https://lh3.googleusercontent.com/d/1OjWRJPb3Efxdw5Tz3t5DSA342Ad0HJQe) center/cover fixed no-repeat}
 
 /* screens */
 #mode-selection-screen,#maintenance-screen{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
@@ -57,8 +57,21 @@ button:active{transform:translateY(0)}
 .slot{position:relative;display:flex;flex-direction:column;justify-content:space-between;padding:15px;background:#fff!important;color:#000!important;font:800 16px 'Kanit Condensed',sans-serif!important;border-radius:10px}
 .line-top{display:flex;justify-content:space-between;font-size:18px;font-weight:700}
 .line-top>div:first-child{font-size:24px;font-weight:900}
-.passenger{text-align:center;margin:15px 0 8px;font-size:22px;font-weight:700}
+.passenger{text-align:center;margin:15px 0 8px;font-size:32px;font-weight:700}
+.route {
+    text-align: left;
+    font-size: 18px; 
+    margin-top: 10px;
+    padding-left: 20px;
+}
+.route-row {
+    display: grid;
+    grid-template-columns: 85px 15px 1fr; /* ล็อกความกว้าง Pick Up / Drop Off ให้เท่ากัน */
+    align-items: start;
+    margin-bottom: 5px;
+}
 .route{text-align:center;font-size:16px;margin:0 0 35px}
+
 .code{position:absolute;right:15px;bottom:10px;font-size:18px;font-weight:700}
 
 /* sections */
@@ -212,33 +225,49 @@ button{width:100%;padding:15px!important;font-size:16px!important}
 </body>
 <script>
 let currentMode=1, PutterName=localStorage.getItem("lastPutter")||"", isAdmin=localStorage.getItem("isAdmin")==="true", isSystemActive=true; const WEB_APP_URL='https://script.google.com/macros/s/AKfycbwn9p1uIxVfShlXaXRQ0PMwuGnzSXw7MpkbIFIkCLujyccQJz13AyfmsBVQwtHvgTPI0A/exec'; async function syncStatus(){try{const r=await fetch(WEB_APP_URL), s=await r.text(); isSystemActive=(s.trim()==="ON"); updateUI();}catch(e){console.error(e)}} syncStatus(); function selectMode(m){ currentMode=m; document.getElementById('mode-selection-screen').style.display='none'; document.getElementById('mode-label').innerText=(m===1?"(รถทะเบียน)":"(งานทั่วไป)"); document.getElementById('btnCopyMode1').style.display=(m===1?'block':'none'); document.getElementById('btnCopyMode2').style.display=(m===2?'block':'none'); document.getElementById('price-row').style.display=(m===2?'block':'none'); const s=document.getElementById('single-row-section'), b=document.getElementById('bts-section'), p=document.getElementById('preview-container'); if(s)s.style.display=(m===2?'block':'none'); if(b)b.style.display=(m===1?'block':'none'); if(p)p.style.display=(m===1?'block':'none'); }
+ const thaiMap = {
+    // 🌟 ส่วนดักตำแหน่งหน้าสุด (ป้องกันโดนเขตอื่นหลอก)
+    "bang khen":"บางเขน","bangkhen":"บางเขน",
+    "ngamwongwan":"งามวงศ์วาน","ngam wong wan":"งามวงศ์วาน",
+    "ramkhamhaeng":"รามคำแหง","ramkhamhang":"รามคำแหง",
+    "charoen nakhon":"เจริญนคร","charoennakhon":"เจริญนคร",
+    "phetchaburi":"เพชรบุรี","petchaburi":"เพชรบุรี",
 
-const thaiMap = {
     // === กรุงเทพฯ ครบ 50 เขต ===
-    "phaya thai":"พญาไท","ratchathewi":"ราชเทวี","pathum wan":"ปทุมวัน",
-    "wattana":"วัฒนา","vadhana":"วัฒนา","khlong toei":"คลองเตย","huai khwang":"ห้วยขวาง",
-    "chatuchak":"จตุจักร","bang rak":"บางรัก","sathorn":"สาทร","sathon":"สาทร",
-    "din daeng":"ดินแดง","lat phrao":"ลาดพร้าว","don mueang":"ดอนเมือง","bang na":"บางนา",
-    "phra khanong":"พระโขนง","prawet":"ประเวศ","suan luang":"สวนหลวง","yan nawa":"ยานนาวา",
-    "bang kho laem":"บางคอแหลม","bangkorlaem":"บางคอแหลม","bang sue":"บางซื่อ","bangsue":"บางซื่อ",
-    "lak si":"หลักสี่","sai mai":"สายไหม","khannayao":"คันนายาว","saphan sung":"สะพานสูง",
-    "wang thonglang":"วังทองหลาง","bueng kum":"บึงกุ่ม","bang kapi":"บางกะปิ","bangkapi":"บางกะปิ",
-    "min buri":"มีนบุรี","minburi":"มีนบุรี","lat krabang":"ลาดกระบัง","nong chok":"หนองจอก",
-    "khlong sam wa":"คลองสามวา","samphanthawong":"สัมพันธวงศ์","pom prap":"ป้อมปราบฯ",
-    "phra nakhon":"พระนคร","dusit":"ดุสิต","thon buri":"ธนบุรี","khlong san":"คลองสาน",
-    "bang kok yai":"บางกอกใหญ่","bang kok noi":"บางกอกน้อย","bang phlat":"บางพลัด",
-    "taling chan":"ตลิ่งชัน","phasi charoen":"ภาษีเจริญ","bang kae":"บางแค","nong khaem":"หนองแขม",
-    "bang khun thian":"บางขุนเทียน","chom thong":"จอมทอง","rat burana":"ราษฎร์บูรณะ",
-    "thung khru":"ทุ่งครุ","bang bon":"บางบอน","bangbon":"บางบอน","thawi watthana":"ทวีวัฒนา",
-    "bang khen":"บางเขน","samphen":"สำเพ็ง","charoen krung":"เจริญกรุง",
+    "phaya thai":"พญาไท","phayathai":"พญาไท","ratchathewi":"ราชเทวี","pathum wan":"ปทุมวัน","pathumwan":"ปทุมวัน",
+    "wattana":"วัฒนา","vadhana":"วัฒนา","khlong toei":"คลองเตย","khlongtoei":"คลองเตย","huai khwang":"ห้วยขวาง","huaikhwang":"ห้วยขวาง",
+    "chatuchak":"จตุจักร","bang rak":"บางรัก","bangrak":"บางรัก","sathorn":"สาทร","sathon":"สาทร",
+    "din daeng":"ดินแดง","dindaeng":"ดินแดง","lat phrao":"ลาดพร้าว","latphrao":"ลาดพร้าว","ladprao":"ลาดพร้าว",
+    "don mueang":"ดอนเมือง","donmueang":"ดอนเมือง","bang na":"บางนา","bangna":"บางนา",
+    "phra khanong":"พระโขนง","phrakhanong":"พระโขนง","prawet":"ประเวศ","suan luang":"สวนหลวง","suanluang":"สวนหลวง",
+    "yan nawa":"ยานนาวา","yannawa":"ยานนาวา","bang kho laem":"บางคอแหลม","bangkorlaem":"บางคอแหลม",
+    "bang sue":"บางซื่อ","bangsue":"บางซื่อ","lak si":"หลักสี่","laksi":"หลักสี่",
+    "sai mai":"สายไหม","saimai":"สายไหม","khannayao":"คันนายาว","khan na yao":"คันนายาว",
+    "saphan sung":"สะพานสูง","saphansung":"สะพานสูง","wang thonglang":"วังทองหลาง","wangthonglang":"วังทองหลาง",
+    "bueng kum":"บึงกุ่ม","buengkum":"บึงกุ่ม","bang kapi":"บางกะปิ","bangkapi":"บางกะปิ",
+    "min buri":"มีนบุรี","minburi":"มีนบุรี","lat krabang":"ลาดกระบัง","latkrabang":"ลาดกระบัง",
+    "nong chok":"หนองจอก","nongchok":"หนองจอก","khlong sam wa":"คลองสามวา","khlongsamwa":"คลองสามวา",
+    "samphanthawong":"สัมพันธวงศ์","pom prap":"ป้อมปราบฯ","pomprap":"ป้อมปราบฯ",
+    "phra nakhon":"พระนคร","phranakhon":"พระนคร","dusit":"ดุสิต",
+    "thon buri":"ธนบุรี","thonburi":"ธนบุรี","khlong san":"คลองสาน","khlongsan":"คลองสาน",
+    "bang kok yai":"บางกอกใหญ่","bangkokyai":"บางกอกใหญ่","bang kok noi":"บางกอกน้อย","bangkoknoi":"บางกอกน้อย",
+    "bang phlat":"บางพลัด","bangphlat":"บางพลัด","taling chan":"ตลิ่งชัน","talingchan":"ตลิ่งชัน",
+    "phasi charoen":"ภาษีเจริญ","phasicharoen":"ภาษีเจริญ","bang kae":"บางแค","bangkae":"บางแค",
+    "nong khaem":"หนองแขม","nongkhaem":"หนองแขม","bang khun thian":"บางขุนเทียน","bangkhunthian":"บางขุนเทียน",
+    "chom thong":"จอมทอง","chomthong":"จอมทอง","rat burana":"ราษฎร์บูรณะ","ratburana":"ราษฎร์บูรณะ",
+    "thung khru":"ทุ่งครุ","thungkhru":"ทุ่งครุ","bang bon":"บางบอน","bangbon":"บางบอน",
+    "thawi watthana":"ทวีวัฒนา","thawiwatthana":"ทวีวัฒนา",
+    "samphen":"สำเพ็ง","charoen krung":"เจริญกรุง","charoenkrung":"เจริญกรุง",
 
     // === ปริมณฑล & พุทธมณฑล ===
     "phutthamonthon":"พุทธมณฑล","salaya":"ศาลายา","sam phran":"สามพราน","nakhon pathom":"นครปฐม",
-    "pak kret":"ปากเกร็ด","pakkret":"ปากเกร็ด","bang yai":"บางใหญ่","bang bua thong":"บางบัวทอง",
-    "khlong luang":"คลองหลวง","thanyaburi":"ธัญบุรี","lam luk ka":"ลำลูกกา","lamlukka":"ลำลูกกา",
+    "pak kret":"ปากเกร็ด","pakkret":"ปากเกร็ด","bang yai":"บางใหญ่","bangyai":"บางใหญ่",
+    "bang bua thong":"บางบัวทอง","bangbuathong":"บางบัวทอง","khlong luang":"คลองหลวง","khlongluang":"คลองหลวง",
+    "thanyaburi":"ธัญบุรี","lam luk ka":"ลำลูกกา","lamlukka":"ลำลูกกา",
     "bang phli":"บางพลี","bangphli":"บางพลี","samrong":"สำโรง","phra pradaeng":"พระประแดง",
     "krathum baen":"กระทุ่มแบน","mahachai":"มหาชัย","samut sakhon":"สมุทรสาคร",
-    "nonthaburi":"นนทบุรี","pathumthani":"ปทุมธานี","samutprakan":"สมุทรปราการ",
+    "nonthaburi":"นนทบุรี","pathumthani":"ปทุมธานี",
+    "samut prakan":"สมุทรปราการ","samutprakan":"สมุทรปราการ","bang prong":"สมุทรปราการ", // เพิ่มแบบเว้นวรรค และคำว่า bang prong
 
     // === ต่างจังหวัดสำคัญ ===
     "pattaya":"พัทยา","jomtien":"จอมเทียน","rayong":"ระยอง","hua hin":"หัวหิน","huahin":"หัวหิน",
@@ -261,7 +290,7 @@ const thaiMap = {
   "21140":"ระยอง/บ่อวิน/ปลวกแดง", "21000":"เมืองระยอง", "77110":"หัวหิน", "76120":"ชะอำ"
 };
 const PROVINCE_PREFIX = {
-  "10": "กรุงเทพมหานคร", "11": "นนทบุรี", "12": "ปทุมธานี", "13": "พระนครศรีอยุธยา", "14": "อ่างทอง/สุพรรณบุรี",
+  "10": "กทม", "11": "นนทบุรี", "12": "ปทุมธานี", "13": "พระนครศรีอยุธยา", "14": "อ่างทอง/สุพรรณบุรี",
   "15": "ลพบุรี/ชัยนาท", "16": "เพชรบูรณ์", "17": "อุทัยธานี", "18": "สระบุรี", "20": "ชลบุรี",
   "21": "ระยอง", "22": "จันทบุรี", "23": "ตราด", "24": "ฉะเชิงเทรา", "25": "ปราจีนบุรี",
   "26": "นครนายก", "27": "สระแก้ว", "30": "นครราชสีมา", "31": "บุรีรัมย์", "32": "สุรินทร์",
@@ -292,15 +321,14 @@ const PRIORITY_AREAS = {
     "ชิดลม": /ชิดลม|chidlom/i,
     "หลังสวน": /หลังสวน|langsuan|lang suan/i,
     "เพลินจิต": /เพลินจิต|phloen chit/i,
-    "สยาม": /square|siam|paragon|siam kempinski/i,
     "ประตูน้ำ": /ประตูน้ำ|pratunam|baiyoke/i,
     "ราชเทวี": /ราชเทวี|ratchathewi/i,
     "พญาไท": /พญาไท|phaya thai/i,
     "บรรทัดทอง": /บรรทัดทอง|banthat thong/i,
     "อโศก": /อโศก|asoke|asok|terminal 21/i,
-    "พร้อมพงษ์": /พร้อมพงษ์|phrom phong|emquartier|emporium|sukhumvit 24/i,
-    "ทองหล่อ": /ทองหล่อ|thonglo|thong lo|sukhumvit 55/i,
-    "เอกมัย": /เอกมัย|ekkamai|sukhumvit 63/i,
+    "พร้อมพงษ์": /พร้อมพงษ์|phrom phong|emquartier|emporium/i,
+    "ทองหล่อ": /ทองหล่อ|thonglo|thong lo/i,
+    "เอกมัย": /เอกมัย|ekkamai/i,
     "พระราม 4": /พระราม 4|rama 4|q sirikit/i,
     "อ่อนนุช": /อ่อนนุช|onnut|on nut/i,
     "ปุณณวิถี": /ปุณณวิถี|punna withi/i,
@@ -391,12 +419,10 @@ const MAP_RULES = [
   ["CPN", /ชุมพร|\b86\d{3}/i], ["SKA", /สงขลา|หาดใหญ่|\b90\d{3}/i], ["STN", /สตูล|\b91\d{3}/i], 
   ["TRG", /ตรัง|\b92\d{3}/i], ["PLG", /พัทลุง|\b93\d{3}/i], ["PTN", /ปัตตานี|\b94\d{3}/i], 
   ["YLA", /ยะลา|\b95\d{3}/i], ["NWT", /นราธิวาส|\b96\d{3}/i] 
-];
- const MAP = t => {
+];const MAP = t => {
   if (!t) return "BK";
   let x = t.toString().trim().replace(/^\d+\s*/, ''); 
   let lowerX = x.toLowerCase();
-  // ดัก BK ให้แม่นยำขึ้น
   if (lowerX.includes("petchburi") || lowerX.includes("ratchathewi") || 
       lowerX.includes("ศรีอยุธยา") || lowerX.includes("charoen nakhon") || 
       lowerX.includes("เจริญนคร")) return "BK";
@@ -411,68 +437,57 @@ const MAP_RULES = [
   return foundText ? foundText[0] : "BK";
 };
 
-function getAreaForShort(t) {
+ function getAreaForShort(t) {
     if (!t) return "ระบุพื้นที่";
-    
-    // 1. เตรียมข้อมูล
-    const tx = t.toLowerCase().replace(/langsuan/g, 'lang suan');
-    // ฟังก์ชันช่วยจับเลขซอย (ดึงเลขจาก ซอย/Soi/Alley)
+
     const gs = s => (s.match(/(?:ซอย|ซ\.|ซ|soi|alley)\s*([\d\/\-]+)/i) || [])[1] || "";
+    const soiNum = gs(t);
+    const cleanTx = t.toLowerCase()
+        .replace(/saan hotel sathorn|shangri-la hotel|hotel|resort|inn|guesthouse|suite|mansion|apartment|condo|villa/gi, " ")
+        .replace(/[^\w\s\/\-ก-๙]/g, ' ').replace(/\s+/g, ' ').trim();
 
-    // 2. ด่านสนามบิน (เหมือนเดิม)
-    if (/dmk|don mueang/.test(tx) && !/hotel|shuttle|road|st\./.test(tx)) return "แอร์ดอน";
-    if (/bkk|suvarnabhumi/.test(tx) && !/hotel|shuttle|road|st\./.test(tx)) return "แอร์สุ";
+    // 1. สนามบิน
+    if (/dmk|don mueang/.test(cleanTx)) return "แอร์ดอน";
+    if (/bkk|suvarnabhumi/.test(cleanTx)) return "แอร์สุ";
 
-    // 3. ด่าน PRIORITY + ด่านถนน (รวมร่างกันเพื่อความแม่น)
+    // 2. Priority & ThaiMap (ยุบรวม Logic ข้ามสาทร)
+    const isConflict = (y) => y.includes("สาทร") && cleanTx.includes("เจริญนคร");
+
     if (typeof PRIORITY_AREAS !== 'undefined') {
         for (const [y, r] of Object.entries(PRIORITY_AREAS)) {
-            if (r.test(tx)) {
-                // กฎเหล็ก: ถ้าเจอชื่อย่านในชื่อโรงแรม ให้ข้ามไปก่อน (ยกเว้นกิ่งแก้ว/ทองหล่อ)
-                const isHotel = new RegExp(y.toLowerCase() + ".*hotel|hotel.*" + y.toLowerCase(), "i").test(tx);
-                if (isHotel && !/kingkaew|กิ่งแก้ว|thong\s*lo|ทองหล่อ/.test(tx)) continue;
-
-                // --- จุดไม้ตาย: ถ้าเจอ สุขุมวิท/ลาดพร้าว/เพชรบุรี ให้รีบค้นหาซอยทันที ---
+            if (r.test(cleanTx) && !isConflict(y)) {
                 if (/สุขุมวิท|suk|ลาด|lad|เพช|petch/.test(y)) {
-                    const streetName = /ลาด/.test(y) ? "ลาดพร้าว" : /เพช/.test(y) ? "เพชรบุรี" : "สุขุมวิท";
-                    
-                    // 1. ลองหาเลขที่มีคำว่า "ซอย" นำหน้าก่อน (แม่นสุด)
-                    const soiNum = gs(tx);
-                    if (soiNum) return `${streetName} ${soiNum}`;
-
-                    // 2. ถ้าไม่มีคำว่าซอย ให้หาเลข 1-2 หลักที่ตามหลังชื่อถนน (เช่น Sukhumvit 11)
-                    // แต่ต้องไม่ใช่เลขที่บ้าน (เรากั้นไว้ที่ไม่เกิน 100)
-                    const numMatch = tx.match(new RegExp(`${r.source}\\D*?(\\d{1,2})\\b`, "i"));
-                    if (numMatch && parseInt(numMatch[1]) < 100) {
-                        return `${streetName} ${numMatch[1]}`;
-                    }
+                    const street = /ลาด/.test(y) ? "ลาดพร้าว" : /เพช/.test(y) ? "เพชรบุรี" : "สุขุมวิท";
+                    const num = cleanTx.match(new RegExp(`${r.source}\\D*?(\\d{1,2})\\b`, "i"));
+                    return soiNum ? `${street} ${soiNum}` : (num ? `${street} ${num[1]}` : y);
                 }
-                
-                // ถ้าไม่ใช่ถนนที่มีซอย หรือหาซอยไม่เจอ ก็ตอบชื่อย่าน Priority นั้นไปเลยจ๊ะ
-                return y; 
+                return y;
             }
         }
     }
 
-    // 4. ด่านเก็บตก (thaiMap / ZipCode) ...เหมือนเดิม...
     if (typeof thaiMap !== 'undefined') {
         for (const e in thaiMap) {
-            const pattern = e.includes(' ') ? e.toLowerCase() : `\\b${e.toLowerCase()}\\b`;
-            if (new RegExp(`${pattern}|${thaiMap[e]}`, 'i').test(tx)) {
-                const s = gs(tx);
-                return thaiMap[e] + (s ? ` ${s}` : "");
-            }
+            if (new RegExp(e.includes(' ') ? e : `\\b${e}\\b`, 'i').test(cleanTx) && !isConflict(e))
+                return thaiMap[e] + (soiNum ? ` ${soiNum}` : "");
         }
     }
 
-    // 5. รหัสไปรษณีย์
-    const zm = tx.match(/\d{5}/);
-    if (zm && typeof PROVINCE_PREFIX !== 'undefined') {
-        const p2 = zm[0].substring(0, 2);
-        if (PROVINCE_PREFIX[p2]) return PROVINCE_PREFIX[p2];
+    // 3. รหัสไปรษณีย์ และ จังหวัด
+    const zip = t.match(/\d{5}/);
+    if (zip && typeof PROVINCE_PREFIX !== 'undefined' && PROVINCE_PREFIX[zip[0].substring(0, 2)])
+        return PROVINCE_PREFIX[zip[0].substring(0, 2)];
+
+    if (typeof PROVINCE_PREFIX !== 'undefined') {
+        for (const key in PROVINCE_PREFIX) {
+            if (cleanTx.includes(PROVINCE_PREFIX[key].toLowerCase())) return PROVINCE_PREFIX[key];
+        }
     }
 
-    return t.split(/[,\(\n]/)[0].trim().slice(0, 25) || "กทม.";
+    return t.split(/[,\(\n]/)[0].trim().slice(0, 25) || "ระบุไม่ได้.";
 }
+
+
  function updateUI() { const m = document.getElementById("maintenance-screen"), a = document.getElementById("admin-panel"), st = document.getElementById("status-text"), t = document.getElementById("toggle-system"), act = isSystemActive; if (m) m.style.display = (act || isAdmin) ? "none" : "flex"; if (a) a.style.display = isAdmin ? "block" : "none"; if (st) { st.innerHTML = `<b>● ${act ? "Online" : "Offline"}</b>`; st.style.color = act ? "#28a745" : "#dc3545"; } if (t) t.style.background = act ? "#dc3545" : "#28a745"; }
 
 document.getElementById("secret-admin-btn").ondblclick = () => { isAdmin = !isAdmin; localStorage.setItem("isAdmin", isAdmin); alert(`แอดมิน: ${isAdmin ? "🔓 🟢เปิด" : "🔒 🔴ปิด"}`); updateUI(); };
@@ -490,7 +505,7 @@ function getCode(b){const raw=b.match(/【接驳编码code】(.*)/)||b.match(/co
 
 const getCustomEmoji = r => { if (!r) return "🚗"; r = r.toUpperCase(); const g = id => document.getElementById(id)?.value || "", icons = { tA: g("em_to_air"), fA: g("em_from_air"), cy: g("em_city") || "🚗", pv: g("em_prov") || "⭐" }, [f, t] = r.split("-"), isAir = x => x === "S" || x === "D", isLocal = x => ["BK", "PT", "NB", "SP"].includes(x); if (isLocal(f) && isLocal(t)) return icons.cy; if (isAir(f) && isLocal(t)) return icons.fA; if (isLocal(f) && isAir(t)) return icons.tA; if (/P|HH|CA|RY|KC|AY|20|21|77|76|71|13/.test(r) && !r.includes("ศรีอยุธยา")) return icons.pv; return icons.cy; };
 
-function getAllJobData(){ const v=document.getElementById("input").value, cr=(document.getElementById("custom_route")?.value||"").replace(/\s+/g,'').toUpperCase(), cp=parseFloat(document.getElementById("custom_price")?.value)||0; if(!v.trim())return[]; return v.split(/\n(?=[A-Z]{1,2}\d+(?:-\d+)?)/).filter(x=>x.includes('วันที่')).map(b=>{ const id=(b.match(/^([A-Z]{1,2}\d+(?:-\d+)?)/m)||[""])[0], tm=getVal(b,"时间เวลา"), rs=getVal(b,"车型ขนาดรถ").toLowerCase(), dt=(b.match(/【日期วันที่】\s*([\d\/\-]+)/)||["",""])[1], st=/camry|c7/.test(rs)?"C7":rs.includes("7")?"7":"5", is7=st!="5", pk=getVal(b,"接รับ"), dp=getVal(b,"送ส่ง"), rf=MAP(pk), rt=MAP(dp), cl=(rf+"-"+rt).toUpperCase(), rv=(rt+"-"+rf).toUpperCase(), getP=(a,b)=>document.getElementById(is7?b:a)?.value||0; let pr=0; if(cr&&cp>0&&cl===cr)pr=cp; if(!pr){ const fix={"S-P":[850,900],"D-P":[1200,1300],"BK-P":[1100,1200],"S-HH":[1500,1600],"S-RY":[1200,1300],"S-CA":[1500,1600]}, map={"S-P":['p5_s_p','p7_s_p'],"D-P":['p5_d_p','p7_d_p'],"BK-P":['p5_bk_p','p7_bk_p'],"S-CA":['p5_s_ca','p7_s_ca'],"S-RY":['p5_s_ry','p7_s_ry'],"S-HH":['p5_s_hh','p7_s_hh'],"BK-HH":['p5_bk_hh','p7_bk_hh'],"S-BK":['p5_s_bk','p7_s_bk'],"BK-S":['p5_bk_s','p7_bk_s']}, k=Object.keys(map).find(key=>cl==key||rv==key); if(k)pr=getP(...map[k]); if(!pr&&(cl+rv).includes("HH"))pr=getP('p5_hh','p7_hh'); if(!pr){ if(k&&fix[k])pr=fix[k][is7?1:0]; else if(cl.includes("BK")||rv.includes("BK")||rt=="S"||rf=="S")pr=getP('p5_bk', 'p7_bk')||(is7?480:380); else pr=getP('p5_bk','p7_bk'); } } return {id,time:tm,date:dt,seat:st,price:pr,pk,dp,name:getVal(b,"姓名ชื่อ"),flight:getVal(b,"航班flight"),orderId:getVal(b,"客户订单号"),code:typeof getCode=="function"?getCode(b):"",mapFrom:rf,mapTo:rt,areaFrom:getAreaForShort(pk),areaTo:getAreaForShort(dp)}; }); } function calculatePrice(f,t,s){ const is7=s=="7"||s=="C7", getP=(a,b)=>document.getElementById(is7?b:a)?.value||0, r=(f+"-"+t).toUpperCase(), v=(t+"-"+f).toUpperCase(), map={"S-P":['p5_s_p','p7_s_p'],"D-P":['p5_d_p','p7_d_p'],"BK-P":['p5_bk_p','p7_bk_p'],"S-HH":['p5_s_hh','p7_s_hh']}, k=Object.keys(map).find(key=>r==key||v==key); return k?getP(...map[k]):(r+v).includes("HH")?getP('p5_hh','p7_hh'):getP('p5_bk','p7_bk'); }
+function getAllJobData(){ const v=document.getElementById("input").value, cr=(document.getElementById("custom_route")?.value||"").replace(/\s+/g,'').toUpperCase(), cp=parseFloat(document.getElementById("custom_price")?.value)||0; if(!v.trim())return[]; return v.split(/\n(?=[A-Z]{1,2}\d+(?:-\d+)?)/).filter(x=>x.includes('วันที่')).map(b=>{ const id=(b.match(/^([A-Z]{1,2}\d+(?:-\d+)?)/m)||[""])[0], tm=getVal(b,"时间เวลา"), rs=getVal(b,"车型ขนาดรถ").toLowerCase(), dt=(b.match(/【日期วันที่】\s*([\d\/\-]+)/)||["",""])[1], st=/camry|c7/.test(rs)?"C7":rs.includes("7")?"7":"5", is7=st!="5", pk=getVal(b,"接รับ"), dp=getVal(b,"送ส่ง"), rf=MAP(pk), rt=MAP(dp), cl=(rf+"-"+rt).toUpperCase(), rv=(rt+"-"+rf).toUpperCase(), getP=(a,b)=>document.getElementById(is7?b:a)?.value||0; let pr=0; if(cr&&cp>0&&cl===cr)pr=cp; if(!pr){ const fix={"S-P":[850,900],"D-P":[1200,1300],"BK-P":[1100,1200],"S-HH":[1500,1600],"S-RY":[1200,1300],"S-CA":[1500,1600]}, map={"S-P":['p5_s_p','p7_s_p'],"D-P":['p5_d_p','p7_d_p'],"BK-P":['p5_bk_p','p7_bk_p'],"S-CA":['p5_s_ca','p7_s_ca'],"S-RY":['p5_s_ry','p7_s_ry'],"S-HH":['p5_s_hh','p7_s_hh'],"BK-HH":['p5_bk_hh','p7_bk_hh'],"S-BK":['p5_s_bk','p7_s_bk'],"BK-S":['p5_bk_s','p7_s_bk']}, k=Object.keys(map).find(key=>cl==key||rv==key); if(k)pr=getP(...map[k]); if(!pr&&(cl+rv).includes("HH"))pr=getP('p5_hh','p7_hh'); if(!pr){ if(k&&fix[k])pr=fix[k][is7?1:0]; else if(cl.includes("BK")||rv.includes("BK")||rt=="S"||rf=="S")pr=getP('p5_bk', 'p7_bk')||(is7?480:380); else pr=getP('p5_bk','p7_bk'); } } return {id,time:tm,date:dt,seat:st,price:pr,pk,dp,name:getVal(b,"姓名ชื่อ"),flight:getVal(b,"航班flight"),orderId:getVal(b,"客户订单号"),code:typeof getCode=="function"?getCode(b):"",mapFrom:rf,mapTo:rt,areaFrom:getAreaForShort(pk),areaTo:getAreaForShort(dp)}; }); } function calculatePrice(f,t,s){ const is7=s=="7"||s=="C7", getP=(a,b)=>document.getElementById(is7?b:a)?.value||0, r=(f+"-"+t).toUpperCase(), v=(t+"-"+f).toUpperCase(), map={"S-P":['p5_s_p','p7_s_p'],"D-P":['p5_d_p','p7_d_p'],"BK-P":['p5_bk_p','p7_bk_p'],"S-HH":['p5_s_hh','p7_s_hh']}, k=Object.keys(map).find(key=>r==key||v==key); return k?getP(...map[k]):(r+v).includes("HH")?getP('p5_hh','p7_hh'):getP('p5_bk','p7_bk'); }
 
 function renderShortOut(){ let j=getAllJobData(), c=document.getElementById("short-out-container"), s=document.getElementById("single-row-section"), sc=document.getElementById("single-row-container"), oc=document.getElementById("order-only-container"), h="", sh="", oh="", d=""; if(!j.length)return; j.sort((a,b)=>a.date.localeCompare(b.date)||a.id.localeCompare(b.id,undefined,{numeric:true})).forEach(x=>{ if(x.date!==d){ d=x.date; h+=`<div style="margin-top:12px;font-weight:600;color:#007bff;text-align:left;">📅 ${d}</div>`; sh+=`📅 ${d}\n`; oh+=`📅 ${d}\n`; } let r=(x.mapFrom+"-"+x.mapTo).toUpperCase(), e=getCustomEmoji(r), sd=x.seat=="C7"?"Cam7":x.seat, tm=(x.time||"").replace(/\s+/g,''); if(currentMode===1){ s&&(s.style.display="none"); let f=x.areaFrom.includes("แอร์")?"#007FFF":"#FF8C00", t=x.areaTo.includes("แอร์")?"#007FFF":"#FF8C00"; h+=`<div style="text-align:left;color:#fff;margin-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:5px;">${x.id}//${tm}//#${x.seat}${r}<br><a href="${mapsLink(x.pk)}" target="_blank" style="color:${f};text-decoration:none;">🗺️ ${x.areaFrom}</a>→<a href="${mapsLink(x.dp)}" target="_blank" style="color:${t};text-decoration:none;">🌍 ${x.areaTo}</a>${x.flight?` <a href="${flightLink(x.flight)}" target="_blank" style="color:#00d4ff;text-decoration:none;">✈️ ${x.flight}</a>`:""}</div>`; }else{ s&&(s.style.display="block"); h+=`<div style="text-align:left;color:#fff;margin-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:5px;">${x.id}(${e})${tm}/${x.price}#${sd}${r}<br>${x.areaFrom.trim()}-${x.areaTo.trim()}${x.flight?" ✈️"+x.flight:""}</div>`; sh+=`${x.id}(${e})${tm}/${x.price}#${sd}${r}\n`; oh+=`${x.orderId||"-"}\n`; } }); if(c){ c.style.color="#fff"; c.style.textAlign="left"; c.innerHTML=h; } if(sc){ sc.style.color="#fff"; sc.style.textAlign="left"; sc.innerText=sh.trim(); } if(oc){ oc.style.color="#fff"; oc.style.textAlign="left"; oc.innerText=oh.trim(); } }
 
@@ -504,7 +519,44 @@ function copyShort1() { let o = "", d = "", data = getAllJobData().sort((a, b) =
 
 function executeManualCopy(t) { let e = document.createElement("textarea"), c = document.getElementById("copy-circle"); e.value = t; document.body.appendChild(e); e.select(); try { document.execCommand("copy"); if(c){ c.style.display = "flex"; setTimeout(() => c.style.display = "none", 1500); } } catch (err) { console.error(err) } e.remove(); }
 
-const clean = t => t ? t.split(/[,\(\)\n]/)[0].trim() : ""; function makePage(j4) { let w = document.createElement("div"); w.className = "page-wrap"; w.innerHTML = Array.from({length: 4}, (_, i) => { let j = j4[i]; return `<div class="slot">${j ? `<div class="line-top"><div>${j.id}</div><div>${j.time}</div><div>${j.date}</div></div><div class="passenger">${j.name?.includes("/") && j.name.length > 20 ? j.name.replace(/\//g, "/<br>") : j.name || ""}</div><div class="route">${clean(j.pk)} → ${clean(j.dp)}</div>${j.code ? `<div class="code">${j.code}</div>` : ""}` : ""}</div>`; }).join(""); return w; } async function buildPDF() { const { jsPDF } = window.jspdf, p = document.querySelectorAll(".page-wrap"), d = new jsPDF("l", "pt", [842, 595]); for (let i = 0; i < p.length; i++) { const c = await html2canvas(p[i], { scale: 3, useCORS: !0, windowWidth: 1200 }); d.addImage(c.toDataURL("image/jpeg", 1), "JPEG", 0, 0, 842, 595); if (i < p.length - 1) d.addPage(); } return d; }
+const clean = t => t ? t.split(/[,\(\)\n]/)[0].trim() : ""; 
+
+function makePage(j4) { 
+    let w = document.createElement("div"); 
+    w.className = "page-wrap"; 
+    w.innerHTML = Array.from({length: 4}, (_, i) => { 
+        let j = j4[i]; 
+        return `<div class="slot">${j ? `
+            <div class="line-top">
+                <div>${j.id}</div>
+                <div>${j.time}</div>
+                <div>${j.date}</div>
+            </div>
+            
+            <div class="passenger">
+                ${j.name?.includes("/") && j.name.length > 20 ? j.name.replace(/\//g, "/<br>") : j.name || ""}
+            </div>
+            
+            <div class="route">
+                <div class="route-row">
+                    <span class="route-label">Pick Up</span>
+                    <span>:</span>
+                    <span class="route-val">${clean(j.pk)}</span>
+                </div>
+                <div class="route-row">
+                    <span class="route-label">Drop Off</span>
+                    <span>:</span>
+                    <span class="route-val">${clean(j.dp)}</span>
+                </div>
+            </div>
+            
+            ${j.code ? `<div class="code">${j.code}</div>` : ""}
+        ` : ""}</div>`; 
+    }).join(""); 
+    return w; 
+}
+
+async function buildPDF() { const { jsPDF } = window.jspdf, p = document.querySelectorAll(".page-wrap"), d = new jsPDF("l", "pt", [842, 595]); for (let i = 0; i < p.length; i++) { const c = await html2canvas(p[i], { scale: 3, useCORS: !0, windowWidth: 1200 }); d.addImage(c.toDataURL("image/jpeg", 1), "JPEG", 0, 0, 842, 595); if (i < p.length - 1) d.addPage(); } return d; }
 
 const fillPreview = () => { const j = getAllJobData(), c = document.getElementById("preview-container"); if(c) { c.innerHTML = ""; for (let i = 0; i < j.length; i += 4) c.appendChild(makePage(j.slice(i, i + 4))); } }; const handlePDF = async (save) => { const pdf = await buildPDF(), fn = (document.getElementById("input").value.match(/[A-Z]{1,2}\d{2,5}/) || ["JobSheet"])[0] + ".pdf"; if (save) return pdf.save(fn); const file = new File([pdf.output('blob')], fn, { type: 'application/pdf' }); navigator.share ? navigator.share({ files: [file] }) : alert("ไม่รองรับการแชร์"); };
 document.getElementById("btnPreviewSheet").onclick = fillPreview;
@@ -512,3 +564,4 @@ document.getElementById("btnPDF").onclick = () => handlePDF(true);
 document.getElementById("btnSharePDF").onclick = () => handlePDF(false);
 function clearData() { if (confirm("ล้างข้อมูล?")) { document.querySelectorAll("input,textarea").forEach(e => e.value = ""); document.getElementById("preview-container").innerHTML = ""; } }
 </script>
+</html>
