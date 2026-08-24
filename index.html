@@ -8,12 +8,99 @@
 <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700;800;900&family=Kanit+Condensed:wght@400;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{--primary:#007bff;--secondary:#28a745;--radius:8px}
-body{margin:0;fo,nt-family:'Kanit',sans-serif;background:url(https://lh3.googleusercontent.com/d/1OjWRJPb3Efxdw5Tz3t5DSA342Ad0HJQe) center/cover fixed no-repeat}
+body{margin:0;font-family:'Kanit',sans-serif;background:url(https://lh3.googleusercontent.com/d/1OjWRJPb3Efxdw5Tz3t5DSA342Ad0HJQe) center/cover fixed no-repeat}
 
 /* screens */
-#mode-selection-screen,#maintenance-screen{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
-#mode-selection-screen{background:rgba(0,0,0,.8);backdrop-filter:blur(10px);z-index:10000}
-#maintenance-screen{display:none;background:#fff;z-index:9998}
+#mode-selection-screen{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:rgba(0,0,0,.8);backdrop-filter:blur(10px);z-index:10000}
+
+/* maintenance screen (Updated design with LINE & QR) */
+#maintenance-screen{
+    position: fixed;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(15, 23, 42, 0.9);
+    backdrop-filter: blur(12px);
+    z-index: 9998;
+    font-family: inherit;
+    padding: 20px;
+}
+.maintenance-box {
+    background: #ffffff;
+    padding: 35px 30px;
+    border-radius: 24px;
+    text-align: center;
+    max-width: 420px;
+    width: 100%;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    animation: fadeInScale 0.3s ease-out;
+}
+.maintenance-icon { font-size: 48px; margin-bottom: 12px; }
+.maintenance-box h1 {
+    color: #1e293b;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    background: none !important;
+    box-shadow: none !important;
+}
+.maintenance-desc {
+    color: #64748b;
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+.line-contact-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.line-qr-img {
+    width: 130px;
+    height: 130px;
+    object-fit: contain;
+    border-radius: 12px;
+    background: #fff;
+    padding: 6px;
+    border: 1px solid #cbd5e1;
+    margin-bottom: 12px;
+}
+.line-action-area { width: 100%; text-align: center; }
+.line-label {
+    display: block;
+    font-size: 12px;
+    color: #64748b;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+.line-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background-color: #06c755;
+    color: #ffffff;
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background-color 0.2s, transform 0.1s;
+    box-shadow: 0 4px 12px rgba(6, 199, 85, 0.3);
+}
+.line-btn:hover { background-color: #05b34c; }
+.line-btn:active { transform: scale(0.98); }
+@keyframes fadeInScale {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
 
 /* admin */
 #admin-panel{display:none;position: relative;inset:0;margin:auto;height:fit-content;width:fit-content;background:rgba(255,255,255,.9);backdrop-filter:blur(10px);border-radius:50px;box-shadow:0 15px 35px rgba(0,0,0,.2);border:1px solid rgba(255,255,255,.4);text-align:center;min-width:250px;z-index:9999;}
@@ -66,35 +153,14 @@ button:active{transform:translateY(0)}
 }
 .route-row {
     display: grid;
-    grid-template-columns: 85px 15px 1fr; /* ล็อกความกว้าง Pick Up / Drop Off ให้เท่ากัน */
+    grid-template-columns: 85px 15px 1fr;
     align-items: start;
     margin-bottom: 5px;
 }
-.route{text-align:center;font-size:16px;margin:0 0 35px}
-
 .code{position:absolute;right:15px;bottom:10px;font-size:18px;font-weight:700}
 
 /* sections */
 .input-section,.short-out-section{background:rgba(255,255,255,.05)!important;border:1px solid rgba(255,255,255,.1);border-radius:15px;width:95%;max-width:800px;margin:0 auto 20px;text-align:center;padding:15px}
-
-/* price */
-.price-container{display:flex;flex-wrap:wrap;gap:8px;background:rgba(30,30,30,.6);backdrop-filter:blur(10px);padding:12px;border-radius:25px;color:#fff;width:100%;border:1px solid rgba(255,255,255,.1)}
-.price-card{flex:1;min-width:85px;background:rgba(255,255,255,.05);padding:10px 5px;border-radius:20px;border-top:4px solid #444;text-align:center;transition:.3s}
-.price-card:hover{background:rgba(255,255,255,.1);transform:translateY(-3px)}
-.card-title{font-size:11px;font-weight:bold;margin-bottom:8px;display:block;color:#00eaff}
-.input-row{display:flex;flex-direction:column;gap:5px;align-items:center}
-.input-item{display:flex;align-items:center;gap:5px;font-size:11px}
-.input-item label{color:#ff00ff}
-.input-item input{width:100px;background:rgba(0,0,0,.3);color:#00ff00;border:1px solid rgba(255,255,255,.2);border-radius:10px;text-align:center;font-size:10px;padding:2px 0;outline:0;transition:.2s}
-.input-item input:focus{border-color:#00eaff;background:#000;box-shadow:0 0 8px rgba(0,234,255,.3)}
-#price-row{display:none;color:#fff;margin-bottom:20px;justify-content:center;gap:15px;background:rgba(255,255,255,.05);padding:15px;border-radius:30px;backdrop-filter:blur(5px);border:1px solid rgba(255,255,255,.1)}
-#price-row input{width:80px;border-radius:50px;border:1px solid rgba(0,234,255,.3);background:rgba(0,0,0,.4);color:#00eaff;padding:8px 12px;text-align:center;font-weight:bold;outline:0;transition:.3s}
-#price-row input:focus{background:#000;border-color:#00eaff;box-shadow:0 0 12px rgba(0,234,255,.4);transform:scale(1.05)}
-#em_to_air,#em_from_air,#em_city,#em_prov{border-radius:10px!important}
-
-/* flight btn */
-.flight-btn{color:#ff4757!important;text-decoration:none;font-weight:bold;background:rgba(255,71,87,.1);padding:5px 15px;border-radius:50px;transition:.3s;display:inline-block;border:1px solid rgba(255,71,87,.2)}
-.flight-btn:hover{background:#ff4757;color:#fff!important;box-shadow:0 4px 12px rgba(255,71,87,.3)}
 
 /* mobile */
 @media(max-width:900px){
@@ -104,12 +170,6 @@ button{width:100%;padding:15px!important;font-size:16px!important}
 .mode-card-container{grid-template-columns:1fr;gap:15px}
 .mode-card{padding:30px 20px;border-radius:35px}
 #admin-panel{width:85%;padding:20px;border-radius:35px;top:10px}
-#copy-circle{
- position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
- width:100px;height:80px;background:rgba(0,0,0,.8);color:#fff;
- border-radius:20%;display:none;align-items:center;justify-content:center;
- flex-direction:column;z-index:99999;border:2px solid #00eaff;font-size:14px;
-}
 }
 </style>
 </head>
@@ -124,7 +184,29 @@ button{width:100%;padding:15px!important;font-size:16px!important}
 <div id="status-toast"></div>
 
 <div id="secret-admin-btn"></div>
-<div id="maintenance-screen"><h1 style="color:var(--danger)">🛠️ ปิดปรับปรุงชั่วคราว</h1><p>กำลังอัปเดตระบบ กรุณาลองใหม่ภายหลัง</p></div>
+
+<!-- หน้าต่างปิดปรับปรุง (อัปเดตใหม่เรียบร้อย) -->
+<div id="maintenance-screen">
+    <div class="maintenance-box">
+        <div class="maintenance-icon">🛠️</div>
+        <h1>ระบบปิดปรับปรุงชั่วคราว</h1>
+        <p class="maintenance-desc">
+            ขณะนี้ระบบกำลังอยู่ในระหว่างการพัฒนาและอัปเดตเพื่อประสิทธิภาพที่ดีขึ้น<br>
+            ท่านยังสามารถติดต่อทีมงานหรือส่งงานผ่านทาง LINE ได้ตามปกติครับ
+        </p>
+
+        <div class="line-contact-card">
+            <img src="https://lh3.googleusercontent.com/d/1q7jpWr2V2MNDTYban_8gc6Uqv9hlI8KN" alt="LINE QR Code" class="line-qr-img">
+            <div class="line-action-area">
+                <span class="line-label">สแกน QR Code หรือคลิกปุ่มด้านล่าง</span>
+                <a href="https://lin.ee/8Minov5" target="_blank" class="line-btn">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c-.346 0 .63.285.63.63 0 .349-.284.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.158.521-.403.619-.086.035-.178.053-.269.053-.207 0-.41-.082-.56-.231l-2.073-2.08v2.015c0 .348-.283.63-.63.63-.349 0-.63-.282-.63-.63V8.108c0-.345.281-.63.63-.63.348 0 .63.285.63.63v2.015l2.073-2.08c.189-.189.453-.284.717-.245.264.039.479.222.56.482l.002.008.006.021 1.258 3.86zM7.5 13.5c-.348 0-.63-.282-.63-.63V8.108c0-.348.282-.63.63-.63.348 0 .63.282.63.63v4.762c0 .348-.282.63-.63.63zm-3.15 0c-.348 0-.63-.282-.63-.63V8.108c0-.348.282-.63.63-.63.348 0 .63.282.63.63v4.762c0 .348-.282.63-.63.63zm13.15-8.388C11.956 5.112 7.05 5.568 4.5 5.86c-1.545.174-2.7 1.47-2.7 3.024v4.734c0 1.554 1.155 2.85 2.7 3.024 2.55.292 7.456.748 13 1.248.882.08 1.5-.654 1.5-1.536V6.648c0-.882-.618-1.616-1.5-1.536z"/></svg>
+                    <span>แชทผ่าน LINE (คลิกเลย)</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
 
 <center><h1 id="webHeader" onclick="location.reload()"> แปลงใบงาน <span id="mode-label"></span> </h1></center>
 
@@ -134,8 +216,7 @@ button{width:100%;padding:15px!important;font-size:16px!important}
 <button id="toggle-system" style="background:var(--danger);color:#0000ff;margin-top:5px">เปิด/ปิด การใช้งานระบบ</button>
 </div>
 
-<div class="input-section">
-
+<!-- แก้ไข: รวมกล่อง input-section ให้เหลือชั้นเดียวเพื่อไม่ให้ DOM ซ้อนกันผิดพลาด -->
 <div class="input-section">
 
 <div id="price-row" style="display:none; width:100%; margin-bottom:15px; box-sizing:border-box">
@@ -226,14 +307,11 @@ button{width:100%;padding:15px!important;font-size:16px!important}
 <script>
 let currentMode=1, PutterName=localStorage.getItem("lastPutter")||"", isAdmin=localStorage.getItem("isAdmin")==="true", isSystemActive=true; const WEB_APP_URL='https://script.google.com/macros/s/AKfycbwn9p1uIxVfShlXaXRQ0PMwuGnzSXw7MpkbIFIkCLujyccQJz13AyfmsBVQwtHvgTPI0A/exec'; async function syncStatus(){try{const r=await fetch(WEB_APP_URL), s=await r.text(); isSystemActive=(s.trim()==="ON"); updateUI();}catch(e){console.error(e)}} syncStatus(); function selectMode(m){ currentMode=m; document.getElementById('mode-selection-screen').style.display='none'; document.getElementById('mode-label').innerText=(m===1?"(รถทะเบียน)":"(งานทั่วไป)"); document.getElementById('btnCopyMode1').style.display=(m===1?'block':'none'); document.getElementById('btnCopyMode2').style.display=(m===2?'block':'none'); document.getElementById('price-row').style.display=(m===2?'block':'none'); const s=document.getElementById('single-row-section'), b=document.getElementById('bts-section'), p=document.getElementById('preview-container'); if(s)s.style.display=(m===2?'block':'none'); if(b)b.style.display=(m===1?'block':'none'); if(p)p.style.display=(m===1?'block':'none'); }
  const thaiMap = {
-    // 🌟 ส่วนดักตำแหน่งหน้าสุด (ป้องกันโดนเขตอื่นหลอก)
     "bang khen":"บางเขน","bangkhen":"บางเขน",
     "ngamwongwan":"งามวงศ์วาน","ngam wong wan":"งามวงศ์วาน",
     "ramkhamhaeng":"รามคำแหง","ramkhamhang":"รามคำแหง",
     "charoen nakhon":"เจริญนคร","charoennakhon":"เจริญนคร",
     "phetchaburi":"เพชรบุรี","petchaburi":"เพชรบุรี",
-
-    // === กรุงเทพฯ ครบ 50 เขต ===
     "phaya thai":"พญาไท","phayathai":"พญาไท","ratchathewi":"ราชเทวี","pathum wan":"ปทุมวัน","pathumwan":"ปทุมวัน",
     "wattana":"วัฒนา","vadhana":"วัฒนา","khlong toei":"คลองเตย","khlongtoei":"คลองเตย","huai khwang":"ห้วยขวาง","huaikhwang":"ห้วยขวาง",
     "chatuchak":"จตุจักร","bang rak":"บางรัก","bangrak":"บางรัก","sathorn":"สาทร","sathon":"สาทร",
@@ -258,8 +336,6 @@ let currentMode=1, PutterName=localStorage.getItem("lastPutter")||"", isAdmin=lo
     "thung khru":"ทุ่งครุ","thungkhru":"ทุ่งครุ","bang bon":"บางบอน","bangbon":"บางบอน",
     "thawi watthana":"ทวีวัฒนา","thawiwatthana":"ทวีวัฒนา",
     "samphen":"สำเพ็ง","charoen krung":"เจริญกรุง","charoenkrung":"เจริญกรุง",
-
-    // === ปริมณฑล & พุทธมณฑล ===
     "phutthamonthon":"พุทธมณฑล","salaya":"ศาลายา","sam phran":"สามพราน","nakhon pathom":"นครปฐม",
     "pak kret":"ปากเกร็ด","pakkret":"ปากเกร็ด","bang yai":"บางใหญ่","bangyai":"บางใหญ่",
     "bang bua thong":"บางบัวทอง","bangbuathong":"บางบัวทอง","khlong luang":"คลองหลวง","khlongluang":"คลองหลวง",
@@ -267,9 +343,7 @@ let currentMode=1, PutterName=localStorage.getItem("lastPutter")||"", isAdmin=lo
     "bang phli":"บางพลี","bangphli":"บางพลี","samrong":"สำโรง","phra pradaeng":"พระประแดง",
     "krathum baen":"กระทุ่มแบน","mahachai":"มหาชัย","samut sakhon":"สมุทรสาคร",
     "nonthaburi":"นนทบุรี","pathumthani":"ปทุมธานี",
-    "samut prakan":"สมุทรปราการ","samutprakan":"สมุทรปราการ","bang prong":"สมุทรปราการ", // เพิ่มแบบเว้นวรรค และคำว่า bang prong
-
-    // === ต่างจังหวัดสำคัญ ===
+    "samut prakan":"สมุทรปราการ","samutprakan":"สมุทรปราการ","bang prong":"สมุทรปราการ",
     "pattaya":"พัทยา","jomtien":"จอมเทียน","rayong":"ระยอง","hua hin":"หัวหิน","huahin":"หัวหิน",
     "cha am":"ชะอำ","chaam":"ชะอำ","chonburi":"ชลบุรี","ayutthaya":"อยุธยา","saraburi":"สระบุรี"
 };
@@ -419,74 +493,89 @@ const MAP_RULES = [
   ["CPN", /ชุมพร|\b86\d{3}/i], ["SKA", /สงขลา|หาดใหญ่|\b90\d{3}/i], ["STN", /สตูล|\b91\d{3}/i], 
   ["TRG", /ตรัง|\b92\d{3}/i], ["PLG", /พัทลุง|\b93\d{3}/i], ["PTN", /ปัตตานี|\b94\d{3}/i], 
   ["YLA", /ยะลา|\b95\d{3}/i], ["NWT", /นราธิวาส|\b96\d{3}/i] 
-];const MAP = t => {
-  if (!t) return "BK";
-  let x = t.toString().trim().replace(/^\d+\s*/, ''); 
-  let lowerX = x.toLowerCase();
-  if (lowerX.includes("petchburi") || lowerX.includes("ratchathewi") || 
-      lowerX.includes("ศรีอยุธยา") || lowerX.includes("charoen nakhon") || 
-      lowerX.includes("เจริญนคร")) return "BK";
+];
+// --- Helper Parser Functions ---
+function getVal(t, k) {
+  const m = t.match(new RegExp(`【(?:${k})】\\s*([^\\n【]+)`, 'i'));
+  return m ? m[1].trim() : "";
+}
 
+function MAP(t) {
+  if (!t) return "BK";
+  let lowerX = t.toString().trim().replace(/^\d+\s*/, '').toLowerCase();
+  if (["petchburi", "ratchathewi", "ศรีอยุธยา", "charoen nakhon", "เจริญนคร"].some(v => lowerX.includes(v))) return "BK";
+  
   const zip = t.toString().match(/\b\d{5}\b/);
   if (zip) {
     const found = MAP_RULES.find(([_, reg]) => reg.test(zip[0]));
     if (found) return found[0];
   }
-  let cleanX = x.replace(/\s+/g, '').toLowerCase();
-  const foundText = MAP_RULES.find(([_, reg]) => reg.test(cleanX));
+  const foundText = MAP_RULES.find(([_, reg]) => reg.test(lowerX.replace(/\s+/g, '')));
   return foundText ? foundText[0] : "BK";
-};
-
- function getAreaForShort(t) {
-    if (!t) return "ระบุพื้นที่";
-
-    const gs = s => (s.match(/(?:ซอย|ซ\.|ซ|soi|alley)\s*([\d\/\-]+)/i) || [])[1] || "";
-    const soiNum = gs(t);
-    const cleanTx = t.toLowerCase()
-        .replace(/saan hotel sathorn|shangri-la hotel|hotel|resort|inn|guesthouse|suite|mansion|apartment|condo|villa/gi, " ")
-        .replace(/[^\w\s\/\-ก-๙]/g, ' ').replace(/\s+/g, ' ').trim();
-
-    // 1. สนามบิน
-    if (/dmk|don mueang/.test(cleanTx)) return "แอร์ดอน";
-    if (/bkk|suvarnabhumi/.test(cleanTx)) return "แอร์สุ";
-
-    // 2. Priority & ThaiMap (ยุบรวม Logic ข้ามสาทร)
-    const isConflict = (y) => y.includes("สาทร") && cleanTx.includes("เจริญนคร");
-
-    if (typeof PRIORITY_AREAS !== 'undefined') {
-        for (const [y, r] of Object.entries(PRIORITY_AREAS)) {
-            if (r.test(cleanTx) && !isConflict(y)) {
-                if (/สุขุมวิท|suk|ลาด|lad|เพช|petch/.test(y)) {
-                    const street = /ลาด/.test(y) ? "ลาดพร้าว" : /เพช/.test(y) ? "เพชรบุรี" : "สุขุมวิท";
-                    const num = cleanTx.match(new RegExp(`${r.source}\\D*?(\\d{1,2})\\b`, "i"));
-                    return soiNum ? `${street} ${soiNum}` : (num ? `${street} ${num[1]}` : y);
-                }
-                return y;
-            }
-        }
-    }
-
-    if (typeof thaiMap !== 'undefined') {
-        for (const e in thaiMap) {
-            if (new RegExp(e.includes(' ') ? e : `\\b${e}\\b`, 'i').test(cleanTx) && !isConflict(e))
-                return thaiMap[e] + (soiNum ? ` ${soiNum}` : "");
-        }
-    }
-
-    // 3. รหัสไปรษณีย์ และ จังหวัด
-    const zip = t.match(/\d{5}/);
-    if (zip && typeof PROVINCE_PREFIX !== 'undefined' && PROVINCE_PREFIX[zip[0].substring(0, 2)])
-        return PROVINCE_PREFIX[zip[0].substring(0, 2)];
-
-    if (typeof PROVINCE_PREFIX !== 'undefined') {
-        for (const key in PROVINCE_PREFIX) {
-            if (cleanTx.includes(PROVINCE_PREFIX[key].toLowerCase())) return PROVINCE_PREFIX[key];
-        }
-    }
-
-    return t.split(/[,\(\n]/)[0].trim().slice(0, 25) || "ระบุไม่ได้.";
 }
 
+function getAreaForShort(t) {
+  if (!t) return "";
+  
+  let specificSoi = "";
+  const sukMatch = t.match(/(?:สุขุมวิท|sukhumvit)\s*(?:ซอย|ซ\.|soi)?\s*(\d+)/i);
+  const latMatch = t.match(/(?:ลาดพร้าว|lat\s*phrao|ladprao)\s*(?:ซอย|ซ\.|soi)?\s*(\d+)/i);
+  
+  if (sukMatch) specificSoi = `สุขุมวิท ${sukMatch[1]}`;
+  else if (latMatch) specificSoi = `ลาดพร้าว ${latMatch[1]}`;
+
+  const generalSoiNum = (t.match(/(?:ซอย|ซ\.|ซ|soi|alley)\s*([\d\/\-]+)/i) || [])[1] || "";
+
+  const cleanTx = t.toLowerCase()
+    .replace(/saan hotel sathorn|shangri-la hotel|hotel|resort|inn|guesthouse|suite|mansion|apartment|condo|villa/gi, " ")
+    .replace(/[^\w\s\/\-ก-๙]/g, ' ').replace(/\s+/g, ' ').trim();
+
+  // 1. เช็กสนามบิน
+  if (/bkk|suvarnabhumi|สุวรรณภูมิ/i.test(cleanTx)) return "แอร์สุ";
+  if (/dmk|don\s*mueang|ดอนเมือง/i.test(cleanTx)) return "แอร์ดอน";
+  const isConflict = y => y.includes("สาทร") && cleanTx.includes("เจริญนคร");
+
+  // 2. เช็กย่านสำคัญจาก PRIORITY_AREAS
+  for (const [y, r] of Object.entries(PRIORITY_AREAS)) {
+    if (r.test(cleanTx) && !isConflict(y)) {
+      if (/สุขุมวิท|suk|ลาด|lad|เพช|petch/.test(y)) {
+        if (specificSoi) return specificSoi;
+        const street = /ลาด/.test(y) ? "ลาดพร้าว" : /เพช/.test(y) ? "เพชรบุรี" : "สุขุมวิท";
+        const num = cleanTx.match(new RegExp(`${r.source}\\D*?(\\d{1,2})\\b`, "i"));
+        if (generalSoiNum) return `${street} ${generalSoiNum}`;
+        if (num && num[1]) return `${street} ${num[1]}`;
+        return y; 
+      }
+      return specificSoi ? specificSoi : y;
+    }
+  }
+
+  if (specificSoi) return specificSoi;
+
+  // 3. เช็กแมปภาษาอังกฤษ/ไทยทั่วไปจาก thaiMap
+  for (const e in thaiMap) {
+    if (new RegExp(e.includes(' ') ? e : `\\b${e}\\b`, 'i').test(cleanTx) && !isConflict(e)) {
+      return thaiMap[e] + (generalSoiNum ? ` ${generalSoiNum}` : "");
+    }
+  }
+
+  // 4. เช็ครหัสไปรษณีย์แปลงเป็นจังหวัด
+  const zip = t.match(/\d{5}/);
+  if (zip && PROVINCE_PREFIX[zip[0].substring(0, 2)]) return PROVINCE_PREFIX[zip[0].substring(0, 2)];
+
+  for (const key in PROVINCE_PREFIX) {
+    if (cleanTx.includes(PROVINCE_PREFIX[key].toLowerCase())) return PROVINCE_PREFIX[key];
+  }
+
+  // 5. ถ้าไม่ตรงเงื่อนไขไหนเลย คืนค่าว่าง
+  return "";
+}
+
+function getAreaToShort(t) {
+  return getAreaForShort(t);
+}
+
+// แก้ไข: ตัดบรรทัดขยะที่ลอยอยู่นอกฟังก์ชันออกเรียบร้อย
 
  function updateUI() { const m = document.getElementById("maintenance-screen"), a = document.getElementById("admin-panel"), st = document.getElementById("status-text"), t = document.getElementById("toggle-system"), act = isSystemActive; if (m) m.style.display = (act || isAdmin) ? "none" : "flex"; if (a) a.style.display = isAdmin ? "block" : "none"; if (st) { st.innerHTML = `<b>● ${act ? "Online" : "Offline"}</b>`; st.style.color = act ? "#28a745" : "#dc3545"; } if (t) t.style.background = act ? "#dc3545" : "#28a745"; }
 
@@ -498,10 +587,7 @@ updateUI();
 function mapsLink(a){if(!a)return"#";let q=a.replace(/'/g,"").replace(/\n/g," ");const t=a.toLowerCase();if(/suvarnabhumi|bkk|สุวรรณภูมิ/.test(t))q="Suvarnabhumi Airport";if(/don mueang|dmk|ดอนเมือง/.test(t))q="Don Mueang Airport";return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;}
 function flightLink(f){if(!f)return"#";const cleanFlight=f.trim().replace(/\s+/g,'');return `intent://www.flightradar24.com/data/flights/${cleanFlight}#Intent;scheme=https;package=com.flightradar24free;end`;}
 
-function getVal(t, k) { const re = new RegExp(`【${k}】\\s*([\\s\\S]*?)(?=\\s*【|$)`), m = t.match(re); return m ? m[1].trim() : ""; }
-
 function getCode(b){const raw=b.match(/【接驳编码code】(.*)/)||b.match(/code[:：]?\s*(.*)/i);if(!raw)return"";return raw[1].trim().match(/[0-9A-Za-z]+/)?.[0]||""}
-
 
 const getCustomEmoji = r => { if (!r) return "🚗"; r = r.toUpperCase(); const g = id => document.getElementById(id)?.value || "", icons = { tA: g("em_to_air"), fA: g("em_from_air"), cy: g("em_city") || "🚗", pv: g("em_prov") || "⭐" }, [f, t] = r.split("-"), isAir = x => x === "S" || x === "D", isLocal = x => ["BK", "PT", "NB", "SP"].includes(x); if (isLocal(f) && isLocal(t)) return icons.cy; if (isAir(f) && isLocal(t)) return icons.fA; if (isLocal(f) && isAir(t)) return icons.tA; if (/P|HH|CA|RY|KC|AY|20|21|77|76|71|13/.test(r) && !r.includes("ศรีอยุธยา")) return icons.pv; return icons.cy; };
 
