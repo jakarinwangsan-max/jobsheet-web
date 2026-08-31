@@ -305,6 +305,9 @@ button{width:100%;padding:15px!important;font-size:16px!important}
 <div id="preview-container"></div>
 </body>
 <script>
+    
+localStorage.removeItem("isAdmin");
+    
 let currentMode=1, PutterName=localStorage.getItem("lastPutter")||"", isAdmin=localStorage.getItem("isAdmin")==="true", isSystemActive=true; const WEB_APP_URL='https://script.google.com/macros/s/AKfycbwn9p1uIxVfShlXaXRQ0PMwuGnzSXw7MpkbIFIkCLujyccQJz13AyfmsBVQwtHvgTPI0A/exec'; async function syncStatus(){try{const r=await fetch(WEB_APP_URL), s=await r.text(); isSystemActive=(s.trim()==="ON"); updateUI();}catch(e){console.error(e)}} syncStatus(); function selectMode(m){ currentMode=m; document.getElementById('mode-selection-screen').style.display='none'; document.getElementById('mode-label').innerText=(m===1?"(รถทะเบียน)":"(งานทั่วไป)"); document.getElementById('btnCopyMode1').style.display=(m===1?'block':'none'); document.getElementById('btnCopyMode2').style.display=(m===2?'block':'none'); document.getElementById('price-row').style.display=(m===2?'block':'none'); const s=document.getElementById('single-row-section'), b=document.getElementById('bts-section'), p=document.getElementById('preview-container'); if(s)s.style.display=(m===2?'block':'none'); if(b)b.style.display=(m===1?'block':'none'); if(p)p.style.display=(m===1?'block':'none'); }
  const thaiMap = {
     "bang khen":"บางเขน","bangkhen":"บางเขน",
